@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SEOsuite
 
-## Getting Started
+> Automated SEO Intelligence Platform — [seosuite.info](https://seosuite.info)
 
-First, run the development server:
+Built on the BERNAS Intelligence Engine. Enterprise-grade SEO auditing, Core Web Vitals monitoring, keyword tracking, and the **Pilar1st** topic cluster builder.
+
+## Modules
+
+| Module | Description | Status |
+|--------|-------------|--------|
+| **SEO Audit** | 53-point technical audit (robots, sitemap, on-page, schema, headers, CWV, links) | ✅ Live |
+| **Pilar1st** | GEO × Keyword matrix — 100 keywords × 10 kota = 1000 artikel | ✅ Live |
+| **CWV Monitor** | PageSpeed Insights API integration — LCP, INP, CLS, FCP, TTFB | 🔑 Requires PSI_API_KEY |
+| **GSC Tracker** | Keyword rank tracking via Google Search Console API | 🔜 Roadmap |
+| **PDF Reports** | Weekly automated SEO health PDF export | 🔜 Roadmap |
+
+## Quick Start
 
 ```bash
+# Clone
+git clone https://github.com/putra-commits/seosuite.git
+cd seosuite
+
+# Install
+npm install
+
+# Configure
+cp .env.local.example .env.local
+# Add your PSI_API_KEY for full CWV data
+
+# Dev
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## API Reference
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### `GET /api/audit?url=https://yourdomain.com`
+Runs a 53-point technical SEO audit. Returns score (0–100) + 7 section breakdown.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### `POST /api/pilar`
+```json
+{ "keywords": ["Next.js", "SEO Audit"], "cities": ["Jakarta", "Bandung"] }
+```
+Returns GEO × Keyword cluster matrix with intent classification and word targets.
 
-## Learn More
+### `GET /api/health`
+Returns service health status.
 
-To learn more about Next.js, take a look at the following resources:
+## Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Framework**: Next.js 15 (App Router)
+- **UI**: Tailwind CSS + Custom Design System
+- **Icons**: Lucide React
+- **Engine**: BERNAS SEO Health Check (ported from `seo-health-check.ts`)
+- **Domain**: seosuite.info
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Workflows (Cod1st × UX1st × Debug1st)
 
-## Deploy on Vercel
+Developed following the BERNAS agent methodology:
+- **Cod1st**: Type-safe API routes, AbortSignal timeouts, proper error guards
+- **UX1st**: Premium dark SaaS UI, score ring, real-time progress, scan-line effect
+- **Debug1st**: No SSR leaks, no window/document in server routes, health endpoint
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+© 2026 SEOsuite — A BERNAS Sovereign Intelligence Group product
