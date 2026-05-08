@@ -1,7 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Map, Plus, X, Zap, ArrowLeft, Download, BarChart3, Globe, FileText, TrendingUp } from 'lucide-react';
+import { 
+  Map, Plus, X, Zap, Download, BarChart3, Globe, FileText, 
+  TrendingUp, ArrowRight, Search, LayoutGrid, Info, ChevronRight,
+  Database, Compass, Loader2
+} from 'lucide-react';
 import Link from 'next/link';
 
 interface ClusterArticle {
@@ -20,21 +24,26 @@ interface PilarSummary {
 interface PilarResult { summary: PilarSummary; clusters: PilarCluster[]; generatedAt: string; }
 
 const INTENT_COLORS: Record<string, string> = {
-  informational: 'badge-blue',
-  commercial:    'badge-yellow',
-  transactional: 'badge-green',
+  informational: 'bg-blue-500/10 text-blue-500',
+  commercial:    'bg-amber-500/10 text-amber-500',
+  transactional: 'bg-emerald-500/10 text-emerald-500',
+};
+
+const INTENT_LABELS: Record<string, string> = {
+  informational: 'Informasional',
+  commercial:    'Komersial',
+  transactional: 'Transaksional',
 };
 
 const DEFAULT_KEYWORDS = [
-  'Next.js Server Components', 'SEO Technical Audit', 'Core Web Vitals Optimization',
-  'Content Marketing Strategy', 'Digital Transformation UMKM', 'AI Marketing Automation',
+  'Optimasi SEO On-Page', 'Audit Teknis Website', 'Riset Kata Kunci Berprofit',
+  'Strategi Konten Pilar', 'Digital Marketing UMKM', 'Otomasi Pemasaran AI',
 ];
-const DEFAULT_CITIES = ['Jakarta', 'Bandung', 'Surabaya', 'Yogyakarta', 'Medan',
-  'Makassar', 'Semarang', 'Palembang', 'Balikpapan', 'Denpasar'];
+const DEFAULT_CITIES = ['Jakarta', 'Bandung', 'Surabaya', 'Yogyakarta', 'Medan'];
 
 export default function PilarPage() {
   const [keywords, setKeywords]     = useState<string[]>(DEFAULT_KEYWORDS);
-  const [cities, setCities]         = useState<string[]>(DEFAULT_CITIES.slice(0, 5));
+  const [cities, setCities]         = useState<string[]>(DEFAULT_CITIES);
   const [kwInput, setKwInput]       = useState('');
   const [cityInput, setCityInput]   = useState('');
   const [loading, setLoading]       = useState(false);
@@ -87,76 +96,58 @@ export default function PilarPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--bg-base)' }}>
-      {/* Header */}
-      <header className="flex items-center justify-between px-6 py-3 border-b sticky top-0 z-40"
-        style={{ borderColor: 'var(--border)', background: 'rgba(5,8,16,0.95)', backdropFilter: 'blur(12px)' }}>
-        <div className="flex items-center gap-3">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: 'var(--accent)' }}>
-              <Zap className="w-3.5 h-3.5 text-white" />
-            </div>
-            <span className="font-black text-sm" style={{ fontFamily: 'var(--font-display)' }}>SEOsuite</span>
-          </Link>
-          <span style={{ color: 'var(--border-bright)' }}>/</span>
-          <div className="flex items-center gap-1.5">
-            <Map className="w-3.5 h-3.5 text-purple-400" />
-            <span className="text-sm font-semibold text-purple-400">Pilar1st</span>
-            <span className="badge-blue text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded ml-1">Add-on</span>
+    <div className="p-8 lg:p-12 max-w-7xl mx-auto">
+      <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <Map className="w-4 h-4 text-purple-500" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-purple-400">Pilar Builder</span>
           </div>
+          <h1 className="text-3xl font-bold tracking-tight mb-2">Arsitek Klaster Topik</h1>
+          <p className="text-zinc-500 text-sm max-w-2xl">
+            Tingkatkan otoritas konten Anda dengan klaster topik GEO-SEO otomatis. 
+            Transformasikan kata kunci benih menjadi peta jalan editorial 1.000 artikel.
+          </p>
         </div>
+        
         {result && (
-          <button onClick={exportCSV}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors hover:border-blue-500/50"
-            style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)' }}>
-            <Download className="w-3.5 h-3.5" /> Export CSV
+          <button 
+            onClick={exportCSV}
+            className="bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-white px-6 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm"
+          >
+            <Download className="w-4 h-4" /> Ekspor Matriks CSV
           </button>
         )}
       </header>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* Hero */}
-        <div className="mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border mb-4 text-xs"
-            style={{ borderColor: 'var(--border-bright)', background: 'var(--bg-card)', color: 'var(--text-muted)' }}>
-            <Map className="w-3.5 h-3.5 text-purple-400" />
-            National Data Alchemist — GEO × Keyword Matrix
-          </div>
-          <h1 className="text-3xl font-black mb-2" style={{ fontFamily: 'var(--font-display)' }}>
-            Pilar<span className="gradient-text">1st</span> Builder
-          </h1>
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            100 keywords × 10 kota = 1.000 artikel tanpa duplikasi. Topic cluster otomatis dengan GEO-SEO matrix.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Config Panel */}
-          <div className="lg:col-span-1 space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Left: Configuration */}
+        <div className="lg:col-span-4 space-y-8">
+          <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 space-y-6">
             {/* Keywords */}
-            <div className="rounded-xl border p-4" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold">Keywords <span style={{ color: 'var(--text-muted)' }}>({keywords.length}/100)</span></h2>
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-bold text-white uppercase tracking-widest">Kata Kunci Benih</h3>
+                <span className="text-[10px] text-zinc-600 font-bold">{keywords.length}/100</span>
               </div>
-              <div className="flex gap-2 mb-3">
-                <input value={kwInput} onChange={e => setKwInput(e.target.value)}
+              <div className="flex gap-2 mb-4">
+                <input 
+                  value={kwInput} 
+                  onChange={e => setKwInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && addKeyword()}
-                  placeholder="Add keyword..."
-                  className="flex-1 bg-transparent text-xs py-2 px-3 rounded-lg border outline-none placeholder:text-slate-700"
-                  style={{ borderColor: 'var(--border)', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }} />
-                <button onClick={addKeyword}
-                  className="p-2 rounded-lg transition-colors hover:opacity-80"
-                  style={{ background: 'var(--accent)' }}>
-                  <Plus className="w-3.5 h-3.5 text-white" />
+                  placeholder="misal: Tren Real Estate"
+                  className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-purple-500/50 transition-colors font-mono"
+                />
+                <button onClick={addKeyword} className="p-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 transition-all">
+                  <Plus className="w-4 h-4 text-white" />
                 </button>
               </div>
-              <div className="space-y-1.5 max-h-48 overflow-y-auto">
+              <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto no-scrollbar">
                 {keywords.map((kw, i) => (
-                  <div key={i} className="flex items-center justify-between px-2.5 py-1.5 rounded-lg"
-                    style={{ background: 'var(--bg-surface)' }}>
-                    <span className="text-xs font-mono truncate" style={{ color: 'var(--text-secondary)' }}>{kw}</span>
-                    <button onClick={() => setKeywords(p => p.filter((_, j) => j !== i))}>
-                      <X className="w-3 h-3 hover:text-red-400" style={{ color: 'var(--text-muted)' }} />
+                  <div key={i} className="flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 group">
+                    <span className="text-[10px] font-medium text-zinc-400 group-hover:text-zinc-200 transition-colors">{kw}</span>
+                    <button onClick={() => setKeywords(p => p.filter((_, j) => j !== i))} className="text-zinc-700 hover:text-red-500">
+                      <X className="w-3 h-3" />
                     </button>
                   </div>
                 ))}
@@ -164,139 +155,151 @@ export default function PilarPage() {
             </div>
 
             {/* Cities */}
-            <div className="rounded-xl border p-4" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
-              <h2 className="text-sm font-semibold mb-3">Kota GEO-SEO <span style={{ color: 'var(--text-muted)' }}>({cities.length}/10)</span></h2>
-              <div className="flex gap-2 mb-3">
-                <input value={cityInput} onChange={e => setCityInput(e.target.value)}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-bold text-white uppercase tracking-widest">Target GEO</h3>
+                <span className="text-[10px] text-zinc-600 font-bold">{cities.length}/10</span>
+              </div>
+              <div className="flex gap-2 mb-4">
+                <input 
+                  value={cityInput} 
+                  onChange={e => setCityInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && addCity()}
-                  placeholder="Tambah kota..."
-                  className="flex-1 bg-transparent text-xs py-2 px-3 rounded-lg border outline-none placeholder:text-slate-700"
-                  style={{ borderColor: 'var(--border)', color: 'var(--text-primary)' }} />
-                <button onClick={addCity}
-                  className="p-2 rounded-lg hover:opacity-80"
-                  style={{ background: 'rgba(168,85,247,0.2)' }}>
-                  <Plus className="w-3.5 h-3.5 text-purple-400" />
+                  placeholder="misal: Jakarta"
+                  className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-blue-500/50 transition-colors font-mono"
+                />
+                <button onClick={addCity} className="p-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 transition-all">
+                  <Plus className="w-4 h-4 text-white" />
                 </button>
               </div>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-2">
                 {cities.map((c, i) => (
-                  <div key={i} className="flex items-center gap-1 px-2 py-1 rounded-full text-xs border"
-                    style={{ borderColor: 'var(--border-bright)', background: 'var(--bg-surface)', color: 'var(--text-secondary)' }}>
-                    <Globe className="w-3 h-3" />
-                    {c}
-                    <button onClick={() => setCities(p => p.filter((_, j) => j !== i))}>
-                      <X className="w-2.5 h-2.5" style={{ color: 'var(--text-muted)' }} />
+                  <div key={i} className="flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 group">
+                    <Globe className="w-2.5 h-2.5 text-zinc-600" />
+                    <span className="text-[10px] font-medium text-zinc-400 group-hover:text-zinc-200 transition-colors">{c}</span>
+                    <button onClick={() => setCities(p => p.filter((_, j) => j !== i))} className="text-zinc-700 hover:text-red-500">
+                      <X className="w-3 h-3" />
                     </button>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Generate Button */}
-            <button onClick={generate} disabled={loading || keywords.length === 0}
-              className="w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #3b82f6)', color: 'white', boxShadow: '0 0 32px rgba(124,58,237,0.3)' }}>
-              {loading ? (
-                <><div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> Generating...</>
-              ) : (
-                <><Map className="w-4 h-4" /> Generate {keywords.length * cities.length} Articles</>
-              )}
+            <button 
+              onClick={generate} 
+              disabled={loading || keywords.length === 0}
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-3 shadow-lg shadow-purple-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+            >
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
+              {loading ? 'Membangun Matriks...' : `Hasilkan ${keywords.length * cities.length} Node Klaster`}
             </button>
           </div>
 
-          {/* Result Panel */}
-          <div className="lg:col-span-2">
-            {!result && !loading && (
-              <div className="h-64 flex flex-col items-center justify-center gap-3 rounded-xl border"
-                style={{ borderColor: 'var(--border)', borderStyle: 'dashed' }}>
-                <Map className="w-10 h-10" style={{ color: 'var(--text-muted)' }} />
-                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Configure keywords & cities, then generate your cluster</p>
-              </div>
-            )}
+          <div className="p-5 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex gap-4">
+            <Info className="w-5 h-5 text-amber-500 shrink-0" />
+            <p className="text-[11px] text-zinc-500 leading-relaxed">
+              <strong className="text-amber-500/80">Tips Pro:</strong> Menggunakan kota dalam strategi kata kunci Anda meningkatkan relevansi lokal hingga 40% untuk Google Discover dan mesin GEO AI.
+            </p>
+          </div>
+        </div>
 
-            {loading && (
-              <div className="h-64 flex flex-col items-center justify-center gap-4 rounded-xl border"
-                style={{ borderColor: 'var(--border)' }}>
-                <div className="relative w-12 h-12">
-                  <div className="absolute inset-0 rounded-full border-2 border-purple-500/20 border-t-purple-500 animate-spin" />
-                  <Map className="w-5 h-5 text-purple-400 absolute inset-0 m-auto" />
-                </div>
-                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Building topic cluster matrix...</p>
+        {/* Right: Results */}
+        <div className="lg:col-span-8">
+          {!result && !loading && (
+            <div className="h-[500px] rounded-3xl border border-zinc-800 border-dashed flex flex-col items-center justify-center text-center p-12">
+              <div className="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-6">
+                <LayoutGrid className="w-8 h-8 text-zinc-700" />
               </div>
-            )}
+              <h3 className="text-lg font-bold text-zinc-300 mb-2">Matriks Tidak Aktif</h3>
+              <p className="text-sm text-zinc-500 max-w-xs leading-relaxed">Konfigurasi kata kunci benih dan target kota Anda untuk menghasilkan pilar konten yang terstruktur.</p>
+            </div>
+          )}
 
-            {result && (
-              <div className="space-y-4">
-                {/* Summary Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {[
-                    { label: 'Total Articles', value: result.summary.totalArticles, icon: <FileText className="w-3.5 h-3.5 text-blue-400" />, color: '#60a5fa' },
-                    { label: 'Coverage', value: `${result.summary.coverage}%`, icon: <BarChart3 className="w-3.5 h-3.5 text-emerald-400" />, color: '#10b981' },
-                    { label: 'Est. Days', value: result.summary.estimatedDays, icon: <TrendingUp className="w-3.5 h-3.5 text-amber-400" />, color: '#f59e0b' },
-                    { label: 'Keywords', value: result.summary.keywords, icon: <Map className="w-3.5 h-3.5 text-purple-400" />, color: '#a78bfa' },
-                  ].map(s => (
-                    <div key={s.label} className="rounded-xl border p-3" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
-                      <div className="flex items-center gap-1.5 mb-1.5">{s.icon}<span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--text-muted)' }}>{s.label}</span></div>
-                      <p className="text-xl font-black" style={{ fontFamily: 'var(--font-display)', color: s.color }}>{s.value}</p>
+          {loading && (
+            <div className="h-[500px] rounded-3xl bg-zinc-900/30 border border-zinc-800 flex flex-col items-center justify-center p-12">
+              <div className="w-20 h-20 rounded-full border-2 border-zinc-800 border-t-purple-500 animate-spin mb-8 flex items-center justify-center">
+                <Compass className="w-8 h-8 text-purple-400" />
+              </div>
+              <p className="text-sm text-zinc-400 font-bold tracking-widest uppercase animate-pulse">Mengorkestrasi Arsitektur Node Klaster...</p>
+            </div>
+          )}
+
+          {result && (
+            <div className="space-y-8 animate-in fade-in duration-700">
+              {/* Summary */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { label: 'Artikel', value: result.summary.totalArticles, icon: <FileText className="w-4 h-4 text-blue-400" /> },
+                  { label: 'Cakupan', value: `${result.summary.coverage}%`, icon: <BarChart3 className="w-4 h-4 text-emerald-400" /> },
+                  { label: 'Waktu Bangun', value: `${result.summary.estimatedDays}h`, icon: <TrendingUp className="w-4 h-4 text-amber-400" /> },
+                  { label: 'Hub Klaster', value: result.summary.keywords, icon: <Map className="w-4 h-4 text-purple-400" /> },
+                ].map(s => (
+                  <div key={s.label} className="p-5 rounded-2xl bg-zinc-900 border border-zinc-800">
+                    <div className="flex items-center gap-2 mb-2">
+                      {s.icon}
+                      <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">{s.label}</span>
                     </div>
-                  ))}
-                </div>
+                    <p className="text-2xl font-bold text-white">{s.value}</p>
+                  </div>
+                ))}
+              </div>
 
-                {/* Intent breakdown */}
-                <div className="rounded-xl border p-4" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
-                  <h3 className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--text-muted)' }}>Search Intent Distribution</h3>
-                  <div className="flex gap-3 flex-wrap">
-                    {Object.entries(result.summary.intentBreakdown).map(([intent, count]) => (
-                      <div key={intent} className={`${INTENT_COLORS[intent]} text-xs font-semibold px-3 py-1.5 rounded-full`}>
-                        {intent}: {count}
-                      </div>
+              {/* Cluster Detail */}
+              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+                <div className="p-2 border-b border-zinc-800 bg-zinc-950/50 overflow-x-auto no-scrollbar">
+                  <div className="flex gap-1">
+                    {result.clusters.map((c, i) => (
+                      <button 
+                        key={i} 
+                        onClick={() => setActiveKw(i)}
+                        className={`px-6 py-2.5 rounded-xl text-[11px] font-bold transition-all whitespace-nowrap ${
+                          activeKw === i 
+                            ? 'bg-zinc-800 text-white shadow-sm' 
+                            : 'text-zinc-500 hover:text-zinc-300'
+                        }`}
+                      >
+                        {c.keyword}
+                      </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Keyword tabs + cluster list */}
-                <div className="rounded-xl border overflow-hidden" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
-                  {/* Keyword selector */}
-                  <div className="border-b overflow-x-auto" style={{ borderColor: 'var(--border)' }}>
-                    <div className="flex">
-                      {result.clusters.map((c, i) => (
-                        <button key={i} onClick={() => setActiveKw(i)}
-                          className="px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors"
-                          style={{
-                            borderColor: activeKw === i ? 'var(--accent)' : 'transparent',
-                            color: activeKw === i ? 'var(--text-primary)' : 'var(--text-muted)',
-                          }}>
-                          {c.keyword}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Cluster articles */}
+                <div className="max-h-[600px] overflow-y-auto divide-y divide-zinc-800/50">
                   {activeKw !== null && result.clusters[activeKw] && (
-                    <div className="divide-y" style={{ borderColor: 'var(--border)' }}>
-                      {result.clusters[activeKw].clusters.map((a, i) => (
-                        <div key={i} className="flex items-start gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors">
-                          <div className="flex items-center gap-1 shrink-0">
-                            <Globe className="w-3.5 h-3.5" style={{ color: 'var(--text-muted)' }} />
-                            <span className="text-xs font-bold w-20 shrink-0" style={{ color: 'var(--text-muted)' }}>{a.city}</span>
+                    result.clusters[activeKw].clusters.map((a, i) => (
+                      <div key={i} className="p-5 flex items-center justify-between hover:bg-zinc-800/10 group transition-all">
+                        <div className="flex items-start gap-4 flex-1 min-w-0">
+                          <div className="w-8 h-8 rounded-lg bg-zinc-950 flex items-center justify-center text-zinc-600 shrink-0 mt-0.5">
+                            <Globe className="w-3.5 h-3.5" />
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>{a.title}</p>
-                            <p className="text-xs mt-0.5 font-mono truncate" style={{ color: 'var(--text-muted)' }}>/nasional/news/{a.slug}</p>
-                          </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <span className={`${INTENT_COLORS[a.intent]} text-[10px] font-bold px-2 py-0.5 rounded-full`}>{a.intent}</span>
-                            <span className="text-[10px] font-mono" style={{ color: 'var(--text-muted)' }}>{a.wordTarget}w</span>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-[9px] font-black uppercase text-zinc-600 tracking-tighter w-14 shrink-0">{a.city}</span>
+                              <p className="text-sm font-bold text-zinc-200 group-hover:text-white truncate">{a.title}</p>
+                            </div>
+                            <p className="text-[10px] text-zinc-600 font-mono truncate">/berita/nasional/{a.slug}</p>
                           </div>
                         </div>
-                      ))}
-                    </div>
+                        <div className="flex items-center gap-6 shrink-0 ml-6">
+                          <div className="text-right">
+                            <span className={`text-[10px] font-bold px-3 py-1 rounded-full ${INTENT_COLORS[a.intent]}`}>
+                              {INTENT_LABELS[a.intent]}
+                            </span>
+                          </div>
+                          <div className="w-10 text-right">
+                            <span className="text-[10px] font-bold text-zinc-500">{a.wordTarget}w</span>
+                          </div>
+                          <div className="w-8 h-8 rounded-lg bg-zinc-950 flex items-center justify-center text-zinc-700 group-hover:text-white transition-colors">
+                            <ChevronRight className="w-4 h-4" />
+                          </div>
+                        </div>
+                      </div>
+                    ))
                   )}
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
