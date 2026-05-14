@@ -15,11 +15,15 @@ interface KW {
   words: number; 
   intent: 'Informational' | 'Navigational' | 'Transactional';
   isBranded: boolean;
+  searchVolume: number;
+  cpc: number;
+  competitionLevel: string;
 }
 
 interface KWData { 
   seed: string; 
   total: number; 
+  source: string;
   keywords: KW[]; 
 }
 
@@ -30,6 +34,8 @@ export default function KeywordsPage() {
   const [copied, setCopied] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<'All' | 'Informational' | 'Navigational' | 'Transactional'>('All');
   const [showBranded, setShowBranded] = useState<boolean | null>(null); // null = all, true = branded, false = non-branded
+  const [selectedKWs, setSelectedKWs] = useState<string[]>([]);
+  const [exporting, setExporting] = useState(false);
   
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -70,13 +76,13 @@ export default function KeywordsPage() {
     catch { 
       // Fallback for demo/dev
       const mockKeywords: KW[] = [
-        { keyword: `${seed} terbaru`, score: 85, words: 3, intent: 'Informational', isBranded: false },
-        { keyword: `cara optimasi ${seed}`, score: 92, words: 4, intent: 'Informational', isBranded: false },
-        { keyword: `harga ${seed} premium`, score: 78, words: 3, intent: 'Transactional', isBranded: false },
-        { keyword: `seosuite ${seed} audit`, score: 95, words: 3, intent: 'Navigational', isBranded: true },
-        { keyword: `daftar ${seed} 2026`, score: 88, words: 3, intent: 'Transactional', isBranded: false },
+        { keyword: `${seed} terbaru`, score: 85, words: 3, intent: 'Informational', isBranded: false, searchVolume: 1200, cpc: 2500, competitionLevel: 'MEDIUM' },
+        { keyword: `cara optimasi ${seed}`, score: 92, words: 4, intent: 'Informational', isBranded: false, searchVolume: 450, cpc: 1200, competitionLevel: 'LOW' },
+        { keyword: `harga ${seed} premium`, score: 78, words: 3, intent: 'Transactional', isBranded: false, searchVolume: 880, cpc: 8500, competitionLevel: 'HIGH' },
+        { keyword: `seosuite ${seed} audit`, score: 95, words: 3, intent: 'Navigational', isBranded: true, searchVolume: 150, cpc: 500, competitionLevel: 'LOW' },
+        { keyword: `daftar ${seed} 2026`, score: 88, words: 3, intent: 'Transactional', isBranded: false, searchVolume: 300, cpc: 4300, competitionLevel: 'MEDIUM' },
       ];
-      setData({ seed, total: mockKeywords.length, keywords: mockKeywords });
+      setData({ seed, total: mockKeywords.length, source: 'Mock Data', keywords: mockKeywords });
     }
     finally { setLoading(false); }
   }
@@ -96,6 +102,37 @@ export default function KeywordsPage() {
     setTimeout(() => setCopied(null), 1500);
   }
 
+  function toggleSelection(kw: string) {
+    setSelectedKWs(prev => 
+      prev.includes(kw) ? prev.filter(k => k !== kw) : [...prev, kw]
+    );
+  }
+
+  async function exportToAlchemist() {
+    if (selectedKWs.length === 0) return;
+    setExporting(true);
+    try {
+      const payload = data?.keywords.filter(k => selectedKWs.includes(k.keyword)) || [];
+      const res = await fetch('/api/export-pilar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ keywords: payload })
+      });
+      if (res.ok) {
+        alert(`${selectedKWs.length} kata kunci berhasil dikirim ke Alchemist Engine!`);
+        setSelectedKWs([]);
+      } else {
+        alert('Gagal mengekspor kata kunci.');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Terjadi kesalahan sistem.');
+    } finally {
+      setExporting(false);
+    }
+  }
+
+
   return (
     <div className="p-8 lg:p-12 max-w-6xl mx-auto font-sans">
       <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -113,10 +150,12 @@ export default function KeywordsPage() {
         </div>
 
         <div className="flex gap-2">
-           <div className="px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">GSC Pipeline Active</span>
-           </div>
+           {data?.source && (
+             <div className="px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center gap-3">
+                <div className={`w-2 h-2 rounded-full ${data.source === 'Google Ads API' ? 'bg-blue-500' : 'bg-emerald-500'} animate-pulse`} />
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Source: {data.source}</span>
+             </div>
+           )}
         </div>
       </header>
 
@@ -184,7 +223,7 @@ export default function KeywordsPage() {
                   >
                     Branded
                   </button>
-                  <button 
+                   <button 
                     onClick={() => setShowBranded(false === showBranded ? null : false)}
                     className={`px-2 py-1 rounded text-[10px] font-bold border transition-all ${showBranded === false ? 'bg-amber-500/10 border-amber-500/50 text-amber-500' : 'bg-zinc-900 border-zinc-800 text-zinc-500'}`}
                   >
@@ -193,44 +232,80 @@ export default function KeywordsPage() {
                </div>
             </div>
 
+            {selectedKWs.length > 0 && (
+               <div className="flex justify-between items-center bg-blue-600/10 border border-blue-500/20 rounded-2xl p-4 animate-in fade-in zoom-in duration-300">
+                  <span className="text-sm font-bold text-blue-400">
+                     {selectedKWs.length} Kata Kunci Terpilih
+                  </span>
+                  <button
+                     onClick={exportToAlchemist}
+                     disabled={exporting}
+                     className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 disabled:opacity-50"
+                  >
+                     {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
+                     {exporting ? 'Mengirim...' : 'Kirim ke BERNAS'}
+                  </button>
+               </div>
+            )}
+
+
             <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl overflow-hidden backdrop-blur-sm">
               <div className="grid grid-cols-12 px-6 py-4 border-b border-zinc-800 bg-zinc-900/80">
-                <div className="col-span-7 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Penemuan Kata Kunci</div>
-                <div className="col-span-3 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-center">Lapisan Niat</div>
-                <div className="col-span-2 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-right">Hasil</div>
+                <div className="col-span-1 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-center">Pilih</div>
+                <div className="col-span-4 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Penemuan Kata Kunci</div>
+                <div className="col-span-2 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-center">Lapisan Niat</div>
+                <div className="col-span-3 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-right">Metrics (SV/CPC)</div>
+                <div className="col-span-2 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-right">Score</div>
               </div>
               <div className="divide-y divide-zinc-800 max-h-[600px] overflow-y-auto custom-scrollbar">
                 {filteredKeywords.map((k, i) => (
-                  <div key={i} className="grid grid-cols-12 items-center px-6 py-4 hover:bg-zinc-800/40 group transition-all">
-                    <div className="col-span-7 flex items-center gap-4">
+                  <div key={i} className={`grid grid-cols-12 items-center px-6 py-4 hover:bg-zinc-800/40 group transition-all ${selectedKWs.includes(k.keyword) ? 'bg-blue-900/10' : ''}`}>
+                    <div className="col-span-1 flex justify-center">
+                       <input 
+                         type="checkbox"
+                         checked={selectedKWs.includes(k.keyword)}
+                         onChange={() => toggleSelection(k.keyword)}
+                         className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-blue-500 focus:ring-blue-500 focus:ring-offset-zinc-900 cursor-pointer"
+                       />
+                    </div>
+                    <div className="col-span-4 flex items-center gap-4">
                       <button 
                         onClick={() => copyKW(k.keyword)}
                         className="p-2 rounded-xl border border-zinc-800 bg-zinc-900/50 text-zinc-600 hover:text-white hover:border-zinc-700 transition-all"
                       >
                         {copied === k.keyword ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                       </button>
-                      <div className="flex flex-col">
+                      <div className="flex flex-col truncate pr-2">
                         <span className="text-sm font-bold text-zinc-100 group-hover:text-blue-400 transition-colors truncate">{k.keyword}</span>
                         <div className="flex items-center gap-2 mt-1">
                           {k.words >= 4 && <span className="text-[8px] font-black text-emerald-500 uppercase tracking-tighter">Long-Tail</span>}
                           {k.isBranded && <span className="text-[8px] font-black text-blue-500 uppercase tracking-tighter italic">Branded</span>}
+                          {k.competitionLevel && k.competitionLevel !== 'UNSPECIFIED' && (
+                             <span className="text-[8px] font-black text-amber-500 uppercase tracking-tighter border border-amber-500/20 px-1 rounded">{k.competitionLevel}</span>
+                          )}
                         </div>
                       </div>
                     </div>
-                    <div className="col-span-3 text-center">
+                    <div className="col-span-2 text-center">
                       <span className={`text-[9px] font-black px-2 py-1 rounded uppercase tracking-wider ${
                         k.intent === 'Transactional' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 
                         k.intent === 'Navigational' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 
                         'bg-zinc-800 text-zinc-500 border border-zinc-700'
                       }`}>
-                        {k.intent === 'Transactional' ? 'TRANSAKSIONAL' : 
-                         k.intent === 'Navigational' ? 'NAVIGASIONAL' : 
-                         'INFORMASIONAL'}
+                        {k.intent === 'Transactional' ? 'TRANS' : 
+                         k.intent === 'Navigational' ? 'NAV' : 
+                         'INFO'}
                       </span>
+                    </div>
+                    <div className="col-span-3 text-right">
+                       <div className="flex flex-col items-end justify-center">
+                         <span className="text-xs font-bold text-zinc-300">{k.searchVolume > 0 ? k.searchVolume.toLocaleString('id-ID') : '-'} <span className="text-[8px] text-zinc-500 uppercase">Vol</span></span>
+                         <span className="text-[10px] font-mono text-zinc-500">{k.cpc > 0 ? `Rp ${k.cpc.toLocaleString('id-ID')}` : '-'} <span className="text-[8px] text-zinc-600 uppercase">CPC</span></span>
+                       </div>
                     </div>
                     <div className="col-span-2 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <div className="w-12 h-1 bg-zinc-800 rounded-full overflow-hidden">
+                        <div className="hidden md:block w-12 h-1 bg-zinc-800 rounded-full overflow-hidden">
                           <div className="h-full bg-blue-500" style={{ width: `${k.score}%` }} />
                         </div>
                         <span className="text-[10px] font-black font-mono text-zinc-500">{k.score}</span>

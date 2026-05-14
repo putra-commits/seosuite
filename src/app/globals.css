@@ -22,6 +22,7 @@ body {
 .gradient-text {
   background: linear-gradient(to right, #fff, #a1a1aa);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
