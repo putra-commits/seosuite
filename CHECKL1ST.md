@@ -16,6 +16,7 @@ Sesuai dengan standarisasi **AutoProfit.id**, tampilan SEOsuite harus memancarka
 - [ ] **Konsistensi Warna:** Pastikan warna utama berfokus pada Hitam (`#090b10`), *Zinc-900* (Card/Glass), dan Emas/Kuning (`yellow-500` / `amber-600`).
 - [ ] **Zero Broken Tailwind Classes:** Hindari penggunaan *utility class* Tailwind yang bertentangan atau menyebabkan layout berantakan di layar Mobile (responsif mutlak).
 - [ ] **Glassmorphism Standar:** Setiap Card paket berlangganan atau elemen *overlay* harus mempertahankan transparansi blur (*glassmorphism*) yang elegan.
+- [ ] **Typography Elegan (Anti-Alay):** JANGAN gunakan teks miring (*italic*) kecuali untuk kutipan/quotes, dan JANGAN gunakan ALL CAPS pada *heading* utama (H1/H2). Gunakan huruf kapital standar (*Sentence Case* / *Title Case*) demi menjaga wibawa dan estetika premium.
 
 ## 3. FUNNEL PENJUALAN & CONVERSION INTEGRITY
 SEOsuite dirancang sebagai mesin pencetak profit. Alur dari pengunjung ke pembeli tidak boleh terputus.
