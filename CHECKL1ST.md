@@ -40,6 +40,15 @@ Tanpa poin ini, aplikasi hanyalah brosur kosong.
   ```
 
 ---
+
+## 6. STRICT SOVEREIGN DON'Ts (Aturan Mutlak)
+Sesuai dengan standar The Big 5 (Alchem1st, BizGrow, BERNAS), larangan berikut **HARUS** dipatuhi:
+- ❌ **DON'T Put `dynamic` Above Imports:** Jangan meletakkan `export const dynamic = "force-dynamic";` sebelum statemen `import` di API Routes (Next.js 15). Ini memicu *build crash*.
+- ❌ **DON'T Import Firebase:** SEOsuite adalah *Sovereign App*. JANGAN menambahkan *import* dari `firebase-admin` atau SDK Firebase lainnya. Gunakan Prisma (jika ada database).
+- ❌ **DON'T Use `framer-motion` opacity:0 for Critical Content:** Jangan gunakan `initial={{ opacity: 0 }}` pada teks utama yang dibaca Googlebot/pengunjung. Jika *hydration* gagal, layar akan blank. Gunakan CSS biasa.
+- ❌ **DON'T Build While Server Still Running:** Jangan jalankan `npm run build` jika `server.js` produksi lama masih menyala di latar belakang. Ini menyebabkan proses kompilasi *hang*.
+
+---
 **Diperbarui secara Otonom oleh: AI Antigravity**
 **Afiliasi Repositori:** AutoProfit Sovereign Ecosystem
 *No Code Gets Pushed Unless This Checklist Turns Green.*
