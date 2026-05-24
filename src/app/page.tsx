@@ -67,14 +67,24 @@ const TIERS = [
   }
 ];
 
+interface AuditResult {
+  finalScore: number;
+  seoScore: number;
+  aeoScore: number;
+  geoScore: number;
+  issues: string[];
+}
+
 export default function LandingPage() {
   const [loading, setLoading] = useState<string | null>(null);
   
   // Test Website Flow State
   const [testUrl, setTestUrl] = useState("");
-  const [testState, setTestState] = useState<"idle" | "scanning" | "result">("idle");
+  const [testState, setTestState] = useState<"idle" | "scanning" | "result" | "error">("idle");
+  const [auditResult, setAuditResult] = useState<AuditResult | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleTestWebsite = (e: React.FormEvent) => {
+  const handleTestWebsite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!testUrl) return;
     
@@ -85,11 +95,28 @@ export default function LandingPage() {
     }
     
     setTestState("scanning");
+    setErrorMessage("");
     
-    // Simulate scanning for 3.5 seconds
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: finalUrl }),
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok || data.error) {
+        throw new Error(data.error || 'Gagal melakukan audit.');
+      }
+      
+      setAuditResult(data.data);
       setTestState("result");
-    }, 3500);
+      
+    } catch (err: any) {
+      setErrorMessage(err.message);
+      setTestState("error");
+    }
   };
 
   const handleCheckout = async (tierName: string) => {
@@ -177,7 +204,7 @@ export default function LandingPage() {
             transition={{ delay: 0.2 }}
             className="text-zinc-400 text-lg md:text-xl max-w-3xl mx-auto font-medium leading-relaxed mb-12"
           >
-            Banyak orang punya website tapi <span className="text-white font-semibold">cuma jadi pajangan</span>. Masukkan URL Anda di bawah ini dan biarkan AI kami menemukan <span className="text-yellow-500 font-semibold">kebocoran trafik</span> Anda secara instan.
+            Banyak orang punya website tapi <span className="text-white font-bold">cuma jadi pajangan</span>. Masukkan URL Anda di bawah ini dan biarkan AI kami menemukan <span className="text-yellow-500 font-semibold">kebocoran trafik</span> Anda secara instan.
           </motion.p>
 
           <motion.div
@@ -186,7 +213,7 @@ export default function LandingPage() {
             transition={{ delay: 0.3 }}
             className="max-w-2xl mx-auto"
           >
-            {testState === "idle" && (
+            {(testState === "idle" || testState === "error") && (
               <form onSubmit={handleTestWebsite} className="flex flex-col sm:flex-row gap-4 p-2 bg-zinc-900/50 border border-zinc-800 rounded-2xl backdrop-blur-xl">
                 <input 
                   type="text" 
@@ -202,43 +229,82 @@ export default function LandingPage() {
               </form>
             )}
 
+            {testState === "error" && (
+              <p className="mt-4 text-sm text-red-500 font-medium">{errorMessage}</p>
+            )}
+
             {testState === "scanning" && (
               <div className="p-12 bg-zinc-900/50 border border-zinc-800 rounded-3xl backdrop-blur-xl flex flex-col items-center justify-center gap-6">
                 <div className="w-12 h-12 border-4 border-yellow-500/20 border-t-yellow-500 rounded-full animate-spin" />
                 <div className="space-y-2 text-center">
-                  <h3 className="text-xl font-bold text-white animate-pulse">Menganalisis Arsitektur SEO...</h3>
-                  <p className="text-sm font-medium text-zinc-500">Memeriksa kebocoran trafik dan indeks AI (ChatGPT/Perplexity).</p>
+                  <h3 className="text-xl font-bold text-white animate-pulse">Menganalisis Arsitektur AI...</h3>
+                  <p className="text-sm font-medium text-zinc-500">Membaca HTML dan mengevaluasi SEO, AEO, serta GEO.</p>
                 </div>
               </div>
             )}
 
-            {testState === "result" && (
+            {testState === "result" && auditResult && (
               <div className="p-8 bg-[#1a0f0f] border border-red-900/50 rounded-3xl backdrop-blur-xl text-left shadow-[0_0_50px_rgba(220,38,38,0.15)] animate-in fade-in zoom-in duration-500">
-                <div className="flex items-start gap-6">
-                  <div className="w-16 h-16 rounded-2xl bg-red-950 border border-red-900 flex items-center justify-center shrink-0">
-                    <span className="text-2xl font-bold text-red-500">35</span>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <AlertTriangle className="w-5 h-5 text-red-500" />
-                      <h3 className="text-lg font-bold text-red-500">Kritis: Otoritas Rendah</h3>
+                <div className="flex flex-col gap-6">
+                  
+                  {/* Global Score Header */}
+                  <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-2xl bg-red-950 border border-red-900 flex items-center justify-center shrink-0 shadow-inner">
+                      <span className="text-2xl font-bold text-red-500">{auditResult.finalScore}</span>
                     </div>
-                    <p className="text-zinc-300 text-sm leading-relaxed mb-4">
-                      Website <strong className="text-white">{testUrl}</strong> kehilangan potensi klik AI dan organik sebesar <strong className="text-red-400">78%</strong>. Arsitektur konversi tidak ditemukan, dan mesin pencari AI tidak merekomendasikan brand Anda.
-                    </p>
-                    <ul className="space-y-2 mb-6 text-sm font-medium text-zinc-400">
-                      <li className="flex items-center gap-2"><XCircle className="w-4 h-4 text-red-500" /> Kanibalisasi Kata Kunci Terdeteksi</li>
-                      <li className="flex items-center gap-2"><XCircle className="w-4 h-4 text-red-500" /> Zero-Click Search Optimization Gagal</li>
-                      <li className="flex items-center gap-2"><XCircle className="w-4 h-4 text-red-500" /> Tidak Ada Funnel Pembeli</li>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <AlertTriangle className="w-5 h-5 text-red-500" />
+                        <h3 className="text-lg font-bold text-red-500">Kritis: Otoritas AI Rendah</h3>
+                      </div>
+                      <p className="text-zinc-300 text-sm leading-relaxed">
+                        Website <strong className="text-white">{auditResult.url}</strong> kehilangan potensi klik AI (ChatGPT/Perplexity) dan pencarian organik.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 3 Pillars Score */}
+                  <div className="grid grid-cols-3 gap-4 border-y border-red-900/30 py-4">
+                    <div className="text-center">
+                      <p className="text-xs font-semibold text-zinc-500 mb-1">SEO Score</p>
+                      <p className={`text-2xl font-bold ${auditResult.seoScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.seoScore}</p>
+                    </div>
+                    <div className="text-center border-l border-zinc-800/50">
+                      <p className="text-xs font-semibold text-zinc-500 mb-1">AEO Score</p>
+                      <p className={`text-2xl font-bold ${auditResult.aeoScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.aeoScore}</p>
+                    </div>
+                    <div className="text-center border-l border-zinc-800/50">
+                      <p className="text-xs font-semibold text-zinc-500 mb-1">GEO Score</p>
+                      <p className={`text-2xl font-bold ${auditResult.geoScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.geoScore}</p>
+                    </div>
+                  </div>
+
+                  {/* Issues List */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-white mb-3">Temuan Utama:</h4>
+                    <ul className="space-y-3 mb-6 text-sm font-medium text-zinc-400">
+                      {auditResult.issues.map((issue, idx) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <XCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" /> 
+                          <span>{issue}</span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
+
+                  <button 
+                    onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white font-bold hover:opacity-90 transition-all shadow-[0_10px_30px_rgba(220,38,38,0.3)]"
+                  >
+                    Perbaiki Sekarang (Lihat Paket)
+                  </button>
+                  <button 
+                    onClick={() => { setTestState("idle"); setTestUrl(""); }}
+                    className="w-full py-2 text-xs font-semibold text-zinc-500 hover:text-white text-center transition-colors"
+                  >
+                    Audit URL Lain
+                  </button>
                 </div>
-                <button 
-                  onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="w-full py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white font-bold hover:opacity-90 transition-all shadow-[0_10px_30px_rgba(220,38,38,0.3)]"
-                >
-                  Perbaiki Sekarang (Lihat Paket)
-                </button>
               </div>
             )}
           </motion.div>
@@ -271,7 +337,7 @@ export default function LandingPage() {
                   <Bot className="w-5 h-5 text-amber-500" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">AI Search Dominance</p>
+                  <p className="text-sm font-semibold text-white">AI Search Dominance (AEO & GEO)</p>
                   <p className="text-sm text-zinc-500">Pastikan bisnis Anda jadi jawaban utama di ChatGPT & Perplexity.</p>
                 </div>
               </div>

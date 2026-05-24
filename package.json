@@ -9,7 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@google/genai": "^2.6.0",
+    "@prisma/client": "^7.8.0",
     "@types/recharts": "^1.8.29",
+    "cheerio": "^1.2.0",
     "firebase-admin": "^13.9.0",
     "framer-motion": "^12.38.0",
     "google-ads-api": "^23.0.0",
@@ -27,8 +30,10 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.5",
+    "prisma": "^7.8.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
