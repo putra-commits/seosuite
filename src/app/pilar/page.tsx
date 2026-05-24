@@ -24,7 +24,7 @@ interface PilarSummary {
 interface PilarResult { summary: PilarSummary; clusters: PilarCluster[]; generatedAt: string; }
 
 const INTENT_COLORS: Record<string, string> = {
-  informational: 'bg-blue-500/10 text-blue-500',
+  informational: 'bg-amber-500/10 text-amber-500',
   commercial:    'bg-amber-500/10 text-amber-500',
   transactional: 'bg-emerald-500/10 text-emerald-500',
 };
@@ -166,9 +166,9 @@ export default function PilarPage() {
                   onChange={e => setCityInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && addCity()}
                   placeholder="misal: Jakarta"
-                  className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-blue-500/50 transition-colors font-mono"
+                  className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-amber-500/50 transition-colors font-mono"
                 />
-                <button onClick={addCity} className="p-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 transition-all">
+                <button onClick={addCity} className="p-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 transition-all">
                   <Plus className="w-4 h-4 text-white" />
                 </button>
               </div>
@@ -188,7 +188,7 @@ export default function PilarPage() {
             <button 
               onClick={generate} 
               disabled={loading || keywords.length === 0}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-3 shadow-lg shadow-purple-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-amber-600 text-white text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-3 shadow-lg shadow-purple-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
               {loading ? 'Membangun Matriks...' : `Hasilkan ${keywords.length * cities.length} Node Klaster`}
@@ -229,7 +229,7 @@ export default function PilarPage() {
               {/* Summary */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { label: 'Artikel', value: result.summary.totalArticles, icon: <FileText className="w-4 h-4 text-blue-400" /> },
+                  { label: 'Artikel', value: result.summary.totalArticles, icon: <FileText className="w-4 h-4 text-amber-400" /> },
                   { label: 'Cakupan', value: `${result.summary.coverage}%`, icon: <BarChart3 className="w-4 h-4 text-emerald-400" /> },
                   { label: 'Waktu Bangun', value: `${result.summary.estimatedDays}h`, icon: <TrendingUp className="w-4 h-4 text-amber-400" /> },
                   { label: 'Hub Klaster', value: result.summary.keywords, icon: <Map className="w-4 h-4 text-purple-400" /> },

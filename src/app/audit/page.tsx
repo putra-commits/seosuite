@@ -120,10 +120,10 @@ export default function AuditPage() {
       <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <Gauge className="w-4 h-4 text-blue-500" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">PageSpeed Intelligence v3.0</span>
+            <Gauge className="w-4 h-4 text-amber-500" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-amber-400">PageSpeed Intelligence v3.0</span>
           </div>
-          <h1 className="text-4xl font-black tracking-tight text-white mb-2 italic">
+          <h1 className="text-4xl font-black tracking-tight text-white mb-2">
             Inti <span className="text-zinc-600">Teknis</span>
           </h1>
           <p className="text-zinc-500 text-sm max-w-lg leading-relaxed">
@@ -149,7 +149,7 @@ export default function AuditPage() {
 
       {/* Input Section */}
       <div className="relative group mb-12">
-        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-amber-600/20 to-purple-600/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
         <div className="relative flex gap-3 p-3 bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 rounded-[1.5rem] shadow-2xl">
           <div className="flex items-center pl-4">
              <Globe className="w-5 h-5 text-zinc-600" />
@@ -166,7 +166,7 @@ export default function AuditPage() {
           <button 
             onClick={runAudit}
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-blue-600/20"
+            className="bg-amber-600 hover:bg-amber-500 text-white px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-amber-600/20"
           >
             {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Activity className="w-4 h-4" />}
             {loading ? 'Menganalisis Vital...' : 'Mulai Audit'}
@@ -180,7 +180,7 @@ export default function AuditPage() {
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
-              className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 shadow-[0_0_15px_rgba(59,130,246,0.5)]" 
+              className="h-full bg-gradient-to-r from-amber-600 to-indigo-600 shadow-[0_0_15px_rgba(59,130,246,0.5)]" 
             />
           </div>
           <div className="space-y-2">
@@ -196,7 +196,7 @@ export default function AuditPage() {
           {/* Main Scoring Dashboard */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 p-12 rounded-[3.5rem] bg-zinc-900/30 border border-zinc-800 shadow-3xl backdrop-blur-sm relative overflow-hidden">
              <div className="absolute top-0 right-0 p-8 opacity-5">
-                <Sparkles size={120} className="text-blue-500" />
+                <Sparkles size={120} className="text-amber-500" />
              </div>
              {report.sections.map((s, i) => (
                 <ScoreRing key={s.id} score={s.score} label={s.title} size={140} />
@@ -238,7 +238,7 @@ export default function AuditPage() {
                    {report.sections[activeTab]?.results.map((r, i) => (
                       <div key={i} className="grid grid-cols-12 items-center px-8 py-6 hover:bg-zinc-800/40 transition-all group">
                          <div className="col-span-8 space-y-1">
-                            <h4 className="text-sm font-bold text-zinc-200 group-hover:text-blue-400 transition-colors">{r.label}</h4>
+                            <h4 className="text-sm font-bold text-zinc-200 group-hover:text-amber-400 transition-colors">{r.label}</h4>
                             <p className="text-[11px] text-zinc-500 leading-relaxed font-medium">{r.detail}</p>
                          </div>
                          <div className="col-span-2 text-center">
@@ -273,9 +273,9 @@ export default function AuditPage() {
 function VitalCard({ label, value, status, color, desc }: any) {
    return (
       <div className="p-8 rounded-[2rem] bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all group">
-         <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-4 italic">{label}</p>
+         <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-4">{label}</p>
          <div className="flex items-baseline gap-3 mb-2">
-            <span className="text-4xl font-black text-white italic tracking-tighter">{value}</span>
+            <span className="text-4xl font-black text-white tracking-tighter">{value}</span>
             <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${color}`}>{status}</span>
          </div>
          <p className="text-[10px] text-zinc-600 font-bold leading-relaxed">{desc}</p>

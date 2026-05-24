@@ -40,7 +40,7 @@ export default function FunnelAuditPage() {
 
     return {
       stages: [
-        { name: 'Akuisisi', value: acquisition, color: 'bg-blue-600', desc: 'Total trafik masuk' },
+        { name: 'Akuisisi', value: acquisition, color: 'bg-amber-600', desc: 'Total trafik masuk' },
         { name: 'Aktivasi', value: activation, color: 'bg-indigo-600', desc: 'Pengalaman nilai pertama' },
         { name: 'Retensi', value: retention, color: 'bg-purple-600', desc: 'Pengguna yang kembali' },
         { name: 'Referensi', value: referrals, color: 'bg-pink-600', desc: 'Pengguna yang mengajak orang lain' },
@@ -58,14 +58,14 @@ export default function FunnelAuditPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <div className="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-[10px] font-bold text-blue-500 uppercase tracking-wider">
+            <div className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-[10px] font-bold text-amber-500 uppercase tracking-wider">
               Mesin Audit Pertumbuhan
             </div>
             <div className="w-1 h-1 rounded-full bg-zinc-700" />
-            <span className="text-xs font-medium text-zinc-500 text-blue-500/80 font-mono">MODE_AARRR_BAJAK_LAUT</span>
+            <span className="text-xs font-medium text-zinc-500 text-amber-500/80 font-mono">MODE_AARRR_BAJAK_LAUT</span>
           </div>
           <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-            Pusat Komando <span className="text-blue-500 italic">Pertumbuhan</span>
+            Pusat Komando <span className="text-amber-500">Pertumbuhan</span>
             <div className="w-8 h-8 rounded bg-zinc-900 border border-zinc-800 flex items-center justify-center">
               <Activity className="w-4 h-4 text-emerald-500" />
             </div>
@@ -77,7 +77,7 @@ export default function FunnelAuditPage() {
 
         <div className="flex items-center gap-3">
            <div className="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-lg flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+              <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
               <span className="text-xs font-bold text-zinc-300 uppercase">Live Simulation</span>
            </div>
         </div>
@@ -92,7 +92,7 @@ export default function FunnelAuditPage() {
           {/* Quick Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 hover:border-zinc-700 transition-colors cursor-default group">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1 group-hover:text-blue-400 transition-colors">Hasil Pertumbuhan</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1 group-hover:text-amber-400 transition-colors">Hasil Pertumbuhan</p>
               <div className="flex items-end gap-2">
                 <span className="text-2xl font-bold text-white">{funnelData.conversionRate}%</span>
                 <span className="text-xs font-medium text-emerald-500 mb-1">AARRR Teroptimasi</span>
@@ -187,14 +187,14 @@ export default function FunnelAuditPage() {
                   <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Trafik Bulanan</label>
                   <input 
                     type="number" value={traffic} onChange={(e) => setTraffic(Number(e.target.value))}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-white text-sm font-bold focus:border-blue-500/50 outline-none transition-all"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-white text-sm font-bold focus:border-amber-500/50 outline-none transition-all"
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">AOV (Rp)</label>
                   <input 
                     type="number" value={aov} onChange={(e) => setAov(Number(e.target.value))}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-white text-sm font-bold focus:border-blue-500/50 outline-none transition-all"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-white text-sm font-bold focus:border-amber-500/50 outline-none transition-all"
                   />
                 </div>
               </div>
@@ -212,7 +212,7 @@ export default function FunnelAuditPage() {
 
           {/* AI Insights */}
           <div className="p-8 rounded-[2rem] bg-gradient-to-br from-zinc-900 to-black border border-zinc-800 relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-1 h-full bg-blue-600" />
+            <div className="absolute top-0 left-0 w-1 h-full bg-amber-600" />
             
             <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
               <Zap className="w-5 h-5 text-yellow-500 fill-yellow-500" />
@@ -251,10 +251,10 @@ export default function FunnelAuditPage() {
         {/* Conversion Architecture Audit Section */}
         <div className="mt-12 p-10 rounded-[3rem] bg-zinc-900/30 border border-zinc-800 backdrop-blur-md relative overflow-hidden group">
            <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 transition-opacity">
-              <Zap size={120} className="text-blue-500" />
+              <Zap size={120} className="text-amber-500" />
            </div>
            
-           <h2 className="text-2xl font-black text-white mb-10 flex items-center gap-3 italic uppercase tracking-tighter">
+           <h2 className="text-2xl font-black text-white mb-10 flex items-center gap-3 uppercase tracking-tighter">
              Conversion <span className="text-zinc-600">Architecture</span> Audit
            </h2>
 
@@ -285,7 +285,7 @@ export default function FunnelAuditPage() {
                 rate="65/100" 
                 status="Stabil" 
                 advice="Tingkatkan visibilitas testimoni di bagian atas halaman." 
-                color="text-blue-500"
+                color="text-amber-500"
               />
            </div>
 
@@ -295,7 +295,7 @@ export default function FunnelAuditPage() {
                     <Activity className="w-6 h-6 text-emerald-500" />
                  </div>
                  <div>
-                    <p className="text-sm font-bold text-white italic">Overall Conversion Health: <span className="text-emerald-500 uppercase tracking-widest">B+ Strong</span></p>
+                    <p className="text-sm font-bold text-white">Overall Conversion Health: <span className="text-emerald-500 uppercase tracking-widest">B+ Strong</span></p>
                     <p className="text-[10px] text-zinc-500 font-bold uppercase">Last audited 2 minutes ago via UX1st Engine</p>
                  </div>
               </div>
@@ -319,7 +319,7 @@ function ConversionPoint({ label, rate, status, advice, color }: any) {
             {status}
           </span>
        </div>
-       <div className="text-3xl font-black text-white italic mb-2 tracking-tighter">{rate}</div>
+       <div className="text-3xl font-black text-white mb-2 tracking-tighter">{rate}</div>
        <p className="text-[10px] leading-relaxed text-zinc-500 font-medium group-hover/item:text-zinc-400 transition-colors">
           {advice}
        </p>

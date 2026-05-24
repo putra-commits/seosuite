@@ -39,22 +39,22 @@ export default function LocalSeoPage() {
         {/* Local SEO Intelligence Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
            <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 border-l-cyan-500/50 border-l-2">
-              <div className="text-3xl font-black text-white italic mb-1">76%</div>
+              <div className="text-3xl font-black text-white mb-1">76%</div>
               <p className="text-[10px] font-black text-cyan-500 uppercase tracking-widest mb-2">Visit Rate</p>
               <p className="text-[10px] text-zinc-500 font-bold leading-relaxed">
                 76% orang yang melakukan pencarian lokal di smartphone mengunjungi bisnis terkait dalam 24 jam.
               </p>
            </div>
            <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 border-l-emerald-500/50 border-l-2">
-              <div className="text-3xl font-black text-white italic mb-1">28%</div>
+              <div className="text-3xl font-black text-white mb-1">28%</div>
               <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-2">Purchase Intent</p>
               <p className="text-[10px] text-zinc-500 font-bold leading-relaxed">
                 28% dari pencarian "di dekat saya" (near me) berakhir dengan pembelian nyata di lokasi.
               </p>
            </div>
-           <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 border-l-blue-500/50 border-l-2">
-              <div className="text-3xl font-black text-white italic mb-1">46%</div>
-              <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Global Intent</p>
+           <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 border-l-amber-500/50 border-l-2">
+              <div className="text-3xl font-black text-white mb-1">46%</div>
+              <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-2">Global Intent</p>
               <p className="text-[10px] text-zinc-500 font-bold leading-relaxed">
                 46% dari seluruh pencarian di Google adalah untuk mencari informasi bisnis atau layanan lokal.
               </p>

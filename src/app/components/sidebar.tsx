@@ -45,13 +45,15 @@ export default function Sidebar() {
   return (
     <div className="w-64 h-screen border-r border-[#27272a] bg-[#09090b] flex flex-col sticky top-0 shrink-0">
       <div className="p-6 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-          <Zap className="w-5 h-5 text-white fill-white" />
-        </div>
-        <div>
-          <h1 className="font-bold text-sm tracking-tight text-white uppercase italic">SEO<span className="text-zinc-600">suite</span></h1>
-          <p className="text-[10px] text-zinc-500 font-medium tracking-widest">Enterprise v3.0</p>
-        </div>
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center shadow-lg shadow-yellow-500/20 group-hover:scale-105 transition-transform">
+            <Zap size={16} className="text-black fill-black" />
+          </div>
+          <div>
+            <h1 className="font-bold text-sm tracking-tight text-white uppercase">SEO<span className="text-zinc-500">suite</span></h1>
+            <p className="text-[10px] text-zinc-500 font-medium tracking-widest">Enterprise v3.0</p>
+          </div>
+        </Link>
       </div>
 
       <nav className="flex-1 px-3 overflow-y-auto pb-6">
@@ -73,9 +75,9 @@ export default function Sidebar() {
                         : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
                     }`}
                   >
-                    <item.icon className={`w-4 h-4 ${isActive ? 'text-blue-500' : 'text-zinc-500 group-hover:text-zinc-300'}`} />
+                    <item.icon className={`w-4 h-4 ${isActive ? 'text-amber-500' : 'text-zinc-500 group-hover:text-zinc-300'}`} />
                     <span className="flex-1">{item.name}</span>
-                    {isActive && <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />}
+                    {isActive && <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />}
                   </Link>
                 );
               })}

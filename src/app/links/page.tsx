@@ -37,7 +37,7 @@ export default function LinksPage() {
     { key: 'broken', label: 'Rusak', color: 'text-red-500', count: data.stats.broken },
     { key: 'toxic', label: 'Toksik', color: 'text-amber-500', count: data.stats.toxic },
     { key: 'healthy', label: 'Sehat', color: 'text-emerald-500', count: data.stats.healthy },
-    { key: 'internal', label: 'Internal', color: 'text-blue-500', count: data.stats.internal },
+    { key: 'internal', label: 'Internal', color: 'text-amber-500', count: data.stats.internal },
   ] : [];
 
   const currentList = data ? (tab === 'broken' ? data.broken : tab === 'toxic' ? data.toxic : tab === 'healthy' ? data.healthy : data.internal) : [];
@@ -47,8 +47,8 @@ export default function LinksPage() {
       <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <Link2 className="w-4 h-4 text-blue-500" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">Intelijen Tautan</span>
+            <Link2 className="w-4 h-4 text-amber-500" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400">Intelijen Tautan</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight mb-2">Audit Link & Backlink</h1>
           <p className="text-zinc-500 text-sm max-w-lg">
@@ -69,7 +69,7 @@ export default function LinksPage() {
           <button 
             onClick={runScan} 
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg text-[10px] font-bold transition-all flex items-center gap-2 disabled:opacity-50"
+            className="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2 rounded-lg text-[10px] font-bold transition-all flex items-center gap-2 disabled:opacity-50"
           >
             {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Search className="w-3 h-3" />}
             {loading ? 'Merayap...' : 'Pindai Domain'}
@@ -79,7 +79,7 @@ export default function LinksPage() {
 
       {loading && (
         <div className="py-24 text-center">
-          <div className="w-16 h-16 rounded-full border-2 border-zinc-800 border-t-blue-500 animate-spin mx-auto mb-6" />
+          <div className="w-16 h-16 rounded-full border-2 border-zinc-800 border-t-amber-500 animate-spin mx-auto mb-6" />
           <p className="text-sm text-zinc-500 font-medium animate-pulse">Merayap struktur domain secara mendalam dan memverifikasi header HTTP...</p>
         </div>
       )}

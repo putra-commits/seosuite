@@ -141,7 +141,7 @@ export default function KeywordsPage() {
             <Sparkles className="w-4 h-4 text-emerald-500 fill-emerald-500/20" />
             <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Keyword Intelligence v2.0</span>
           </div>
-          <h1 className="text-4xl font-black tracking-tight text-white mb-2 italic">
+          <h1 className="text-4xl font-black tracking-tight text-white mb-2">
             Penjelajah <span className="text-zinc-500">Semantik</span>
           </h1>
           <p className="text-zinc-500 text-sm max-w-lg leading-relaxed">
@@ -152,7 +152,7 @@ export default function KeywordsPage() {
         <div className="flex gap-2">
            {data?.source && (
              <div className="px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center gap-3">
-                <div className={`w-2 h-2 rounded-full ${data.source === 'Google Ads API' ? 'bg-blue-500' : 'bg-emerald-500'} animate-pulse`} />
+                <div className={`w-2 h-2 rounded-full ${data.source === 'Google Ads API' ? 'bg-amber-500' : 'bg-emerald-500'} animate-pulse`} />
                 <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Source: {data.source}</span>
              </div>
            )}
@@ -161,7 +161,7 @@ export default function KeywordsPage() {
 
       {/* Search Interface */}
       <div className="relative group mb-10">
-        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-emerald-600/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-amber-600/20 to-emerald-600/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
         <div className="relative flex gap-3 p-3 bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 rounded-[1.5rem] shadow-2xl">
           <div className="flex items-center pl-4">
              <Search className="w-5 h-5 text-zinc-600" />
@@ -178,7 +178,7 @@ export default function KeywordsPage() {
           <button 
             onClick={research}
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-blue-600/20"
+            className="bg-amber-600 hover:bg-amber-500 text-white px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-amber-600/20"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <TrendingUp className="w-4 h-4" />}
             {loading ? 'Menganalisis Niat...' : 'Riset'}
@@ -188,7 +188,7 @@ export default function KeywordsPage() {
 
       {loading && (
         <div className="py-24 text-center">
-          <div className="w-16 h-16 rounded-full border-2 border-zinc-900 border-t-blue-500 animate-spin mx-auto mb-6" />
+          <div className="w-16 h-16 rounded-full border-2 border-zinc-900 border-t-amber-500 animate-spin mx-auto mb-6" />
           <p className="text-sm text-zinc-500 font-bold uppercase tracking-widest animate-pulse">Mengklasifikasikan klaster niat pencarian...</p>
         </div>
       )}
@@ -206,7 +206,7 @@ export default function KeywordsPage() {
                       onClick={() => setActiveFilter(f)}
                       className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tight transition-all border ${
                         activeFilter === f 
-                          ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20' 
+                          ? 'bg-amber-600 border-amber-500 text-white shadow-lg shadow-amber-600/20' 
                           : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700'
                       }`}
                     >
@@ -233,14 +233,14 @@ export default function KeywordsPage() {
             </div>
 
             {selectedKWs.length > 0 && (
-               <div className="flex justify-between items-center bg-blue-600/10 border border-blue-500/20 rounded-2xl p-4 animate-in fade-in zoom-in duration-300">
-                  <span className="text-sm font-bold text-blue-400">
+               <div className="flex justify-between items-center bg-amber-600/10 border border-amber-500/20 rounded-2xl p-4 animate-in fade-in zoom-in duration-300">
+                  <span className="text-sm font-bold text-amber-400">
                      {selectedKWs.length} Kata Kunci Terpilih
                   </span>
                   <button
                      onClick={exportToAlchemist}
                      disabled={exporting}
-                     className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 disabled:opacity-50"
+                     className="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 disabled:opacity-50"
                   >
                      {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
                      {exporting ? 'Mengirim...' : 'Kirim ke BERNAS'}
@@ -259,13 +259,13 @@ export default function KeywordsPage() {
               </div>
               <div className="divide-y divide-zinc-800 max-h-[600px] overflow-y-auto custom-scrollbar">
                 {filteredKeywords.map((k, i) => (
-                  <div key={i} className={`grid grid-cols-12 items-center px-6 py-4 hover:bg-zinc-800/40 group transition-all ${selectedKWs.includes(k.keyword) ? 'bg-blue-900/10' : ''}`}>
+                  <div key={i} className={`grid grid-cols-12 items-center px-6 py-4 hover:bg-zinc-800/40 group transition-all ${selectedKWs.includes(k.keyword) ? 'bg-amber-900/10' : ''}`}>
                     <div className="col-span-1 flex justify-center">
                        <input 
                          type="checkbox"
                          checked={selectedKWs.includes(k.keyword)}
                          onChange={() => toggleSelection(k.keyword)}
-                         className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-blue-500 focus:ring-blue-500 focus:ring-offset-zinc-900 cursor-pointer"
+                         className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-amber-500 focus:ring-offset-zinc-900 cursor-pointer"
                        />
                     </div>
                     <div className="col-span-4 flex items-center gap-4">
@@ -276,10 +276,10 @@ export default function KeywordsPage() {
                         {copied === k.keyword ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                       </button>
                       <div className="flex flex-col truncate pr-2">
-                        <span className="text-sm font-bold text-zinc-100 group-hover:text-blue-400 transition-colors truncate">{k.keyword}</span>
+                        <span className="text-sm font-bold text-zinc-100 group-hover:text-amber-400 transition-colors truncate">{k.keyword}</span>
                         <div className="flex items-center gap-2 mt-1">
                           {k.words >= 4 && <span className="text-[8px] font-black text-emerald-500 uppercase tracking-tighter">Long-Tail</span>}
-                          {k.isBranded && <span className="text-[8px] font-black text-blue-500 uppercase tracking-tighter italic">Branded</span>}
+                          {k.isBranded && <span className="text-[8px] font-black text-amber-500 uppercase tracking-tighter">Branded</span>}
                           {k.competitionLevel && k.competitionLevel !== 'UNSPECIFIED' && (
                              <span className="text-[8px] font-black text-amber-500 uppercase tracking-tighter border border-amber-500/20 px-1 rounded">{k.competitionLevel}</span>
                           )}
@@ -289,7 +289,7 @@ export default function KeywordsPage() {
                     <div className="col-span-2 text-center">
                       <span className={`text-[9px] font-black px-2 py-1 rounded uppercase tracking-wider ${
                         k.intent === 'Transactional' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 
-                        k.intent === 'Navigational' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 
+                        k.intent === 'Navigational' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 
                         'bg-zinc-800 text-zinc-500 border border-zinc-700'
                       }`}>
                         {k.intent === 'Transactional' ? 'TRANS' : 
@@ -306,7 +306,7 @@ export default function KeywordsPage() {
                     <div className="col-span-2 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <div className="hidden md:block w-12 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                          <div className="h-full bg-blue-500" style={{ width: `${k.score}%` }} />
+                          <div className="h-full bg-amber-500" style={{ width: `${k.score}%` }} />
                         </div>
                         <span className="text-[10px] font-black font-mono text-zinc-500">{k.score}</span>
                       </div>
@@ -331,33 +331,33 @@ export default function KeywordsPage() {
                  <ShieldAlert size={80} className="text-amber-500" />
               </div>
               
-              <h3 className="text-lg font-black text-white mb-6 flex items-center gap-2 italic uppercase tracking-tighter">
+              <h3 className="text-lg font-black text-white mb-6 flex items-center gap-2 uppercase tracking-tighter">
                 Celah <span className="text-amber-500">Kompetitor</span>
               </h3>
               
               <div className="space-y-4">
                 <GapItem label="Celah Bernilai Tinggi" value="12" sub="Tindakan Segera" color="text-amber-500" />
                 <GapItem label="Long-Tail Terlewat" value="48" sub="Trafik Belum Terjamah" color="text-emerald-500" />
-                <GapItem label="Niat Cari Tidak Cocok" value="3" sub="Butuh Perubahan Konten" color="text-blue-500" />
+                <GapItem label="Niat Cari Tidak Cocok" value="3" sub="Butuh Perubahan Konten" color="text-amber-500" />
               </div>
 
               <div className="mt-8 pt-6 border-t border-zinc-800 space-y-3">
                  <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">Tindakan Direkomendasikan:</p>
                  <div className="flex items-center gap-2 text-xs text-zinc-400 group/link cursor-pointer hover:text-white transition-colors">
-                    <ChevronRight className="w-3 h-3 text-blue-500 group-hover/link:translate-x-1 transition-transform" />
+                    <ChevronRight className="w-3 h-3 text-amber-500 group-hover/link:translate-x-1 transition-transform" />
                     Suntik long-tail ke Pilar Builder
                  </div>
                  <div className="flex items-center gap-2 text-xs text-zinc-400 group/link cursor-pointer hover:text-white transition-colors">
-                    <ChevronRight className="w-3 h-3 text-blue-500 group-hover/link:translate-x-1 transition-transform" />
+                    <ChevronRight className="w-3 h-3 text-amber-500 group-hover/link:translate-x-1 transition-transform" />
                     Pertajam node semantik AEO/GEO
                  </div>
               </div>
             </div>
 
             {/* Strategic Summary */}
-            <div className="p-8 rounded-[2.5rem] bg-blue-600/5 border border-blue-600/10">
+            <div className="p-8 rounded-[2.5rem] bg-amber-600/5 border border-amber-600/10">
                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-600 flex items-center justify-center shadow-lg shadow-amber-600/20">
                      <Tag className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -367,7 +367,7 @@ export default function KeywordsPage() {
                </div>
 
                <div className="space-y-6">
-                  <DistributionBar label="Informasional" percent={65} color="bg-blue-500" />
+                  <DistributionBar label="Informasional" percent={65} color="bg-amber-500" />
                   <DistributionBar label="Transaksional" percent={20} color="bg-emerald-500" />
                   <DistributionBar label="Navigasional" percent={15} color="bg-amber-500" />
                </div>
@@ -387,7 +387,7 @@ function GapItem({ label, value, sub, color }: any) {
         <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{label}</p>
         <p className="text-[9px] font-bold text-zinc-600">{sub}</p>
       </div>
-      <span className={`text-2xl font-black italic ${color}`}>{value}</span>
+      <span className={`text-2xl font-black  ${color}`}>{value}</span>
     </div>
   );
 }
