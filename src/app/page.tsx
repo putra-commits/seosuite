@@ -6,7 +6,8 @@ import {
   ArrowRight, Check, Zap, MapPin, 
   Bot, BarChart3, Lock, Shield, 
   Globe, ChevronRight, LayoutGrid,
-  Search, Target, Crown, Rocket, Cpu, Star, XCircle, AlertTriangle
+  Search, Target, Crown, Rocket, Cpu, Star, XCircle, AlertTriangle,
+  ShieldCheck, Binary, Unlink, Trash2, TrendingUp, Compass, Layers
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Footer from './components/footer';
@@ -491,7 +492,121 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      {/* The Sovereign Arsenal Section */}
+      <section id="arsenal" className="py-24 relative border-t border-white/5 bg-[#090b10] overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-full pointer-events-none opacity-50">
+           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-yellow-600/10 rounded-full blur-[120px]" />
+           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-600/10 rounded-full blur-[120px]" />
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-8 relative z-10">
+          <div className="text-center mb-20 max-w-3xl mx-auto">
+            <h2 className="text-sm font-black text-yellow-500 mb-4 uppercase tracking-widest">Sovereign Arsenal</h2>
+            <h3 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+              Bukan Sekadar Alat, Ini <span className="text-zinc-500">Senjata Pemusnah Massal Kompetitor.</span>
+            </h3>
+            <p className="text-zinc-400 text-lg leading-relaxed">
+              10 Fitur <strong className="text-white">Enterprise-grade</strong> yang didesain bukan untuk orang awam, melainkan untuk para dominator pasar yang siap mengambil alih pangsa pencarian secara brutal.
+            </p>
+          </div>
 
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {/* Pillar 1: Pertahanan */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-8">
+                 <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+                    <Shield className="w-5 h-5 text-zinc-400" />
+                 </div>
+                 <div>
+                    <h4 className="text-xl font-bold text-white">Integritas & Audit</h4>
+                    <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Pilar Pertahanan</p>
+                 </div>
+              </div>
+              
+              <ArsenalCard 
+                icon={<Binary />} color="zinc"
+                title="Audit Teknis" 
+                desc="Temukan dan musnahkan error 404, masalah rendering JS, dan hambatan indexing yang mencegah Google merayapi situs Anda." 
+              />
+              <ArsenalCard 
+                icon={<ShieldCheck />} color="zinc"
+                title="Integritas Konten" 
+                desc="Pindai plagiarisme, keyword stuffing, dan thin content yang membuat algoritma Google menghukum ranking Anda." 
+              />
+              <ArsenalCard 
+                icon={<Unlink />} color="zinc"
+                title="Audit Link" 
+                desc="Deteksi backlink toxic dan spam yang diam-diam menyabotase otoritas domain Anda dari belakang." 
+              />
+              <ArsenalCard 
+                icon={<Trash2 />} color="zinc"
+                title="Detektor Kanibal" 
+                desc="Hentikan halaman web Anda sendiri saling membunuh dan berebut ranking untuk kata kunci yang sama." 
+              />
+            </div>
+
+            {/* Pillar 2: Intelejen */}
+            <div className="space-y-6 mt-12 lg:mt-0">
+              <div className="flex items-center gap-3 mb-8">
+                 <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                    <Target className="w-5 h-5 text-amber-500" />
+                 </div>
+                 <div>
+                    <h4 className="text-xl font-bold text-white">Kecerdasan Pasar</h4>
+                    <p className="text-xs font-semibold text-amber-600 uppercase tracking-widest">Pilar Intelejen</p>
+                 </div>
+              </div>
+
+              <ArsenalCard 
+                icon={<Search />} color="amber"
+                title="Riset Kata Kunci" 
+                desc="Intai kata kunci 'Golden Ratio' ber-volume tinggi dengan persaingan rendah yang diabaikan kompetitor Anda." 
+              />
+              <ArsenalCard 
+                icon={<TrendingUp />} color="amber"
+                title="Analitik Trending" 
+                desc="Tunggangi gelombang pencarian real-time dan jadilah yang pertama mempublikasikan tren sebelum pasar menyadarinya." 
+              />
+              <ArsenalCard 
+                icon={<MapPin />} color="amber"
+                title="Sovereign Lokal" 
+                desc="Dominasi Google Maps dan pencarian 'Near Me' untuk memonopoli pelanggan di wilayah geografis Anda." 
+              />
+            </div>
+
+            {/* Pillar 3: Penyerangan */}
+            <div className="space-y-6 mt-12 lg:mt-0">
+              <div className="flex items-center gap-3 mb-8">
+                 <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
+                    <Rocket className="w-5 h-5 text-yellow-500" />
+                 </div>
+                 <div>
+                    <h4 className="text-xl font-bold text-white">Ekspansi & Konversi</h4>
+                    <p className="text-xs font-semibold text-yellow-600 uppercase tracking-widest">Pilar Penyerangan</p>
+                 </div>
+              </div>
+
+              <ArsenalCard 
+                icon={<Compass />} color="yellow"
+                title="Arsitektur Funnel" 
+                desc="Bedah dan tambal kebocoran di halaman konversi Anda. Ubah trafik dingin menjadi pembeli fanatik." 
+              />
+              <ArsenalCard 
+                icon={<Bot />} color="yellow"
+                title="AEO & GEO Readiness" 
+                desc="Injeksi sinyal AI ke dalam konten agar ChatGPT, Gemini, dan Siri selalu merekomendasikan produk Anda." 
+              />
+              <ArsenalCard 
+                icon={<Layers />} color="yellow"
+                title="Pilar Builder" 
+                desc="Bangun kluster topik raksasa (Silo Architecture) yang memaksa Google memandang Anda sebagai otoritas absolut." 
+              />
+            </div>
+
+          </div>
+        </div>
+      </section>
       {/* Pricing */}
       <section id="pricing" className="py-32 relative border-t border-white/5 bg-[#090b10]">
         <div className="max-w-6xl mx-auto px-8">
@@ -590,6 +705,29 @@ export default function LandingPage() {
       </section>
 
       <Footer />
+    </div>
+  );
+}
+
+function ArsenalCard({ icon, title, desc, color }: any) {
+  const colorMap: any = {
+    zinc: 'hover:border-zinc-500',
+    amber: 'hover:border-amber-500',
+    yellow: 'hover:border-yellow-500',
+  };
+  const iconColorMap: any = {
+    zinc: 'text-zinc-400 group-hover:text-white',
+    amber: 'text-amber-600 group-hover:text-amber-400',
+    yellow: 'text-yellow-600 group-hover:text-yellow-400',
+  };
+
+  return (
+    <div className={`p-6 rounded-3xl bg-[#131316] border border-zinc-800 transition-all duration-300 group cursor-default ${colorMap[color]}`}>
+      <div className={`w-12 h-12 rounded-xl bg-[#090b10] border border-zinc-800 flex items-center justify-center mb-5 transition-colors ${iconColorMap[color]}`}>
+        {icon}
+      </div>
+      <h5 className="text-lg font-bold text-white mb-2 tracking-tight group-hover:text-white transition-colors">{title}</h5>
+      <p className="text-sm text-zinc-500 leading-relaxed font-medium">{desc}</p>
     </div>
   );
 }
