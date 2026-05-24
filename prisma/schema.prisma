@@ -13,6 +13,9 @@ model Lead {
   seoScore    Int
   aeoScore    Int
   geoScore    Int
+  cwvScore    Int      @default(0)
+  hasGA       Boolean  @default(false)
+  hasGSC      Boolean  @default(false)
   finalScore  Int
   issues      Json     // Array of strings
   createdAt   DateTime @default(now())

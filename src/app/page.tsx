@@ -72,6 +72,9 @@ interface AuditResult {
   seoScore: number;
   aeoScore: number;
   geoScore: number;
+  cwvScore: number;
+  hasGA: boolean;
+  hasGSC: boolean;
   issues: string[];
 }
 
@@ -263,19 +266,35 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  {/* 3 Pillars Score */}
-                  <div className="grid grid-cols-3 gap-4 border-y border-red-900/30 py-4">
+                  {/* 4 Pillars Score */}
+                  <div className="grid grid-cols-4 gap-4 border-y border-red-900/30 py-4">
                     <div className="text-center">
                       <p className="text-xs font-semibold text-zinc-500 mb-1">SEO Score</p>
-                      <p className={`text-2xl font-bold ${auditResult.seoScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.seoScore}</p>
+                      <p className={`text-xl md:text-2xl font-bold ${auditResult.seoScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.seoScore}</p>
+                    </div>
+                    <div className="text-center border-l border-zinc-800/50">
+                      <p className="text-xs font-semibold text-zinc-500 mb-1">CWV Score</p>
+                      <p className={`text-xl md:text-2xl font-bold ${auditResult.cwvScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.cwvScore}</p>
                     </div>
                     <div className="text-center border-l border-zinc-800/50">
                       <p className="text-xs font-semibold text-zinc-500 mb-1">AEO Score</p>
-                      <p className={`text-2xl font-bold ${auditResult.aeoScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.aeoScore}</p>
+                      <p className={`text-xl md:text-2xl font-bold ${auditResult.aeoScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.aeoScore}</p>
                     </div>
                     <div className="text-center border-l border-zinc-800/50">
                       <p className="text-xs font-semibold text-zinc-500 mb-1">GEO Score</p>
-                      <p className={`text-2xl font-bold ${auditResult.geoScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.geoScore}</p>
+                      <p className={`text-xl md:text-2xl font-bold ${auditResult.geoScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.geoScore}</p>
+                    </div>
+                  </div>
+
+                  {/* Analytics Status */}
+                  <div className="flex gap-4 mb-2">
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${auditResult.hasGA ? 'bg-green-500/10 border-green-500/30 text-green-500' : 'bg-red-500/10 border-red-500/30 text-red-500'}`}>
+                       {auditResult.hasGA ? <Check className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                       <span className="text-xs font-bold">Google Analytics (GA4)</span>
+                    </div>
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${auditResult.hasGSC ? 'bg-green-500/10 border-green-500/30 text-green-500' : 'bg-red-500/10 border-red-500/30 text-red-500'}`}>
+                       {auditResult.hasGSC ? <Check className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                       <span className="text-xs font-bold">Search Console (GSC)</span>
                     </div>
                   </div>
 

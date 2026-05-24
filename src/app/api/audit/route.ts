@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     const html = await fetchRes.text();
     const $ = cheerio.load(html);
 
-    // 2. Analisis SEO Basic
+    // 2. Analisis SEO & CWV Heuristik
     const title = $('title').text() || '';
     const description = $('meta[name="description"]').attr('content') || '';
     const h1 = $('h1').text() || '';
@@ -53,7 +53,27 @@ export async function POST(req: Request) {
     if (!description || description.length < 50) { seoScore -= 20; seoIssues.push('Meta description tidak optimal.'); }
     if (!h1) { seoScore -= 15; seoIssues.push('Tag H1 tidak ditemukan (struktur dokumen buruk).'); }
 
-    // 3. Analisis AEO & GEO via Gemini AI
+    // CWV Heuristics
+    let cwvScore = 95;
+    const imagesWithoutLazy = $('img:not([loading="lazy"])').length;
+    if (imagesWithoutLazy > 3) {
+      cwvScore -= 15;
+      seoIssues.push(`Ditemukan ${imagesWithoutLazy} gambar tanpa optimasi lazy-loading (LCP Lambat).`);
+    }
+    if (html.length > 300000) { // Jika HTML > 300KB
+      cwvScore -= 25;
+      seoIssues.push('Ukuran DOM terlalu besar, berisiko merusak skor TBT (Total Blocking Time).');
+    }
+    if (cwvScore < 0) cwvScore = 20;
+
+    // GA & GSC Detection
+    const hasGA = html.includes('googletagmanager.com/gtag/js') || html.includes('google-analytics.com/analytics.js') || html.includes('G-');
+    const hasGSC = html.includes('<meta name="google-site-verification"');
+
+    if (!hasGA) seoIssues.push('Sistem analitik pelacakan pengunjung (GA4) tidak terdeteksi.');
+    if (!hasGSC) seoIssues.push('Website belum diverifikasi di Google Search Console (Blind SEO).');
+
+    // 3. Analisis AEO & GEO via Groq AI
     // Ambil teks utama saja (hapus script/style)
     $('script, style, nav, footer, iframe, noscript').remove();
     const mainText = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 5000); // Batasi 5000 karakter
@@ -106,12 +126,12 @@ JANGAN berikan teks selain JSON.
     }
 
     // Gabungkan Hasil
-    const finalScore = Math.floor((seoScore + aiResult.aeoScore + aiResult.geoScore) / 3);
+    const finalScore = Math.floor((seoScore + aiResult.aeoScore + aiResult.geoScore + cwvScore) / 4);
     const combinedIssues = [
       ...seoIssues,
       ...aiResult.aeoIssues,
       ...aiResult.geoIssues
-    ].slice(0, 4); // Maksimal 4 peringatan paling kritis
+    ].slice(0, 6); // Maksimal 6 peringatan
 
     // Simpan ke Database
     await prisma.lead.create({
@@ -120,6 +140,9 @@ JANGAN berikan teks selain JSON.
         seoScore,
         aeoScore: aiResult.aeoScore,
         geoScore: aiResult.geoScore,
+        cwvScore,
+        hasGA,
+        hasGSC,
         finalScore,
         issues: combinedIssues,
       }
@@ -133,6 +156,9 @@ JANGAN berikan teks selain JSON.
         seoScore,
         aeoScore: aiResult.aeoScore,
         geoScore: aiResult.geoScore,
+        cwvScore,
+        hasGA,
+        hasGSC,
         issues: combinedIssues
       }
     });
