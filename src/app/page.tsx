@@ -198,7 +198,7 @@ export default function LandingPage() {
             className="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1]"
           >
             Website Anda <br />
-            <span className="text-zinc-500">Tidak Menghasilkan?</span>
+            <span className="text-zinc-500">Hanya Jadi Beban Biaya Server?</span>
           </motion.h1>
 
           <motion.p
@@ -207,7 +207,7 @@ export default function LandingPage() {
             transition={{ delay: 0.2 }}
             className="text-zinc-400 text-lg md:text-xl max-w-3xl mx-auto font-medium leading-relaxed mb-12"
           >
-            Banyak orang punya website tapi <span className="text-white font-bold">cuma jadi pajangan</span>. Masukkan URL Anda di bawah ini dan biarkan AI kami menemukan <span className="text-yellow-500 font-semibold">kebocoran trafik</span> Anda secara instan.
+            Berhenti membakar uang untuk <span className="text-red-500 font-bold">Paid Ads</span> berdarah-darah. Biarkan AI kami membedah isi perut website Anda dan membuktikan <span className="text-yellow-500 font-bold">mengapa kompetitor mencuri 90% pelanggan Anda</span> setiap harinya.
           </motion.p>
 
           <motion.div
@@ -222,14 +222,24 @@ export default function LandingPage() {
                   type="text" 
                   value={testUrl}
                   onChange={(e) => setTestUrl(e.target.value)}
-                  placeholder="contoh: bernas.id" 
+                  placeholder="contoh: website-pesaing-anda.com" 
                   className="flex-1 bg-transparent border-none outline-none text-white px-6 py-4 placeholder:text-zinc-600 font-medium"
                   required
                 />
-                <button type="submit" className="px-8 py-4 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-                  Audit Mesin Profit <ArrowRight className="w-5 h-5" />
+                <button type="submit" className="px-8 py-4 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-black hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                  Bongkar Kebocoran Website <ArrowRight className="w-5 h-5" />
                 </button>
               </form>
+            )}
+
+            {(testState === "idle" || testState === "error") && (
+              <motion.div 
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
+                className="mt-6 flex items-center justify-center gap-2 text-xs font-semibold text-zinc-500"
+              >
+                <Shield className="w-4 h-4 text-yellow-500" />
+                Lebih dari 4.200+ pemilik bisnis telah menyadari kebodohan strategi SEO mereka minggu ini.
+              </motion.div>
             )}
 
             {testState === "error" && (
@@ -258,10 +268,10 @@ export default function LandingPage() {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <AlertTriangle className="w-5 h-5 text-red-500" />
-                        <h3 className="text-lg font-bold text-red-500">Kritis: Otoritas AI Rendah</h3>
+                        <h3 className="text-lg font-black text-red-500 uppercase tracking-wide">KRITIS: Koma Digital</h3>
                       </div>
                       <p className="text-zinc-300 text-sm leading-relaxed">
-                        Website <strong className="text-white">{auditResult.url}</strong> kehilangan potensi klik AI (ChatGPT/Perplexity) dan pencarian organik.
+                        AI (ChatGPT/Perplexity) <strong className="text-red-400">menolak merekomendasikan</strong> bisnis Anda di <strong className="text-white">{auditResult.url}</strong>. Jika tidak diperbaiki, Anda akan kehilangan 80% calon pembeli organik bulan ini.
                       </p>
                     </div>
                   </div>
@@ -313,9 +323,9 @@ export default function LandingPage() {
 
                   <button 
                     onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white font-bold hover:opacity-90 transition-all shadow-[0_10px_30px_rgba(220,38,38,0.3)]"
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white font-black uppercase tracking-wide hover:opacity-90 transition-all shadow-[0_10px_30px_rgba(220,38,38,0.3)]"
                   >
-                    Perbaiki Sekarang (Lihat Paket)
+                    Selamatkan Bisnis Saya Sekarang
                   </button>
                   <button 
                     onClick={() => { setTestState("idle"); setTestUrl(""); }}
