@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@google/genai": "^2.6.0",
     "@prisma/client": "^7.8.0",
     "@types/recharts": "^1.8.29",
     "cheerio": "^1.2.0",
@@ -17,6 +16,7 @@
     "framer-motion": "^12.38.0",
     "google-ads-api": "^23.0.0",
     "googleapis": "^171.4.0",
+    "groq-sdk": "^1.2.0",
     "lucide-react": "^1.14.0",
     "midtrans-client": "^1.4.3",
     "next": "16.2.5",

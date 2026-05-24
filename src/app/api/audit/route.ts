@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
-import { GoogleGenAI } from '@google/genai';
+import Groq from 'groq-sdk';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// Inisialisasi Gemini. Jika API key belum diset di .env.local, kita tangkap errornya
-let ai: GoogleGenAI | null = null;
+// Inisialisasi Groq. Jika API key belum diset di .env, kita tangkap errornya
+let groq: Groq | null = null;
 try {
-  ai = new GoogleGenAI({});
+  groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 } catch (e) {
-  console.warn("GoogleGenAI init failed, API Key might be missing.");
+  console.warn("Groq init failed, API Key might be missing.");
 }
 
 export async function POST(req: Request) {
@@ -85,22 +85,23 @@ JANGAN berikan teks selain JSON.
       geoIssues: ['Entitas bisnis tidak terbangun (Zero-Click Search Optimization gagal).']
     };
 
-    if (ai) {
+    if (groq) {
       try {
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
-          contents: prompt,
+        const response = await groq.chat.completions.create({
+          model: 'llama3-70b-8192',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.1,
+          response_format: { type: 'json_object' }
         });
-        const responseText = response.text || '';
+        const responseText = response.choices[0]?.message?.content || '{}';
         
         // Ekstrak JSON
-        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const parsed = JSON.parse(jsonMatch[0]);
+        const parsed = JSON.parse(responseText);
+        if (parsed.aeoScore !== undefined) {
           aiResult = parsed;
         }
       } catch (e) {
-        console.error('Gemini error, fallback to default', e);
+        console.error('Groq error, fallback to default', e);
       }
     }
 
