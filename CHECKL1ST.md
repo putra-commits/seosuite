@@ -41,12 +41,31 @@ Tanpa poin ini, aplikasi hanyalah brosur kosong.
 
 ---
 
-## 6. STRICT SOVEREIGN DON'Ts (Aturan Mutlak)
-Sesuai dengan standar The Big 5 (Alchem1st, BizGrow, BERNAS), larangan berikut **HARUS** dipatuhi:
-- ❌ **DON'T Put `dynamic` Above Imports:** Jangan meletakkan `export const dynamic = "force-dynamic";` sebelum statemen `import` di API Routes (Next.js 15). Ini memicu *build crash*.
-- ❌ **DON'T Import Firebase:** SEOsuite adalah *Sovereign App*. JANGAN menambahkan *import* dari `firebase-admin` atau SDK Firebase lainnya. Gunakan Prisma (jika ada database).
-- ❌ **DON'T Use `framer-motion` opacity:0 for Critical Content:** Jangan gunakan `initial={{ opacity: 0 }}` pada teks utama yang dibaca Googlebot/pengunjung. Jika *hydration* gagal, layar akan blank. Gunakan CSS biasa.
-- ❌ **DON'T Build While Server Still Running:** Jangan jalankan `npm run build` jika `server.js` produksi lama masih menyala di latar belakang. Ini menyebabkan proses kompilasi *hang*.
+---
+
+## 6. THE BIG 5 SOVEREIGN RULES (ATURAN MUTLAK)
+Sesuai dengan konsolidasi standar The Big 5 (Alchem1st, BizGrow, BERNAS), larangan dan kewajiban berikut **HARUS** dipatuhi:
+
+### 🚨 Fatal Guards
+- ❌ **DON'T Copy-Paste Raw Text:** JANGAN *copy-paste* teks mentah dari MS Word / GDocs langsung ke kode. Teks sering membawa *corrupted UTF-8* (`0x97` byte) yang akan merusak Webpack Compiler. Gunakan `Paste as Plain Text`.
+- ❌ **DON'T Put `dynamic` Above Imports:** Jangan meletakkan `export const dynamic = "force-dynamic";` sebelum statemen `import`.
+- ❌ **DON'T Import Firebase:** SEOsuite adalah *Sovereign App*. 100% data operasional WAJIB menggunakan PostgreSQL via Prisma. Zero Firestore.
+- ❌ **DON'T Use `framer-motion` opacity:0 for Critical Content:** Jangan sembunyikan teks SEO dengan `opacity: 0` saat inisialisasi.
+- ❌ **DON'T Build While Server Running:** Matikan *process* PM2/Node lama sebelum `npm run build`.
+
+### 💎 UI/UX & Aesthetics (Alchem1st Standard)
+- ✅ **DO Use Dark Luxury Palette:** Zinc/Black dengan aksen Yellow Gold (`yellow-500`). DILARANG KERAS menggunakan warna warni norak.
+- ❌ **DON'T Use Italics / ALL CAPS:** JANGAN gunakan teks miring (*italic*) dan JANGAN gunakan ALL CAPS pada *heading/subheading*. Gunakan ketebalan font (*font-black/font-bold*) untuk penekanan.
+- ✅ **DO Full-Bleed Layout:** Pastikan UI merender *Full-Bleed* layar penuh, tanpa paksaan margin/padding yang menyisakan ruang putih kosong di sisi pinggir.
+
+### 🧠 AI Generation (BizGrow Standard)
+- ✅ **DO Socratic Style:** AI WAJIB merespons dengan format *Bullet Points* atau penomoran yang rapi.
+- ❌ **DON'T Use Multiple Choice:** JANGAN menyuruh AI memberikan opsi Pilihan Ganda.
+- ✅ **DO API Key Rotation:** Selalu gunakan *load balancing* / *fallback* pada pemanggilan model AI besar.
+
+### 🛡️ SEO Shield (Bernas Standard)
+- ❌ **DON'T Use Zero-Damage Paywalls:** JANGAN potong DOM untuk konten tersembunyi, gunakan CSS `blur()` agar Googlebot tetap membaca teks utuh.
+- ❌ **DON'T Use YouTube Iframes:** Kurangi ketergantungan pada YouTube embed, utamakan CDN statis.
 
 ---
 **Diperbarui secara Otonom oleh: AI Antigravity**

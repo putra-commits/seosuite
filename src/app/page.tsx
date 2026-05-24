@@ -334,7 +334,7 @@ export default function LandingPage() {
       <section id="features" className="py-24 border-t border-white/5 relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
           <div>
-            <h2 className="text-xs font-bold text-yellow-500 tracking-wider mb-4">MASALAH TERSEMBUNYI</h2>
+            <h2 className="text-sm font-black text-yellow-500 mb-4">Masalah Tersembunyi</h2>
             <h3 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight mb-6">
               Website Anda <span className="text-zinc-500">Bisa Menghasilkan Lebih Banyak.</span>
             </h3>
@@ -386,7 +386,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-24">
             <div>
-               <h2 className="text-xs font-bold text-yellow-500 tracking-wider mb-4">EFISIENSI MODAL</h2>
+               <h2 className="text-sm font-black text-yellow-500 mb-4">Efisiensi Modal</h2>
                <h3 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight mb-6 text-white">
                  Berhenti Membayar <span className="text-zinc-500">Untuk Trafik Sementara.</span>
                </h3>
@@ -485,7 +485,7 @@ export default function LandingPage() {
       <section id="pricing" className="py-32 relative border-t border-white/5 bg-[#090b10]">
         <div className="max-w-6xl mx-auto px-8">
           <div className="text-center mb-20">
-            <h2 className="text-xs font-bold text-yellow-500 tracking-wider mb-4">ARSITEKTUR HARGA</h2>
+            <h2 className="text-sm font-black text-yellow-500 mb-4">Arsitektur Harga</h2>
             <h3 className="text-4xl font-bold tracking-tight">Pilih tingkat <span className="text-zinc-500">Dominasi</span> Anda</h3>
           </div>
 
