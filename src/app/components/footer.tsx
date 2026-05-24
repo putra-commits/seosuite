@@ -9,10 +9,14 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
-            <div className="flex items-center gap-2">
-              <Zap className="w-8 h-8 text-blue-600 fill-blue-600" />
-              <span className="text-xl font-black tracking-tighter uppercase italic text-white">SEO<span className="text-zinc-600">suite</span></span>
-            </div>
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 bg-yellow-500 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/20 group-hover:scale-105 transition-transform">
+                <Zap size={20} className="text-black fill-black" />
+              </div>
+              <p className="text-xl font-black text-white tracking-tight">
+                SEO<span className="text-zinc-500 font-medium">suite</span>
+              </p>
+            </Link>
             <p className="text-xs text-zinc-500 font-bold leading-relaxed">
               Platform kedaulatan digital untuk optimasi profit dan otoritas brand.
             </p>

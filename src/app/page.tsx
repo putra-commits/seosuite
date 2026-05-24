@@ -160,10 +160,14 @@ export default function LandingPage() {
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#090b10]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Zap className="w-6 h-6 text-yellow-500 fill-yellow-500" />
-            <span className="text-xl font-bold tracking-tight">SEO<span className="text-zinc-500">suite</span></span>
-          </div>
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center shadow-lg shadow-yellow-500/20 group-hover:scale-105 transition-transform">
+              <Zap size={16} className="text-black fill-black" />
+            </div>
+            <p className="text-xl font-bold text-white tracking-tight">
+              SEO<span className="text-zinc-500 font-medium">suite</span>
+            </p>
+          </Link>
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors">Fitur</a>
             <a href="#pricing" className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors">Harga</a>
