@@ -396,12 +396,12 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-24">
             <div>
-               <h2 className="text-sm font-black text-yellow-500 mb-4">Efisiensi Modal</h2>
+               <h2 className="text-sm font-black text-yellow-500 mb-4">Salesman 24 Jam Non-Stop</h2>
                <h3 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight mb-6 text-white">
-                 Berhenti Membayar <span className="text-zinc-500">Untuk Trafik Sementara.</span>
+                 Jadikan ChatGPT, Gemini & Siri <span className="text-zinc-500">Sebagai Salesman Anda.</span>
                </h3>
                <p className="text-zinc-400 text-lg leading-relaxed mb-8">
-                 Iklan berbayar (Paid Ads) adalah <span className="text-red-400 font-semibold">biaya variabel</span> yang hilang saat Anda berhenti membayar. SEO & AEO adalah <span className="text-yellow-500 font-semibold">aset modal</span> yang terus tumbuh dan menghasilkan profit secara eksponensial.
+                 Berhenti membakar uang untuk <span className="text-red-400 font-semibold">Paid Ads</span>. Saatnya membangun aset digital yang bekerja 24 jam sehari, 7 hari seminggu tanpa minta naik gaji. Dengan menguasai <span className="text-yellow-500 font-semibold">SEO, AEO, dan GEO</span>, Anda merekrut algoritma terbesar di dunia untuk menjual produk Anda saat Anda sedang tidur.
                </p>
                
                <div className="space-y-6">
@@ -409,14 +409,14 @@ export default function LandingPage() {
                      <div className="w-1.5 h-12 bg-red-500 rounded-full" />
                      <div>
                         <p className="text-base font-semibold text-white">Iklan Berbayar (Ads)</p>
-                        <p className="text-sm text-zinc-500">ROI Statis • Biaya Terus Meningkat • Kepercayaan Rendah</p>
+                        <p className="text-sm text-zinc-500">ROI Statis • Biaya Terus Meningkat • Berhenti Saat Saldo Habis</p>
                      </div>
                   </div>
                   <div className="flex items-center gap-6">
                      <div className="w-1.5 h-12 bg-yellow-500 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.5)]" />
                      <div>
-                        <p className="text-base font-semibold text-white">SEOsuite Ecosystem</p>
-                        <p className="text-sm text-zinc-500">ROI Eksponensial • Aset Permanen • Otoritas Tertinggi</p>
+                        <p className="text-base font-semibold text-white">Ekosistem SEO, AEO & GEO</p>
+                        <p className="text-sm text-zinc-500">ROI Eksponensial • Bekerja 24 Jam • Dipercaya oleh AI</p>
                      </div>
                   </div>
                </div>
@@ -464,27 +464,24 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* AI Search Stats */}
+          {/* Trifecta Dominasi Digital */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 pt-16 border-t border-white/5">
              <div className="space-y-3">
-                <div className="text-4xl font-bold text-white tracking-tight">60%</div>
-                <p className="text-sm font-semibold text-zinc-400">Zero-Click Searches</p>
-                <p className="text-sm text-zinc-500 leading-relaxed">
-                  Sebagian besar pencarian kini berakhir tanpa klik. Kami mengoptimalkan AEO agar brand Anda tetap muncul sebagai jawaban utama AI.
+                <div className="text-3xl font-bold text-white tracking-tight">1. SEO <span className="text-xs font-semibold text-yellow-500 uppercase tracking-widest block mt-2">Penakluk Google</span></div>
+                <p className="text-sm text-zinc-400 leading-relaxed pt-2">
+                  <strong className="text-white">Search Engine Optimization:</strong> Menempatkan website Anda di peringkat tertinggi pencarian tradisional Google, menyergap calon pembeli secara organik tepat saat mereka mencari solusi yang Anda tawarkan.
                 </p>
              </div>
              <div className="space-y-3">
-                <div className="text-4xl font-bold text-white tracking-tight">4.4x</div>
-                <p className="text-sm font-semibold text-zinc-400">Nilai Trafik Sitasi AI</p>
-                <p className="text-sm text-zinc-500 leading-relaxed">
-                  Pengunjung yang datang dari sitasi AI (ChatGPT/Perplexity) memiliki nilai konversi 4.4 kali lebih tinggi dibanding organik biasa.
+                <div className="text-3xl font-bold text-white tracking-tight">2. AEO <span className="text-xs font-semibold text-amber-500 uppercase tracking-widest block mt-2">Penakluk ChatGPT & Gemini</span></div>
+                <p className="text-sm text-zinc-400 leading-relaxed pt-2">
+                  <strong className="text-white">Answer Engine Optimization:</strong> Mengkondisikan konten Anda agar direkomendasikan sebagai "Jawaban Terbaik Mutlak" saat prospek bertanya kepada Chatbot AI pintar seputar industri Anda.
                 </p>
              </div>
              <div className="space-y-3">
-                <div className="text-4xl font-bold text-white tracking-tight">35%</div>
-                <p className="text-sm font-semibold text-zinc-400">Boost Klik Sitasi</p>
-                <p className="text-sm text-zinc-500 leading-relaxed">
-                  Brand yang disitasi dalam AI Overviews menerima klik 35% lebih banyak dibanding yang hanya muncul di hasil tradisional.
+                <div className="text-3xl font-bold text-white tracking-tight">3. GEO <span className="text-xs font-semibold text-amber-600 uppercase tracking-widest block mt-2">Penakluk Siri & Voice AI</span></div>
+                <p className="text-sm text-zinc-400 leading-relaxed pt-2">
+                  <strong className="text-white">Generative Engine Optimization:</strong> Mengoptimasi keberadaan merek Anda agar menjadi rujukan utama saat pengguna melakukan pencarian melalui perangkat suara cerdas dan ekosistem pintar Apple.
                 </p>
              </div>
           </div>
