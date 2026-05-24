@@ -77,6 +77,13 @@ export default function LandingPage() {
   const handleTestWebsite = (e: React.FormEvent) => {
     e.preventDefault();
     if (!testUrl) return;
+    
+    let finalUrl = testUrl.trim();
+    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+      finalUrl = 'https://' + finalUrl;
+      setTestUrl(finalUrl);
+    }
+    
     setTestState("scanning");
     
     // Simulate scanning for 3.5 seconds
@@ -182,10 +189,10 @@ export default function LandingPage() {
             {testState === "idle" && (
               <form onSubmit={handleTestWebsite} className="flex flex-col sm:flex-row gap-4 p-2 bg-zinc-900/50 border border-zinc-800 rounded-2xl backdrop-blur-xl">
                 <input 
-                  type="url" 
+                  type="text" 
                   value={testUrl}
                   onChange={(e) => setTestUrl(e.target.value)}
-                  placeholder="https://website-anda.com" 
+                  placeholder="contoh: bernas.id" 
                   className="flex-1 bg-transparent border-none outline-none text-white px-6 py-4 placeholder:text-zinc-600 font-medium"
                   required
                 />
