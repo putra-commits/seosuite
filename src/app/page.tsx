@@ -560,6 +560,35 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Final CTA Section */}
+      <section className="py-32 relative border-t border-white/5 bg-[#050505] overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none">
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-yellow-600/10 rounded-full blur-[120px]" />
+        </div>
+        <div className="max-w-4xl mx-auto px-8 text-center relative z-10">
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-6">
+            Siap Mendominasi <br /> <span className="text-yellow-500">Pencarian AI?</span>
+          </h2>
+          <p className="text-zinc-400 text-lg md:text-xl font-medium leading-relaxed mb-12 max-w-2xl mx-auto">
+            Berhenti membiarkan kompetitor mencuri calon pembeli Anda. Bangun kedaulatan digital yang bekerja 24 jam penuh tanpa henti.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button 
+              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+              className="px-8 py-4 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-black hover:opacity-90 transition-opacity flex items-center justify-center gap-2 w-full sm:w-auto"
+            >
+              Mulai Dominasi Sekarang <ArrowRight className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="px-8 py-4 rounded-xl bg-zinc-900 border border-zinc-800 text-white font-bold hover:bg-zinc-800 transition-colors w-full sm:w-auto"
+            >
+              Audit Website Gratis
+            </button>
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );
