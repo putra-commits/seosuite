@@ -2,12 +2,12 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #09090b;
+  --bg: #090b10;
   --fg: #fafafa;
   --card: #18181b;
   --border: #27272a;
   --muted: #71717a;
-  --accent: #3b82f6;
+  --accent: #eab308;
   --font-sans: 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
