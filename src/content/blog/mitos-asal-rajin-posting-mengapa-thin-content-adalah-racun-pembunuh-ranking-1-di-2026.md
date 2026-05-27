@@ -1,4 +1,5 @@
 ---
+image: "/images/blog/mitos-asal-rajin-posting-mengapa-thin-content-adalah-racun-pembunuh-ranking-1-di-2026.png"
 title: "Mitos 'Asal Rajin Posting': Mengapa Thin Content Adalah Racun Pembunuh Ranking #1 di 2026."
 date: "2026-05-02"
 description: "Temukan wawasan eksklusif tentang bagaimana dominasi pencarian AI dan arsitektur konversi dapat mengubah arah bisnis Anda."

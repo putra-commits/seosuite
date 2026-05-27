@@ -2,7 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import Link from 'next/link';
-import { ArrowRight, BookOpen, Clock, Tag } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight, BookOpen, Clock, Tag, Zap } from 'lucide-react';
 import Footer from '../components/footer';
 
 async function getPosts() {
@@ -61,9 +62,24 @@ export default async function BlogIndex() {
       {/* Blog Grid */}
       <main className="max-w-7xl mx-auto px-8 py-24">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map((post: any) => (
-            <Link href={\`/blog/\${post.slug}\`} key={post.slug} className="group flex flex-col h-full bg-[#131316] rounded-3xl border border-zinc-800 hover:border-yellow-500/50 transition-all duration-300 overflow-hidden shadow-xl">
-              <div className="p-8 flex flex-col flex-1">
+          {posts.map((post: any) => {
+            const imagePath = post.image || '/images/blog/pilar1.png';
+            
+            return (
+            <Link href={`/blog/${post.slug}`} key={post.slug} className="group flex flex-col h-full bg-[#131316] rounded-3xl border border-zinc-800 hover:border-yellow-500/50 transition-all duration-300 overflow-hidden shadow-xl">
+              <div className="w-full h-48 relative overflow-hidden border-b border-zinc-800">
+                <Image src={imagePath} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#131316] via-transparent to-transparent opacity-80" />
+                
+                {/* SEOsuite Watermark */}
+                <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2.5 py-1.5 rounded-lg border border-white/10 z-10">
+                  <div className="w-4 h-4 bg-yellow-500 rounded flex items-center justify-center">
+                    <Zap size={10} className="text-black fill-black" />
+                  </div>
+                  <span className="text-[10px] font-bold text-white tracking-tight">SEO<span className="text-zinc-400">suite</span></span>
+                </div>
+              </div>
+              <div className="p-6 md:p-8 flex flex-col flex-1">
                 <div className="flex items-center gap-3 mb-6">
                   <span className="px-3 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-black text-yellow-500 uppercase tracking-widest rounded-full">
                     {post.category || 'Intelijen'}
@@ -86,7 +102,7 @@ export default async function BlogIndex() {
                 </div>
               </div>
             </Link>
-          ))}
+          )})}
         </div>
       </main>
 

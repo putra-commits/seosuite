@@ -1,4 +1,5 @@
 ---
+image: "/images/blog/chatgpt-dan-gemini-adalah-salesman-baru-anda-panduan-memulai-aeo-answer-engine-optimization.png"
 title: "ChatGPT dan Gemini Adalah Salesman Baru Anda: Panduan Memulai AEO (Answer Engine Optimization)."
 date: "2026-02-03"
 description: "Temukan wawasan eksklusif tentang bagaimana dominasi pencarian AI dan arsitektur konversi dapat mengubah arah bisnis Anda."

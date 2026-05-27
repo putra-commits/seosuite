@@ -1,4 +1,5 @@
 ---
+image: "/images/blog/anda-terlambat-bagaimana-kompetitor-menunggangi-topik-trending-sebelum-anda-memikirkannya.png"
 title: "Anda Terlambat! Bagaimana Kompetitor Menunggangi 'Topik Trending' Sebelum Anda Memikirkannya."
 date: "2026-05-16"
 description: "Temukan wawasan eksklusif tentang bagaimana dominasi pencarian AI dan arsitektur konversi dapat mengubah arah bisnis Anda."

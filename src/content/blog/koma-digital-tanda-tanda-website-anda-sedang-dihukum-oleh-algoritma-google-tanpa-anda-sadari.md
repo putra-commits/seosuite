@@ -1,4 +1,5 @@
 ---
+image: "/images/blog/koma-digital-tanda-tanda-website-anda-sedang-dihukum-oleh-algoritma-google-tanpa-anda-sadari.png"
 title: "Koma Digital: Tanda-tanda Website Anda Sedang Dihukum oleh Algoritma Google (Tanpa Anda Sadari)."
 date: "2026-02-19"
 description: "Temukan wawasan eksklusif tentang bagaimana dominasi pencarian AI dan arsitektur konversi dapat mengubah arah bisnis Anda."

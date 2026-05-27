@@ -1,4 +1,5 @@
 ---
+image: "/images/blog/apakah-website-anda-hanya-menjadi-brosur-mati-pembawa-beban-biaya-server.png"
 title: "Apakah Website Anda Hanya Menjadi 'Brosur Mati' Pembawa Beban Biaya Server?"
 date: "2026-04-26"
 description: "Temukan wawasan eksklusif tentang bagaimana dominasi pencarian AI dan arsitektur konversi dapat mengubah arah bisnis Anda."

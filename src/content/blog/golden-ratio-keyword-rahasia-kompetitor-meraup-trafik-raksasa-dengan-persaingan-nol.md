@@ -1,4 +1,5 @@
 ---
+image: "/images/blog/golden-ratio-keyword-rahasia-kompetitor-meraup-trafik-raksasa-dengan-persaingan-nol.png"
 title: "Golden Ratio Keyword: Rahasia Kompetitor Meraup Trafik Raksasa dengan Persaingan Nol."
 date: "2026-04-12"
 description: "Temukan wawasan eksklusif tentang bagaimana dominasi pencarian AI dan arsitektur konversi dapat mengubah arah bisnis Anda."

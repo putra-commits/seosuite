@@ -50,6 +50,7 @@ Sesuai dengan konsolidasi standar The Big 5 (Alchem1st, BizGrow, BERNAS), larang
 - ❌ **DON'T Copy-Paste Raw Text:** JANGAN *copy-paste* teks mentah dari MS Word / GDocs langsung ke kode. Teks sering membawa *corrupted UTF-8* (`0x97` byte) yang akan merusak Webpack Compiler. Gunakan `Paste as Plain Text`.
 - ❌ **DON'T Put `dynamic` Above Imports:** Jangan meletakkan `export const dynamic = "force-dynamic";` sebelum statemen `import`.
 - ❌ **DON'T Import Firebase:** SEOsuite adalah *Sovereign App*. 100% data operasional WAJIB menggunakan PostgreSQL via Prisma. Zero Firestore.
+- ❌ **DON'T Access `params` Synchronously (Next.js 15+):** Objek `params` dan `searchParams` bersifat *Asynchronous Promise* di Next.js App Router terbaru. JANGAN mengaksesnya secara sinkron (contoh: `params.slug`). WAJIB gunakan `await params` untuk menghindari error `ENOENT undefined`.
 - ❌ **DON'T Use `framer-motion` opacity:0 for Critical Content:** Jangan sembunyikan teks SEO dengan `opacity: 0` saat inisialisasi.
 - ❌ **DON'T Build While Server Running:** Matikan *process* PM2/Node lama sebelum `npm run build`.
 
@@ -57,6 +58,7 @@ Sesuai dengan konsolidasi standar The Big 5 (Alchem1st, BizGrow, BERNAS), larang
 - ✅ **DO Use Dark Luxury Palette:** Zinc/Black dengan aksen Yellow Gold (`yellow-500`). DILARANG KERAS menggunakan warna warni norak.
 - ❌ **DON'T Use Italics / ALL CAPS:** JANGAN gunakan teks miring (*italic*) dan JANGAN gunakan ALL CAPS pada *heading/subheading*. Gunakan ketebalan font (*font-black/font-bold*) untuk penekanan.
 - ✅ **DO Full-Bleed Layout:** Pastikan UI merender *Full-Bleed* layar penuh, tanpa paksaan margin/padding yang menyisakan ruang putih kosong di sisi pinggir.
+- ✅ **DO Fallback Styling for Markdown:** Tailwind v4 mereset semua ukuran *heading*. Jika merender konten Markdown, WAJIB injeksi CSS `Typography` murni di `globals.css` sebagai cadangan jika *plugin* `@tailwindcss/typography` gagal dimuat.
 
 ### 🧠 AI Generation (BizGrow Standard)
 - ✅ **DO Socratic Style:** AI WAJIB merespons dengan format *Bullet Points* atau penomoran yang rapi.
@@ -66,6 +68,13 @@ Sesuai dengan konsolidasi standar The Big 5 (Alchem1st, BizGrow, BERNAS), larang
 ### 🛡️ SEO Shield (Bernas Standard)
 - ❌ **DON'T Use Zero-Damage Paywalls:** JANGAN potong DOM untuk konten tersembunyi, gunakan CSS `blur()` agar Googlebot tetap membaca teks utuh.
 - ❌ **DON'T Use YouTube Iframes:** Kurangi ketergantungan pada YouTube embed, utamakan CDN statis.
+
+## 🚀 7. MARKETING FLIGHT READINESS (LEAD & SEO SHIELD)
+Menjelang masa peluncuran (*launching*), setiap aplikasi di bawah payung **AutoProfit.id** wajib mematuhi standar pemasaran ini untuk mencegah kebocoran prospek (*lead leakage*).
+- [ ] **Distribusi Organik (Sitemap & OpenGraph)**: Wajib memiliki `sitemap.ts` (atau `.xml`) dinamis dan `robots.txt`. Setiap halaman publik/artikel wajib memiliki metadata OpenGraph (`og:image`, `og:title`) dinamis agar terlihat berwibawa saat dibagikan ke WhatsApp dan LinkedIn.
+- [ ] **Lead Capture Wall (Hukum Timbal Balik)**: JANGAN PERNAH memberikan hasil *tools* gratis (seperti kalkulator, audit, generator) secara cuma-cuma penuh. Selalu gunakan sistem *Lead Capture Wall* (mengunci hasil di belakang form WhatsApp/Email) untuk membangun database pemasaran Anda.
+- [ ] **High-Ticket VIP Sales Flow**: Untuk paket berlangganan B2B atau *Enterprise* (> Rp 2 Juta), ganti tombol Checkout langsung dengan tombol *Konsultasi VIP (WhatsApp)*. Jangan paksa klien kakap checkout tanpa interaksi manusia.
+- [ ] **Scarcity & Urgency**: Gunakan *badge* kelangkaan (contoh: "Sisa 2 Slot") pada paket penawaran tertinggi untuk memicu psikologi FOMO.
 
 ---
 **Diperbarui secara Otonom oleh: AI Antigravity**

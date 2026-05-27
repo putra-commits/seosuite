@@ -1,4 +1,5 @@
 ---
+image: "/images/blog/monopoli-area-mengapa-toko-sebelah-selalu-muncul-pertama-di-pencarian-near-me-google-maps.png"
 title: "Monopoli Area: Mengapa Toko Sebelah Selalu Muncul Pertama di Pencarian 'Near Me' Google Maps?"
 date: "2026-02-13"
 description: "Temukan wawasan eksklusif tentang bagaimana dominasi pencarian AI dan arsitektur konversi dapat mengubah arah bisnis Anda."

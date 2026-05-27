@@ -1,4 +1,5 @@
 ---
+image: "/images/blog/data-adalah-senjata-mengapa-berbisnis-tanpa-analitik-sama-saja-berjalan-buta-di-medan-perang.png"
 title: "Data Adalah Senjata: Mengapa Berbisnis Tanpa Analitik Sama Saja Berjalan Buta di Medan Perang."
 date: "2026-04-14"
 description: "Temukan wawasan eksklusif tentang bagaimana dominasi pencarian AI dan arsitektur konversi dapat mengubah arah bisnis Anda."

@@ -1,4 +1,5 @@
 ---
+image: "/images/blog/audit-link-101-apakah-backlink-murah-sedang-menghancurkan-otoritas-domain-anda-pelan-pelan.png"
 title: "Audit Link 101: Apakah Backlink 'Murah' Sedang Menghancurkan Otoritas Domain Anda Pelan-pelan?"
 date: "2026-05-22"
 description: "Temukan wawasan eksklusif tentang bagaimana dominasi pencarian AI dan arsitektur konversi dapat mengubah arah bisnis Anda."

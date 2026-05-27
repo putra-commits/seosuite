@@ -1,4 +1,5 @@
 ---
+image: "/images/blog/bocor-halus-bagaimana-memperbaiki-error-404-yang-mengusir-calon-pembeli-anda-ke-pelukan-kompetitor.png"
 title: "Bocor Halus: Bagaimana Memperbaiki Error 404 yang Mengusir Calon Pembeli Anda ke Pelukan Kompetitor."
 date: "2026-05-20"
 description: "Temukan wawasan eksklusif tentang bagaimana dominasi pencarian AI dan arsitektur konversi dapat mengubah arah bisnis Anda."

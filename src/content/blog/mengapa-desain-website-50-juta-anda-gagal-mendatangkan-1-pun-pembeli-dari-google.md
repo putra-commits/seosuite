@@ -1,4 +1,5 @@
 ---
+image: "/images/blog/mengapa-desain-website-50-juta-anda-gagal-mendatangkan-1-pun-pembeli-dari-google.png"
 title: "Mengapa Desain Website 50 Juta Anda Gagal Mendatangkan 1 Pun Pembeli dari Google?"
 date: "2026-04-07"
 description: "Temukan wawasan eksklusif tentang bagaimana dominasi pencarian AI dan arsitektur konversi dapat mengubah arah bisnis Anda."

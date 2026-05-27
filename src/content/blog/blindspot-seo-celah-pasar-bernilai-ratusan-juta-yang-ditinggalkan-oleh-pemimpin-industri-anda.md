@@ -1,4 +1,5 @@
 ---
+image: "/images/blog/blindspot-seo-celah-pasar-bernilai-ratusan-juta-yang-ditinggalkan-oleh-pemimpin-industri-anda.png"
 title: "Blindspot SEO: Celah Pasar Bernilai Ratusan Juta yang Ditinggalkan oleh Pemimpin Industri Anda."
 date: "2026-05-02"
 description: "Temukan wawasan eksklusif tentang bagaimana dominasi pencarian AI dan arsitektur konversi dapat mengubah arah bisnis Anda."

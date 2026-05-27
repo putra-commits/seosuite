@@ -3,6 +3,8 @@ import path from 'path';
 import matter from 'gray-matter';
 import { marked } from 'marked';
 import Link from 'next/link';
+import Image from 'next/image';
+import { Metadata } from 'next';
 import { ArrowLeft, BookOpen, Clock, Zap } from 'lucide-react';
 import Footer from '../../components/footer';
 
@@ -23,9 +25,39 @@ function getPost(slug: string) {
   };
 }
 
-export default async function BlogPost({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const { frontmatter } = getPost(slug);
+    const imagePath = frontmatter.image || '/images/blog/pilar1.png';
+    return {
+      title: frontmatter.title,
+      description: frontmatter.description,
+      openGraph: {
+        title: frontmatter.title,
+        description: frontmatter.description,
+        type: 'article',
+        publishedTime: frontmatter.date,
+        images: [{ url: `https://seosuite.info${imagePath}` }],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: frontmatter.title,
+        description: frontmatter.description,
+        images: [`https://seosuite.info${imagePath}`],
+      }
+    };
+  } catch (e) {
+    return { title: 'Blog SEOsuite' };
+  }
+}
+
+export default async function BlogPost(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const { frontmatter, content } = getPost(params.slug);
   const htmlContent = await marked.parse(content);
+
+  const imagePath = frontmatter.image || '/images/blog/pilar1.png';
 
   return (
     <div className="min-h-screen bg-[#090b10] text-white selection:bg-yellow-500/30">
@@ -47,7 +79,18 @@ export default async function BlogPost({ params }: { params: { slug: string } })
       </nav>
 
       {/* Article Header */}
-      <header className="pt-24 pb-16 border-b border-white/5 bg-[#050505] relative overflow-hidden">
+      <header className="pt-32 pb-24 relative overflow-hidden">
+        <Image src={imagePath} alt={frontmatter.title} fill className="object-cover opacity-20 pointer-events-none" priority />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#090b10] via-[#090b10]/80 to-transparent" />
+        
+        {/* SEOsuite Watermark */}
+        <div className="absolute top-32 right-8 md:right-16 flex items-center gap-2 bg-black/50 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 z-10 opacity-70">
+          <div className="w-5 h-5 bg-yellow-500 rounded flex items-center justify-center">
+            <Zap size={12} className="text-black fill-black" />
+          </div>
+          <span className="text-xs font-bold text-white tracking-tight">SEO<span className="text-zinc-400">suite</span> Blog</span>
+        </div>
+
         <div className="max-w-3xl mx-auto px-8 relative z-10 text-center">
           <div className="flex items-center justify-center gap-3 mb-8">
             <span className="px-3 py-1 bg-yellow-500/10 border border-yellow-500/20 text-[10px] font-black text-yellow-500 uppercase tracking-widest rounded-full">
@@ -73,11 +116,12 @@ export default async function BlogPost({ params }: { params: { slug: string } })
           dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
 
-        <div className="mt-20 p-8 rounded-3xl bg-gradient-to-br from-zinc-900 to-[#131316] border border-zinc-800 text-center shadow-2xl">
-          <h4 className="text-2xl font-bold text-white mb-4">Berhenti Menebak Algoritma</h4>
-          <p className="text-zinc-400 mb-8 font-medium">Jangan biarkan kompetitor mencuri calon pembeli Anda lagi. Gunakan SEOsuite dan mulailah mendominasi secara organik.</p>
-          <Link href="/#pricing" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-black hover:opacity-90 transition-opacity">
-            Lihat Harga Enterprise <Zap className="w-4 h-4 fill-black" />
+        <div className="mt-20 p-10 rounded-3xl bg-[#131316] border border-yellow-500/30 text-center shadow-[0_0_50px_rgba(234,179,8,0.05)] relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-t from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <h4 className="text-2xl font-black text-white mb-4 relative z-10">Website Anda Sedang Sekarat?</h4>
+          <p className="text-zinc-400 mb-8 font-medium relative z-10 max-w-xl mx-auto">Sebagian besar website bisnis menderita "Koma Digital" tanpa disadari pemiliknya. Masukkan URL Anda dan biarkan AI kami membongkar kebocoran fatal yang membuat kompetitor mencuri pelanggan Anda.</p>
+          <Link href="/" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white font-black hover:opacity-90 transition-opacity shadow-[0_10px_30px_rgba(220,38,38,0.3)] relative z-10 uppercase tracking-wide">
+            Audit Website Saya Sekarang <Zap className="w-4 h-4 fill-white" />
           </Link>
         </div>
       </main>
