@@ -1,82 +1,90 @@
-# 🛡️ THE SEOSUITE PRE-FLIGHT CHECKLIST (QUALITY & CONVERSION GUARD)
-**Dokumen Standar QA & Anti-Regresi untuk SEOsuite (Sovereign SaaS Factory)**
+# ✅ CHECKL1ST: QUALITY ASSURANCE & ECOSYSTEM VALUE ENGINE
 
-> Dokumen `CHECKL1ST` ini adalah panduan mutlak. Setiap programmer (Manusia maupun AI Agensial) **DIWAJIBKAN** memvalidasi seluruh poin di bawah ini SEBELUM melakukan `git commit`, `push`, atau *deployment* ke server produksi. Kegagalan mematuhi checklist ini dapat mematikan "Mesin Kasir" SEOsuite.
+Dokumen ini adalah acuan resmi (**Docs-as-Code**) untuk jaminan kualitas teknis (QA), kepatuhan visual, dan kesiapan pemasaran lintas-ekosistem di bawah payung **Ecosystem Bernas Mahakarya Asia**.
 
----
-
-## 1. COMPILATION & BUILD GUARD
-Setiap kali sebelum push kode ke GitHub, wajib memastikan Next.js compiler tidak terganggu oleh *bug* ketikan atau TypeScript.
-- [ ] **Zero Typescript Errors (`tsc --noEmit`):** Wajib menembus validasi TypeScript tanpa ada pesan error merah.
-- [ ] **Build Sukses (`npm run build`):** Harus berhasil mengkompilasi *production build* tanpa kendala (Zero Hydration Mismatch).
-- [ ] **Encoding Fatal Bug Guard:** JANGAN *copy-paste* teks panjang/artikel langsung dari Microsoft Word ke dalam `.tsx` untuk menghindari karakter perusak UTF-8 (`0x97`). Gunakan `Paste as Plain Text`.
-
-## 2. DARK LUXURY THEME & AESTHETICS (UI/UX)
-Sesuai dengan standarisasi **AutoProfit.id**, tampilan SEOsuite harus memancarkan kemewahan (*Dark Luxury*).
-- [ ] **Konsistensi Warna:** Pastikan warna utama berfokus pada Hitam (`#090b10`), *Zinc-900* (Card/Glass), dan Emas/Kuning (`yellow-500` / `amber-600`).
-- [ ] **Zero Broken Tailwind Classes:** Hindari penggunaan *utility class* Tailwind yang bertentangan atau menyebabkan layout berantakan di layar Mobile (responsif mutlak).
-- [ ] **Glassmorphism Standar:** Setiap Card paket berlangganan atau elemen *overlay* harus mempertahankan transparansi blur (*glassmorphism*) yang elegan.
-- [ ] **Typography Elegan (Anti-Alay):** JANGAN gunakan teks miring (*italic*) kecuali untuk kutipan/quotes, dan JANGAN gunakan ALL CAPS pada *heading* utama (H1/H2). Gunakan huruf kapital standar (*Sentence Case* / *Title Case*) demi menjaga wibawa dan estetika premium.
-
-## 3. FUNNEL PENJUALAN & CONVERSION INTEGRITY
-SEOsuite dirancang sebagai mesin pencetak profit. Alur dari pengunjung ke pembeli tidak boleh terputus.
-- [ ] **Test Website Flow:** Pastikan input box "Masukkan URL Website" di *Hero Section* berfungsi memicu animasi *scanning*.
-- [ ] **Trigger Psikologis:** *Mockup* hasil audit "Skor Merah" (Skor 35) wajib muncul dengan warna peringatan (merah) yang jelas untuk menciptakan urgensi.
-- [ ] **Auto-Scroll CTA:** Tombol "Perbaiki Sekarang" pada hasil audit WAJIB menggulir layar secara otomatis ke bagian `Pricing`.
-
-## 4. INTEGRASI PAYMENT & AUTH (MIDTRANS)
-Tanpa poin ini, aplikasi hanyalah brosur kosong.
-- [ ] **Midtrans Snap Script:** Tag `<script>` Midtrans Snap API harus dirender secara aman (menggunakan environment variable `NEXT_PUBLIC_MIDTRANS_CLIENT_KEY`).
-- [ ] **Zero Hardcoded Secrets:** Token, API Keys Midtrans Server, dan rahasia database JANGAN PERNAH di-hardcode. Harus dipanggil via `.env.local` di *backend* (`/api/*`).
-- [ ] **Checkout Route Proxy:** *Trigger* pembayaran dari Client-Side ke Midtrans WAJIB melalui jalur *proxy* API Internal (e.g. `/api/checkout`).
-
-## 5. SERVER ARCHITECTURE & DEPLOYMENT (PM2)
-- [ ] **Node / React Server Components:** Memisahkan secara tegas mana yang `use client` (komponen interaktif seperti tombol animasi, input URL) dan Server Components (untuk render data statis yang SEO-friendly).
-- [ ] **Zero Unpublish Guard:** JANGAN matikan proses produksi (PM2) tanpa persiapan rollback. Jika memutakhirkan server VPS:
-  ```bash
-  git pull
-  npm run build
-  pm2 restart seosuite
-  ```
+Setiap kali sebelum melakukan push ke GitHub, pengujian pra-rilis (*pre-release*), atau pembuatan *production build*, wajib memastikan seluruh checklist di bawah ini terpenuhi dengan **status lulus penuh (100% Passed)**.
 
 ---
 
----
+## 🛠️ 1. Build & Compilation Guard (Teknis & Keamanan)
 
-## 6. THE BIG 5 SOVEREIGN RULES (ATURAN MUTLAK)
-Sesuai dengan konsolidasi standar The Big 5 (Alchem1st, BizGrow, BERNAS), larangan dan kewajiban berikut **HARUS** dipatuhi:
-
-### 🚨 Fatal Guards
-- ❌ **DON'T Copy-Paste Raw Text:** JANGAN *copy-paste* teks mentah dari MS Word / GDocs langsung ke kode. Teks sering membawa *corrupted UTF-8* (`0x97` byte) yang akan merusak Webpack Compiler. Gunakan `Paste as Plain Text`.
-- ❌ **DON'T Put `dynamic` Above Imports:** Jangan meletakkan `export const dynamic = "force-dynamic";` sebelum statemen `import`.
-- ❌ **DON'T Import Firebase:** SEOsuite adalah *Sovereign App*. 100% data operasional WAJIB menggunakan PostgreSQL via Prisma. Zero Firestore.
-- ❌ **DON'T Access `params` Synchronously (Next.js 15+):** Objek `params` dan `searchParams` bersifat *Asynchronous Promise* di Next.js App Router terbaru. JANGAN mengaksesnya secara sinkron (contoh: `params.slug`). WAJIB gunakan `await params` untuk menghindari error `ENOENT undefined`.
-- ❌ **DON'T Use `framer-motion` opacity:0 for Critical Content:** Jangan sembunyikan teks SEO dengan `opacity: 0` saat inisialisasi.
-- ❌ **DON'T Build While Server Running:** Matikan *process* PM2/Node lama sebelum `npm run build`.
-
-### 💎 UI/UX & Aesthetics (Alchem1st Standard)
-- ✅ **DO Use Dark Luxury Palette:** Zinc/Black dengan aksen Yellow Gold (`yellow-500`). DILARANG KERAS menggunakan warna warni norak.
-- ❌ **DON'T Use Italics / ALL CAPS:** JANGAN gunakan teks miring (*italic*) dan JANGAN gunakan ALL CAPS pada *heading/subheading*. Gunakan ketebalan font (*font-black/font-bold*) untuk penekanan.
-- ✅ **DO Full-Bleed Layout:** Pastikan UI merender *Full-Bleed* layar penuh, tanpa paksaan margin/padding yang menyisakan ruang putih kosong di sisi pinggir.
-- ✅ **DO Fallback Styling for Markdown:** Tailwind v4 mereset semua ukuran *heading*. Jika merender konten Markdown, WAJIB injeksi CSS `Typography` murni di `globals.css` sebagai cadangan jika *plugin* `@tailwindcss/typography` gagal dimuat.
-
-### 🧠 AI Generation (BizGrow Standard)
-- ✅ **DO Socratic Style:** AI WAJIB merespons dengan format *Bullet Points* atau penomoran yang rapi.
-- ❌ **DON'T Use Multiple Choice:** JANGAN menyuruh AI memberikan opsi Pilihan Ganda.
-- ✅ **DO API Key Rotation:** Selalu gunakan *load balancing* / *fallback* pada pemanggilan model AI besar.
-
-### 🛡️ SEO Shield (Bernas Standard)
-- ❌ **DON'T Use Zero-Damage Paywalls:** JANGAN potong DOM untuk konten tersembunyi, gunakan CSS `blur()` agar Googlebot tetap membaca teks utuh.
-- ❌ **DON'T Use YouTube Iframes:** Kurangi ketergantungan pada YouTube embed, utamakan CDN statis.
-
-## 🚀 7. MARKETING FLIGHT READINESS (LEAD & SEO SHIELD)
-Menjelang masa peluncuran (*launching*), setiap aplikasi di bawah payung **AutoProfit.id** wajib mematuhi standar pemasaran ini untuk mencegah kebocoran prospek (*lead leakage*).
-- [ ] **Distribusi Organik (Sitemap & OpenGraph)**: Wajib memiliki `sitemap.ts` (atau `.xml`) dinamis dan `robots.txt`. Setiap halaman publik/artikel wajib memiliki metadata OpenGraph (`og:image`, `og:title`) dinamis agar terlihat berwibawa saat dibagikan ke WhatsApp dan LinkedIn.
-- [ ] **Lead Capture Wall (Hukum Timbal Balik)**: JANGAN PERNAH memberikan hasil *tools* gratis (seperti kalkulator, audit, generator) secara cuma-cuma penuh. Selalu gunakan sistem *Lead Capture Wall* (mengunci hasil di belakang form WhatsApp/Email) untuk membangun database pemasaran Anda.
-- [ ] **High-Ticket VIP Sales Flow**: Untuk paket berlangganan B2B atau *Enterprise* (> Rp 2 Juta), ganti tombol Checkout langsung dengan tombol *Konsultasi VIP (WhatsApp)*. Jangan paksa klien kakap checkout tanpa interaksi manusia.
-- [ ] **Scarcity & Urgency**: Gunakan *badge* kelangkaan (contoh: "Sisa 2 Slot") pada paket penawaran tertinggi untuk memicu psikologi FOMO.
+* [x] **TypeScript Strict Verification**:
+  * Wajib menjalankan type-checking dan memastikan nol kesalahan kompilasi sebelum rilis:
+    ```bash
+    npx tsc --noEmit
+    ```
+* [x] **Webpack & Next.js Build Success**:
+  * Jalankan perintah kompilasi produksi lokal untuk memastikan tidak ada pemblokiran build:
+    ```bash
+    npm run build
+    ```
+* [x] **Fatal UTF-8 Encoding Guard (0x97 Byte Bug)**:
+  * **Dilarang** menyalin teks mentah secara langsung dari MS Word, Google Docs, atau WhatsApp Web ke dalam file `.ts`/`.tsx` (karena membawa karakter terdistorsi tak kasat mata seperti `0x97` byte).
+  * **Wajib** menggunakan `Paste as Plain Text` (Ctrl+Shift+V) untuk semua penulisan teks statis.
+* [x] **Security & Credential Shield**:
+  * Pastikan tidak ada API Key, secret credentials, atau password database yang ter-hardcode di kode *client-side*.
+  * Pastikan file `.env.local` terdaftar aman di dalam `.gitignore`.
 
 ---
-**Diperbarui secara Otonom oleh: AI Antigravity**
-**Afiliasi Repositori:** AutoProfit Sovereign Ecosystem
-*No Code Gets Pushed Unless This Checklist Turns Green.*
+
+## 🎨 2. Kepatuhan WCM Boilerplate (Desain & Estetika)
+
+* [x] **Visual Dark Luxury Standard**:
+  * Latar belakang menggunakan warna gelap mewah terkurasi (`#040609`, `#070b13`, atau `#0f172a`). Warna abu-abu kusam atau putih menyala dilarang untuk tema utama.
+  * Aksen menggunakan warna Emas/Amber (`#f59e0b`) danRoyal-Violet (`#6366f1`) untuk pendaran latar (*ambient glow*).
+* [x] **Geometric Typography Guard**:
+  * Judul utama, nama brand, tombol, dan angka metrik wajib berhuruf tegak, tegas, dan tebal (sans-serif modern). **Dilarang** menggunakan huruf miring (*italic*) pada elemen-elemen tersebut agar terlihat kokoh dan berwibawa.
+* [x] **Glassmorphism Border Cards**:
+  * Seluruh konsol widget atau kartu grid menggunakan border tipis semi-transparan dengan blur tinggi (`backdrop-blur-xl bg-white/[0.02] border border-white/10`) disertai micro-animation berdurasi `duration-300` pada interaksi hover.
+
+---
+
+## 🔗 3. Kepatuhan Footer Ekosistem (Jaring SEO Lintas-Platform - Kelas A/B / Settings Menu - Kelas C)
+
+* [x] **Unified 4-Column Layout / Settings System**:
+  * Footer wajib terbagi menjadi 4 kolom yang proporsional dan responsif (Untuk Kelas A & B) or terintegrasi di menu settings (Untuk Kelas C).
+* [x] **Flagship Ecosystem Features Column (Col 3 - Sovereign Arsenal)**:
+  * Menampilkan tautan/atribusi ke 6 pilar layanan andalan ekosistem guna memicu strategi *cross-selling* pasif:
+    * Mini CRM, WhatsApp API, AI Chat & RAG Engine (AI Advisor & Builder), AI Copywriter & Web Builder, SEO & GEO Optimizer, AI Lead Finder.
+* [x] **Ecosystem SEO Backlinks Column (Col 4 - Sinergi Ekosistem)**:
+  * Wajib merender tautan eksternal aktif (*Dofollow* dengan atribut `target="_blank"`) menuju:
+    * **Universitas Mahakarya Asia** (`https://unmaha.ac.id`)
+    * **BERNAS.id Portal Berita** (`https://bernas.id`)
+    * **Katalog 73 App autoprofit.id** (`https://autoprofit.id`)
+    * **BizGrow SuperApp** (`https://bizgrow.id`)
+    * **Alchem1st Revenue Engine** (`https://alchem1st.id`)
+* [x] **Dynamic Active Year**:
+  * Hak cipta pada footer wajib memuat tahun aktif dinamis (`new Date().getFullYear()`).
+* [x] **TEFA Attribution**:
+  * Wajib menyertakan atribusi resmi: `Developed by Teaching Factory (TEFA) Student Developers × PT ADOLO COACHING MENTORING.`
+
+---
+
+## 🚀 4. Marketing Flight Readiness & Lead Capture Shield
+
+* [x] **Sitemap & OpenGraph Dinamis**:
+  * Setiap halaman publik wajib memiliki sitemap XML dinamis dan metadata OpenGraph (`og:image`, `og:title`) untuk sebaran media sosial yang profesional.
+* [x] **Lead Capture Wall**:
+  * Dilarang memberikan hasil *free tools* atau **akses AI Chat & RAG konsultasi pembuka** secara cuma-cuma penuh. Gunakan form pengunci WhatsApp/Email untuk mendapatkan data prospek pemasaran.
+* [x] **High-Ticket VIP Sales Flow**:
+  * Untuk paket penawaran di atas Rp 2 Juta, tombol checkout langsung wajib digantikan dengan tombol **Konsultasi VIP (WhatsApp)** untuk memfasilitasi komunikasi manusia berkonversi tinggi.
+* [x] **FOMO & Scarcity Badges**:
+  * Sertakan penanda kuota terbatas (contoh: "Tersisa 2 Slot Lisensi Subsidi TEFA Bulan Ini") pada tier harga tertinggi untuk memicu psikologi kelangkaan.
+* [x] **No Silent Dummies Policy Compliance**:
+  * Pastikan seluruh data, metrik, dan grafik tiruan/simulasi yang dirender di dashboard publik maupun internal telah diberi tanda/badge **(DUMMY)** atau **(SIMULASI)** secara jelas. Metrik utama operasional dasbor wajib 100% dinamis terhubung ke data riil.
+* [x] **AI Auto Prospecting Integration**:
+  * Menyediakan dasbor otomatisasi pemasaran B2B (`/prospecting`) yang terintegrasi dengan saluran penawaran personal LinkedIn dan nomor WhatsApp pengirim super admin secara otonom.
+  * Bebas dari silent dummy metrics dan terhubung dengan dynamic scanner untuk memeriksa kesiapan deploy produk SaaS.
+
+---
+
+## 🤝 5. Sinergi Integrasi Ekosistem (Jualan Ekosistem)
+
+* [x] **Ecosystem Branding Declaration**:
+  * Pastikan aplikasi ini tidak terlihat seperti aplikasi *standalone* (mandiri terisolasi). Di bagian header/landing page wajib memuat teks deklarasi: **"Part of Ecosystem Bernas Mahakarya Asia"** atau **"Sinergi Universitas Mahakarya Asia & BERNAS.id"**.
+* [x] **Cross-App Navigation & RAG Hub**:
+  * Menyediakan navigasi ringkas atau tombol panel pencarian (*search overlay*) menuju modul ekosistem pendukung lainnya untuk mempermudah retensi pengguna.
+  * Pastikan modul AI Chat & RAG (AI Advisor) merujuk secara halus ke sister-apps jika mendeteksi kebutuhan khusus (misal: RAG Kumaha merekomendasikan major/prodi di UNMAHA, RAG BizGrow merekomendasikan pencarian leads di OmniClaw).
+* [x] **Tim INTI UX Testing & AI Ingestor Loop**:
+  * Menyediakan dasbor pengujian UX terintegrasi (`/ux-test`) bagi penguji inti (Mbak Sugik, Pak Hendra, Bu Sri, Pak Salam) lengkap dengan WA dispatch.
+  * Menyediakan sistem Automated Ingestor AI (`/api/ux-report`) untuk mem-parse dan menyimpan masukan tim INTI ke database perbaikan pengembang secara otonom tanpa download/upload manual.
