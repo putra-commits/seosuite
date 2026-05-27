@@ -97,7 +97,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#040609] text-white selection:bg-amber-500/30">
       {/* Midtrans Snap Script */}
       <script
         type="text/javascript"
@@ -109,7 +109,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-black/50 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Zap className="w-8 h-8 text-blue-600 fill-blue-600" />
+            <Zap className="w-8 h-8 text-amber-600 fill-amber-600" />
             <span className="text-2xl font-black tracking-tighter uppercase italic">SEO<span className="text-zinc-600">suite</span></span>
           </div>
           <div className="hidden md:flex items-center gap-10">
@@ -125,8 +125,8 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative pt-48 pb-32 overflow-hidden min-h-[90vh] flex items-center">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-[120px]" />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-600/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px]" />
         </div>
 
         <div className="max-w-6xl mx-auto px-8 relative z-10 text-center">
@@ -155,7 +155,7 @@ export default function LandingPage() {
             transition={{ delay: 0.2 }}
             className="text-zinc-500 text-lg md:text-2xl max-w-4xl mx-auto font-bold leading-relaxed mb-12"
           >
-            Banyak orang punya website tapi <span className="text-white italic">cuma jadi pajangan</span>. SEOsuite hadir untuk mengoptimalkan kekuatan yang selama ini Anda abaikan. Bukan cuma SEO, tapi <span className="text-blue-500">GEO, AEO, Funnel,</span> dan <span className="text-emerald-500">Audit Konversi</span> untuk mendongkrak revenue nyata.
+            Banyak orang punya website tapi <span className="text-white italic">cuma jadi pajangan</span>. SEOsuite hadir untuk mengoptimalkan kekuatan yang selama ini Anda abaikan. Bukan cuma SEO, tapi <span className="text-amber-500">GEO, AEO, Funnel,</span> dan <span className="text-indigo-500">Audit Konversi</span> untuk mendongkrak revenue nyata.
           </motion.p>
 
           <motion.div
@@ -178,7 +178,7 @@ export default function LandingPage() {
       <section id="features" className="py-32 border-t border-white/5 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
           <div>
-            <h2 className="text-xs font-black text-emerald-500 uppercase tracking-[0.4em] mb-6">Masalah Tersembunyi</h2>
+            <h2 className="text-xs font-black text-amber-500 uppercase tracking-[0.4em] mb-6">Masalah Tersembunyi</h2>
             <h3 className="text-4xl md:text-6xl font-black tracking-tighter italic leading-none mb-8">
               Website Anda <span className="text-zinc-700">Bisa Menghasilkan Lebih Banyak.</span>
             </h3>
@@ -187,8 +187,8 @@ export default function LandingPage() {
             </p>
             <div className="space-y-4">
               <div className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                  <BarChart3 className="w-5 h-5 text-blue-500" />
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 text-amber-500" />
                 </div>
                 <div>
                   <p className="text-sm font-bold text-white uppercase italic">Profit-Oriented SEO</p>
@@ -196,8 +196,8 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-emerald-500" />
+                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                  <Bot className="w-5 h-5 text-indigo-500" />
                 </div>
                 <div>
                   <p className="text-sm font-bold text-white uppercase italic">AI Search Dominance</p>
@@ -211,11 +211,11 @@ export default function LandingPage() {
                <h4 className="text-xl font-black text-white mb-6 uppercase italic tracking-tighter">Siapa Yang Butuh SEOsuite?</h4>
                <div className="space-y-6">
                   <div className="p-6 rounded-2xl bg-black border border-zinc-800 group hover:border-blue-500/50 transition-all">
-                     <p className="text-xs font-black text-blue-500 uppercase tracking-widest mb-2">Personal Branding</p>
+                     <p className="text-xs font-black text-amber-500 uppercase tracking-widest mb-2">Personal Branding</p>
                      <p className="text-sm text-zinc-400 font-medium">Bangun otoritas digital yang tak terbantahkan. Jadilah wajah pertama yang muncul saat nama atau bidang Anda dicari.</p>
                   </div>
                   <div className="p-6 rounded-2xl bg-black border border-zinc-800 group hover:border-emerald-500/50 transition-all">
-                     <p className="text-xs font-black text-emerald-500 uppercase tracking-widest mb-2">Pemilik Ecommerce</p>
+                     <p className="text-xs font-black text-indigo-500 uppercase tracking-widest mb-2">Pemilik Ecommerce</p>
                      <p className="text-sm text-zinc-400 font-medium">Bosan dengan potongan marketplace yang mencekik? Ubah toko online mandiri Anda menjadi mesin penjualan yang efisien.</p>
                   </div>
                </div>
@@ -230,7 +230,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center mb-32">
             <div>
-               <h2 className="text-xs font-black text-blue-500 uppercase tracking-[0.4em] mb-6">Efisiensi Modal</h2>
+               <h2 className="text-xs font-black text-amber-500 uppercase tracking-[0.4em] mb-6">Efisiensi Modal</h2>
                <h3 className="text-4xl md:text-6xl font-black tracking-tighter italic leading-none mb-8 text-white">
                  Berhenti Membayar <span className="text-zinc-700">Untuk Trafik Sementara.</span>
                </h3>
@@ -247,7 +247,7 @@ export default function LandingPage() {
                      </div>
                   </div>
                   <div className="flex items-center gap-6">
-                     <div className="w-2 h-12 bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+                     <div className="w-2 h-12 bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
                      <div>
                         <p className="text-sm font-black text-white uppercase italic">SEOsuite Ecosystem</p>
                         <p className="text-xs text-zinc-600 font-bold uppercase">ROI Eksponensial | Aset Permanen | Otoritas Tertinggi</p>
@@ -284,15 +284,15 @@ export default function LandingPage() {
                   <motion.div 
                     initial={{ height: 0 }} whileInView={{ height: '80%' }} viewport={{ once: true }}
                     transition={{ delay: 0.5 }}
-                    className="w-full bg-emerald-500/30 border-t-2 border-emerald-500 rounded-t-lg flex items-center justify-center shadow-[0_-20px_40px_rgba(16,185,129,0.1)]"
+                    className="w-full bg-amber-500/30 border-t-2 border-amber-500 rounded-t-lg flex items-center justify-center shadow-[0_-20px_40px_rgba(245,158,11,0.1)]"
                   >
-                     <span className="text-[10px] font-black text-emerald-400 -rotate-90">ORGANIK</span>
+                     <span className="text-[10px] font-black text-amber-400 -rotate-90">ORGANIK</span>
                   </motion.div>
                   <p className="text-[8px] text-center font-black text-zinc-700 uppercase">Bulan 12</p>
                </div>
                
                <div className="absolute top-10 left-10 p-4 bg-black/80 backdrop-blur border border-zinc-800 rounded-2xl">
-                  <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">Pertumbuhan Kumulatif</p>
+                  <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1">Pertumbuhan Kumulatif</p>
                   <p className="text-2xl font-black text-white italic">+440%</p>
                </div>
             </div>
@@ -329,7 +329,7 @@ export default function LandingPage() {
       <section id="pricing" className="py-40 relative border-t border-white/5 bg-zinc-950/20">
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-24">
-            <h2 className="text-xs font-black text-blue-500 uppercase tracking-[0.4em] mb-4">Arsitektur Harga</h2>
+            <h2 className="text-xs font-black text-amber-500 uppercase tracking-[0.4em] mb-4">Arsitektur Harga</h2>
             <h3 className="text-5xl font-black tracking-tighter italic">Pilih tingkat <span className="text-zinc-700">Dominasi</span> Anda</h3>
           </div>
 
@@ -341,12 +341,12 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className={`p-10 rounded-[3rem] bg-zinc-900/40 border transition-all relative group overflow-hidden ${
-                  tier.popular ? 'border-blue-500/50 shadow-[0_0_50px_rgba(59,130,246,0.1)]' : 'border-zinc-800 hover:border-zinc-700'
+                className={`p-10 rounded-[3rem] bg-white/[0.02] backdrop-blur-xl border transition-all relative group overflow-hidden ${
+                  tier.popular ? 'border-amber-500/50 shadow-[0_0_50px_rgba(245,158,11,0.1)]' : 'border-zinc-800 hover:border-zinc-700'
                 }`}
               >
                 {tier.popular && (
-                  <div className="absolute top-0 right-0 px-6 py-2 bg-blue-500 text-black text-[10px] font-black uppercase tracking-widest rounded-bl-2xl italic">
+                  <div className="absolute top-0 right-0 px-6 py-2 bg-amber-500 text-black text-[10px] font-black uppercase tracking-widest rounded-bl-2xl italic">
                     Paling Strategis
                   </div>
                 )}
@@ -377,7 +377,7 @@ export default function LandingPage() {
                   disabled={loading === tier.name}
                   className={`w-full py-5 rounded-2xl font-black text-lg uppercase tracking-tighter transition-all flex items-center justify-center gap-2 ${
                     tier.popular 
-                    ? 'bg-blue-500 text-black hover:bg-blue-400' 
+                    ? 'bg-amber-500 text-black hover:bg-amber-400' 
                     : 'bg-zinc-800 text-white hover:bg-zinc-700'
                   }`}
                 >
