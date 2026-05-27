@@ -118,18 +118,18 @@ Tabel ini melacak kepatuhan 13 repositori terhadap 5 poin standar `CHECKL1ST.md`
 
 | No | Repositori | Kelas | 1. Build Guard | 2. Design WCM | 3. Footer SEO | 4. Flight Ready | 4.a SEO Content | 5. Sinergi | Status Akhir |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | **agenc1st** | Hub | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 🔴 Pending |
-| 2 | **seosuite** | A | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 🔴 Pending |
-| 3 | **adoloweb** | A | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 🔴 Pending |
-| 4 | **OmniAds** | A | ✅ | ✅ Excellent | ✅ Compliant | ⏳ | ❌ 2/100 | ✅ Compliant | 🟢 Audit in Progress |
-| 5 | **alchem1st** | A | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 🔴 Pending |
-| 6 | **BizGrow** | B | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 🔴 Pending |
-| 7 | **kumaha** | B | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 🔴 Pending |
-| 8 | **bernas** | A | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 🔴 Pending |
-| 9 | **unmaha-web** | B | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 🔴 Pending |
-| 10 | **bizhealth** | C | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 🔴 Pending |
-| 11 | **brandhealth** | C | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 🔴 Pending |
-| 12 | **saleshealth** | C | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 🔴 Pending |
-| 13 | **traingrow** | C | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | 🔴 Pending |
+| 1 | **agenc1st** | Hub | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ (Backlog Ready) | ⏳ | 🔴 Pending |
+| 2 | **seosuite** | A | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ (Backlog Ready) | ⏳ | 🔴 Pending |
+| 3 | **adoloweb** | A | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ (Backlog Ready) | ⏳ | 🔴 Pending |
+| 4 | **OmniAds** | A | ✅ | ✅ Excellent | ✅ Compliant | ⏳ | ❌ 2/100 (Backlog Ready) | ✅ Compliant | 🟢 Audit in Progress |
+| 5 | **alchem1st** | A | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ (Backlog Ready) | ⏳ | 🔴 Pending |
+| 6 | **BizGrow** | B | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ (Backlog Ready) | ⏳ | 🔴 Pending |
+| 7 | **kumaha** | B | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ (Backlog Ready) | ⏳ | 🔴 Pending |
+| 8 | **bernas** | A | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ (Backlog Ready) | ⏳ | 🔴 Pending |
+| 9 | **unmaha-web** | B | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ (Backlog Ready) | ⏳ | 🔴 Pending |
+| 10 | **bizhealth** | C | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ (Backlog Ready) | ⏳ | 🔴 Pending |
+| 11 | **brandhealth** | C | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ (Backlog Ready) | ⏳ | 🔴 Pending |
+| 12 | **saleshealth** | C | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ (Backlog Ready) | ⏳ | 🔴 Pending |
+| 13 | **traingrow** | C | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ (Backlog Ready) | ⏳ | 🔴 Pending |
 
 *(Keterangan: ✅ = Lulus 100%, ❌ = Gagal/Kurang, ⏳ = Belum Diaudit)*

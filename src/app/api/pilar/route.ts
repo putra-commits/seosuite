@@ -32,11 +32,16 @@ function generateClusters(keyword: string, cities: string[]): PilarCluster['clus
   const intent   = classifyIntent(keyword);
   const kwSlug   = keyword.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   const templates = [
-    (k: string, c: string) => `Panduan Lengkap ${k} di ${c} 2026`,
-    (k: string, c: string) => `Strategi ${k} untuk Bisnis ${c} Terkini`,
-    (k: string, c: string) => `${k}: Peluang dan Tantangan di ${c}`,
-    (k: string, c: string) => `Cara Mengimplementasikan ${k} di ${c}`,
-    (k: string, c: string) => `${k} ${c} — Analisis Pasar & Tren 2026`,
+    (k: string, c: string) => `Mengapa Eksekusi ${k} di ${c} Sering Berujung Gagal? (Analisis Kritis)`,
+    (k: string, c: string) => `Membongkar Fakta Pahit: Rahasia ${k} di ${c} yang Disembunyikan Agency`,
+    (k: string, c: string) => `Jangan Coba ${k} di Pasar ${c} Sebelum Membaca Investigasi Ini`,
+    (k: string, c: string) => `Realita ${k} di ${c}: Uang Habis Tanpa Hasil (dan Solusi Konkretnya)`,
+    (k: string, c: string) => `Strategi ${k} vs Konvensional di ${c}: Siapa yang Punah Duluan?`,
+    (k: string, c: string) => `Blueprint Rahasia ${k} di ${c}: Dominasi Saat Kompetitor Tertidur`,
+    (k: string, c: string) => `Kapan Saat yang Tepat Berhenti Membakar Uang untuk ${k} di ${c}?`,
+    (k: string, c: string) => `Studi Kasus: Kebocoran Anggaran Akibat Kesalahan ${k} di ${c}`,
+    (k: string, c: string) => `Apakah ${k} di ${c} Benar Menguntungkan, atau Sekadar Tren Sesaat?`,
+    (k: string, c: string) => `Eksploitasi Celah Pasar ${c} Menggunakan Strategi ${k} Anti-Boncos`
   ];
 
   return cities.map((city, i) => {

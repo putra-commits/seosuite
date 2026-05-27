@@ -1,0 +1,767 @@
+{
+  "repository": "seosuite",
+  "totalArticles": 100,
+  "generatedAt": "2026-05-27T09:57:53.692Z",
+  "clusters": [
+    {
+      "pillar": "Jasa SEO B2B",
+      "keyword": "Jasa SEO B2B",
+      "clusters": [
+        {
+          "title": "Mengapa Eksekusi Jasa SEO B2B di Jakarta Sering Berujung Gagal? (Analisis Kritis)",
+          "slug": "jasa-seo-b2b-jakarta",
+          "city": "Jakarta",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Membongkar Fakta Pahit: Rahasia Jasa SEO B2B di Bandung yang Disembunyikan Agency",
+          "slug": "jasa-seo-b2b-bandung",
+          "city": "Bandung",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Jangan Coba Jasa SEO B2B di Pasar Surabaya Sebelum Membaca Investigasi Ini",
+          "slug": "jasa-seo-b2b-surabaya",
+          "city": "Surabaya",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Realita Jasa SEO B2B di Yogyakarta: Uang Habis Tanpa Hasil (dan Solusi Konkretnya)",
+          "slug": "jasa-seo-b2b-yogyakarta",
+          "city": "Yogyakarta",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Strategi Jasa SEO B2B vs Konvensional di Medan: Siapa yang Punah Duluan?",
+          "slug": "jasa-seo-b2b-medan",
+          "city": "Medan",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Blueprint Rahasia Jasa SEO B2B di Makassar: Dominasi Saat Kompetitor Tertidur",
+          "slug": "jasa-seo-b2b-makassar",
+          "city": "Makassar",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Kapan Saat yang Tepat Berhenti Membakar Uang untuk Jasa SEO B2B di Semarang?",
+          "slug": "jasa-seo-b2b-semarang",
+          "city": "Semarang",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Studi Kasus: Kebocoran Anggaran Akibat Kesalahan Jasa SEO B2B di Palembang",
+          "slug": "jasa-seo-b2b-palembang",
+          "city": "Palembang",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Apakah Jasa SEO B2B di Balikpapan Benar Menguntungkan, atau Sekadar Tren Sesaat?",
+          "slug": "jasa-seo-b2b-balikpapan",
+          "city": "Balikpapan",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Eksploitasi Celah Pasar Denpasar Menggunakan Strategi Jasa SEO B2B Anti-Boncos",
+          "slug": "jasa-seo-b2b-denpasar",
+          "city": "Denpasar",
+          "intent": "transactional",
+          "wordTarget": 1200
+        }
+      ]
+    },
+    {
+      "pillar": "Optimasi Mesin Pencari",
+      "keyword": "Optimasi Mesin Pencari",
+      "clusters": [
+        {
+          "title": "Mengapa Eksekusi Optimasi Mesin Pencari di Jakarta Sering Berujung Gagal? (Analisis Kritis)",
+          "slug": "optimasi-mesin-pencari-jakarta",
+          "city": "Jakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Membongkar Fakta Pahit: Rahasia Optimasi Mesin Pencari di Bandung yang Disembunyikan Agency",
+          "slug": "optimasi-mesin-pencari-bandung",
+          "city": "Bandung",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Jangan Coba Optimasi Mesin Pencari di Pasar Surabaya Sebelum Membaca Investigasi Ini",
+          "slug": "optimasi-mesin-pencari-surabaya",
+          "city": "Surabaya",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Realita Optimasi Mesin Pencari di Yogyakarta: Uang Habis Tanpa Hasil (dan Solusi Konkretnya)",
+          "slug": "optimasi-mesin-pencari-yogyakarta",
+          "city": "Yogyakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Strategi Optimasi Mesin Pencari vs Konvensional di Medan: Siapa yang Punah Duluan?",
+          "slug": "optimasi-mesin-pencari-medan",
+          "city": "Medan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Blueprint Rahasia Optimasi Mesin Pencari di Makassar: Dominasi Saat Kompetitor Tertidur",
+          "slug": "optimasi-mesin-pencari-makassar",
+          "city": "Makassar",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Kapan Saat yang Tepat Berhenti Membakar Uang untuk Optimasi Mesin Pencari di Semarang?",
+          "slug": "optimasi-mesin-pencari-semarang",
+          "city": "Semarang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Studi Kasus: Kebocoran Anggaran Akibat Kesalahan Optimasi Mesin Pencari di Palembang",
+          "slug": "optimasi-mesin-pencari-palembang",
+          "city": "Palembang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Apakah Optimasi Mesin Pencari di Balikpapan Benar Menguntungkan, atau Sekadar Tren Sesaat?",
+          "slug": "optimasi-mesin-pencari-balikpapan",
+          "city": "Balikpapan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Eksploitasi Celah Pasar Denpasar Menggunakan Strategi Optimasi Mesin Pencari Anti-Boncos",
+          "slug": "optimasi-mesin-pencari-denpasar",
+          "city": "Denpasar",
+          "intent": "informational",
+          "wordTarget": 1500
+        }
+      ]
+    },
+    {
+      "pillar": "Keyword Riset Profesional",
+      "keyword": "Keyword Riset Profesional",
+      "clusters": [
+        {
+          "title": "Mengapa Eksekusi Keyword Riset Profesional di Jakarta Sering Berujung Gagal? (Analisis Kritis)",
+          "slug": "keyword-riset-profesional-jakarta",
+          "city": "Jakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Membongkar Fakta Pahit: Rahasia Keyword Riset Profesional di Bandung yang Disembunyikan Agency",
+          "slug": "keyword-riset-profesional-bandung",
+          "city": "Bandung",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Jangan Coba Keyword Riset Profesional di Pasar Surabaya Sebelum Membaca Investigasi Ini",
+          "slug": "keyword-riset-profesional-surabaya",
+          "city": "Surabaya",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Realita Keyword Riset Profesional di Yogyakarta: Uang Habis Tanpa Hasil (dan Solusi Konkretnya)",
+          "slug": "keyword-riset-profesional-yogyakarta",
+          "city": "Yogyakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Strategi Keyword Riset Profesional vs Konvensional di Medan: Siapa yang Punah Duluan?",
+          "slug": "keyword-riset-profesional-medan",
+          "city": "Medan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Blueprint Rahasia Keyword Riset Profesional di Makassar: Dominasi Saat Kompetitor Tertidur",
+          "slug": "keyword-riset-profesional-makassar",
+          "city": "Makassar",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Kapan Saat yang Tepat Berhenti Membakar Uang untuk Keyword Riset Profesional di Semarang?",
+          "slug": "keyword-riset-profesional-semarang",
+          "city": "Semarang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Studi Kasus: Kebocoran Anggaran Akibat Kesalahan Keyword Riset Profesional di Palembang",
+          "slug": "keyword-riset-profesional-palembang",
+          "city": "Palembang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Apakah Keyword Riset Profesional di Balikpapan Benar Menguntungkan, atau Sekadar Tren Sesaat?",
+          "slug": "keyword-riset-profesional-balikpapan",
+          "city": "Balikpapan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Eksploitasi Celah Pasar Denpasar Menggunakan Strategi Keyword Riset Profesional Anti-Boncos",
+          "slug": "keyword-riset-profesional-denpasar",
+          "city": "Denpasar",
+          "intent": "informational",
+          "wordTarget": 1500
+        }
+      ]
+    },
+    {
+      "pillar": "Jasa Backlink Dofollow",
+      "keyword": "Jasa Backlink Dofollow",
+      "clusters": [
+        {
+          "title": "Mengapa Eksekusi Jasa Backlink Dofollow di Jakarta Sering Berujung Gagal? (Analisis Kritis)",
+          "slug": "jasa-backlink-dofollow-jakarta",
+          "city": "Jakarta",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Membongkar Fakta Pahit: Rahasia Jasa Backlink Dofollow di Bandung yang Disembunyikan Agency",
+          "slug": "jasa-backlink-dofollow-bandung",
+          "city": "Bandung",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Jangan Coba Jasa Backlink Dofollow di Pasar Surabaya Sebelum Membaca Investigasi Ini",
+          "slug": "jasa-backlink-dofollow-surabaya",
+          "city": "Surabaya",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Realita Jasa Backlink Dofollow di Yogyakarta: Uang Habis Tanpa Hasil (dan Solusi Konkretnya)",
+          "slug": "jasa-backlink-dofollow-yogyakarta",
+          "city": "Yogyakarta",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Strategi Jasa Backlink Dofollow vs Konvensional di Medan: Siapa yang Punah Duluan?",
+          "slug": "jasa-backlink-dofollow-medan",
+          "city": "Medan",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Blueprint Rahasia Jasa Backlink Dofollow di Makassar: Dominasi Saat Kompetitor Tertidur",
+          "slug": "jasa-backlink-dofollow-makassar",
+          "city": "Makassar",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Kapan Saat yang Tepat Berhenti Membakar Uang untuk Jasa Backlink Dofollow di Semarang?",
+          "slug": "jasa-backlink-dofollow-semarang",
+          "city": "Semarang",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Studi Kasus: Kebocoran Anggaran Akibat Kesalahan Jasa Backlink Dofollow di Palembang",
+          "slug": "jasa-backlink-dofollow-palembang",
+          "city": "Palembang",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Apakah Jasa Backlink Dofollow di Balikpapan Benar Menguntungkan, atau Sekadar Tren Sesaat?",
+          "slug": "jasa-backlink-dofollow-balikpapan",
+          "city": "Balikpapan",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Eksploitasi Celah Pasar Denpasar Menggunakan Strategi Jasa Backlink Dofollow Anti-Boncos",
+          "slug": "jasa-backlink-dofollow-denpasar",
+          "city": "Denpasar",
+          "intent": "transactional",
+          "wordTarget": 1200
+        }
+      ]
+    },
+    {
+      "pillar": "Core Web Vitals Audit",
+      "keyword": "Core Web Vitals Audit",
+      "clusters": [
+        {
+          "title": "Mengapa Eksekusi Core Web Vitals Audit di Jakarta Sering Berujung Gagal? (Analisis Kritis)",
+          "slug": "core-web-vitals-audit-jakarta",
+          "city": "Jakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Membongkar Fakta Pahit: Rahasia Core Web Vitals Audit di Bandung yang Disembunyikan Agency",
+          "slug": "core-web-vitals-audit-bandung",
+          "city": "Bandung",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Jangan Coba Core Web Vitals Audit di Pasar Surabaya Sebelum Membaca Investigasi Ini",
+          "slug": "core-web-vitals-audit-surabaya",
+          "city": "Surabaya",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Realita Core Web Vitals Audit di Yogyakarta: Uang Habis Tanpa Hasil (dan Solusi Konkretnya)",
+          "slug": "core-web-vitals-audit-yogyakarta",
+          "city": "Yogyakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Strategi Core Web Vitals Audit vs Konvensional di Medan: Siapa yang Punah Duluan?",
+          "slug": "core-web-vitals-audit-medan",
+          "city": "Medan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Blueprint Rahasia Core Web Vitals Audit di Makassar: Dominasi Saat Kompetitor Tertidur",
+          "slug": "core-web-vitals-audit-makassar",
+          "city": "Makassar",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Kapan Saat yang Tepat Berhenti Membakar Uang untuk Core Web Vitals Audit di Semarang?",
+          "slug": "core-web-vitals-audit-semarang",
+          "city": "Semarang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Studi Kasus: Kebocoran Anggaran Akibat Kesalahan Core Web Vitals Audit di Palembang",
+          "slug": "core-web-vitals-audit-palembang",
+          "city": "Palembang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Apakah Core Web Vitals Audit di Balikpapan Benar Menguntungkan, atau Sekadar Tren Sesaat?",
+          "slug": "core-web-vitals-audit-balikpapan",
+          "city": "Balikpapan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Eksploitasi Celah Pasar Denpasar Menggunakan Strategi Core Web Vitals Audit Anti-Boncos",
+          "slug": "core-web-vitals-audit-denpasar",
+          "city": "Denpasar",
+          "intent": "informational",
+          "wordTarget": 1500
+        }
+      ]
+    },
+    {
+      "pillar": "Content Marketing SEO",
+      "keyword": "Content Marketing SEO",
+      "clusters": [
+        {
+          "title": "Mengapa Eksekusi Content Marketing SEO di Jakarta Sering Berujung Gagal? (Analisis Kritis)",
+          "slug": "content-marketing-seo-jakarta",
+          "city": "Jakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Membongkar Fakta Pahit: Rahasia Content Marketing SEO di Bandung yang Disembunyikan Agency",
+          "slug": "content-marketing-seo-bandung",
+          "city": "Bandung",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Jangan Coba Content Marketing SEO di Pasar Surabaya Sebelum Membaca Investigasi Ini",
+          "slug": "content-marketing-seo-surabaya",
+          "city": "Surabaya",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Realita Content Marketing SEO di Yogyakarta: Uang Habis Tanpa Hasil (dan Solusi Konkretnya)",
+          "slug": "content-marketing-seo-yogyakarta",
+          "city": "Yogyakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Strategi Content Marketing SEO vs Konvensional di Medan: Siapa yang Punah Duluan?",
+          "slug": "content-marketing-seo-medan",
+          "city": "Medan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Blueprint Rahasia Content Marketing SEO di Makassar: Dominasi Saat Kompetitor Tertidur",
+          "slug": "content-marketing-seo-makassar",
+          "city": "Makassar",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Kapan Saat yang Tepat Berhenti Membakar Uang untuk Content Marketing SEO di Semarang?",
+          "slug": "content-marketing-seo-semarang",
+          "city": "Semarang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Studi Kasus: Kebocoran Anggaran Akibat Kesalahan Content Marketing SEO di Palembang",
+          "slug": "content-marketing-seo-palembang",
+          "city": "Palembang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Apakah Content Marketing SEO di Balikpapan Benar Menguntungkan, atau Sekadar Tren Sesaat?",
+          "slug": "content-marketing-seo-balikpapan",
+          "city": "Balikpapan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Eksploitasi Celah Pasar Denpasar Menggunakan Strategi Content Marketing SEO Anti-Boncos",
+          "slug": "content-marketing-seo-denpasar",
+          "city": "Denpasar",
+          "intent": "informational",
+          "wordTarget": 1500
+        }
+      ]
+    },
+    {
+      "pillar": "Jasa Artikel SEO",
+      "keyword": "Jasa Artikel SEO",
+      "clusters": [
+        {
+          "title": "Mengapa Eksekusi Jasa Artikel SEO di Jakarta Sering Berujung Gagal? (Analisis Kritis)",
+          "slug": "jasa-artikel-seo-jakarta",
+          "city": "Jakarta",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Membongkar Fakta Pahit: Rahasia Jasa Artikel SEO di Bandung yang Disembunyikan Agency",
+          "slug": "jasa-artikel-seo-bandung",
+          "city": "Bandung",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Jangan Coba Jasa Artikel SEO di Pasar Surabaya Sebelum Membaca Investigasi Ini",
+          "slug": "jasa-artikel-seo-surabaya",
+          "city": "Surabaya",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Realita Jasa Artikel SEO di Yogyakarta: Uang Habis Tanpa Hasil (dan Solusi Konkretnya)",
+          "slug": "jasa-artikel-seo-yogyakarta",
+          "city": "Yogyakarta",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Strategi Jasa Artikel SEO vs Konvensional di Medan: Siapa yang Punah Duluan?",
+          "slug": "jasa-artikel-seo-medan",
+          "city": "Medan",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Blueprint Rahasia Jasa Artikel SEO di Makassar: Dominasi Saat Kompetitor Tertidur",
+          "slug": "jasa-artikel-seo-makassar",
+          "city": "Makassar",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Kapan Saat yang Tepat Berhenti Membakar Uang untuk Jasa Artikel SEO di Semarang?",
+          "slug": "jasa-artikel-seo-semarang",
+          "city": "Semarang",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Studi Kasus: Kebocoran Anggaran Akibat Kesalahan Jasa Artikel SEO di Palembang",
+          "slug": "jasa-artikel-seo-palembang",
+          "city": "Palembang",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Apakah Jasa Artikel SEO di Balikpapan Benar Menguntungkan, atau Sekadar Tren Sesaat?",
+          "slug": "jasa-artikel-seo-balikpapan",
+          "city": "Balikpapan",
+          "intent": "transactional",
+          "wordTarget": 1200
+        },
+        {
+          "title": "Eksploitasi Celah Pasar Denpasar Menggunakan Strategi Jasa Artikel SEO Anti-Boncos",
+          "slug": "jasa-artikel-seo-denpasar",
+          "city": "Denpasar",
+          "intent": "transactional",
+          "wordTarget": 1200
+        }
+      ]
+    },
+    {
+      "pillar": "Local SEO",
+      "keyword": "Local SEO",
+      "clusters": [
+        {
+          "title": "Mengapa Eksekusi Local SEO di Jakarta Sering Berujung Gagal? (Analisis Kritis)",
+          "slug": "local-seo-jakarta",
+          "city": "Jakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Membongkar Fakta Pahit: Rahasia Local SEO di Bandung yang Disembunyikan Agency",
+          "slug": "local-seo-bandung",
+          "city": "Bandung",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Jangan Coba Local SEO di Pasar Surabaya Sebelum Membaca Investigasi Ini",
+          "slug": "local-seo-surabaya",
+          "city": "Surabaya",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Realita Local SEO di Yogyakarta: Uang Habis Tanpa Hasil (dan Solusi Konkretnya)",
+          "slug": "local-seo-yogyakarta",
+          "city": "Yogyakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Strategi Local SEO vs Konvensional di Medan: Siapa yang Punah Duluan?",
+          "slug": "local-seo-medan",
+          "city": "Medan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Blueprint Rahasia Local SEO di Makassar: Dominasi Saat Kompetitor Tertidur",
+          "slug": "local-seo-makassar",
+          "city": "Makassar",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Kapan Saat yang Tepat Berhenti Membakar Uang untuk Local SEO di Semarang?",
+          "slug": "local-seo-semarang",
+          "city": "Semarang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Studi Kasus: Kebocoran Anggaran Akibat Kesalahan Local SEO di Palembang",
+          "slug": "local-seo-palembang",
+          "city": "Palembang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Apakah Local SEO di Balikpapan Benar Menguntungkan, atau Sekadar Tren Sesaat?",
+          "slug": "local-seo-balikpapan",
+          "city": "Balikpapan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Eksploitasi Celah Pasar Denpasar Menggunakan Strategi Local SEO Anti-Boncos",
+          "slug": "local-seo-denpasar",
+          "city": "Denpasar",
+          "intent": "informational",
+          "wordTarget": 1500
+        }
+      ]
+    },
+    {
+      "pillar": "Optimasi Kecepatan Website",
+      "keyword": "Optimasi Kecepatan Website",
+      "clusters": [
+        {
+          "title": "Mengapa Eksekusi Optimasi Kecepatan Website di Jakarta Sering Berujung Gagal? (Analisis Kritis)",
+          "slug": "optimasi-kecepatan-website-jakarta",
+          "city": "Jakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Membongkar Fakta Pahit: Rahasia Optimasi Kecepatan Website di Bandung yang Disembunyikan Agency",
+          "slug": "optimasi-kecepatan-website-bandung",
+          "city": "Bandung",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Jangan Coba Optimasi Kecepatan Website di Pasar Surabaya Sebelum Membaca Investigasi Ini",
+          "slug": "optimasi-kecepatan-website-surabaya",
+          "city": "Surabaya",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Realita Optimasi Kecepatan Website di Yogyakarta: Uang Habis Tanpa Hasil (dan Solusi Konkretnya)",
+          "slug": "optimasi-kecepatan-website-yogyakarta",
+          "city": "Yogyakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Strategi Optimasi Kecepatan Website vs Konvensional di Medan: Siapa yang Punah Duluan?",
+          "slug": "optimasi-kecepatan-website-medan",
+          "city": "Medan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Blueprint Rahasia Optimasi Kecepatan Website di Makassar: Dominasi Saat Kompetitor Tertidur",
+          "slug": "optimasi-kecepatan-website-makassar",
+          "city": "Makassar",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Kapan Saat yang Tepat Berhenti Membakar Uang untuk Optimasi Kecepatan Website di Semarang?",
+          "slug": "optimasi-kecepatan-website-semarang",
+          "city": "Semarang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Studi Kasus: Kebocoran Anggaran Akibat Kesalahan Optimasi Kecepatan Website di Palembang",
+          "slug": "optimasi-kecepatan-website-palembang",
+          "city": "Palembang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Apakah Optimasi Kecepatan Website di Balikpapan Benar Menguntungkan, atau Sekadar Tren Sesaat?",
+          "slug": "optimasi-kecepatan-website-balikpapan",
+          "city": "Balikpapan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Eksploitasi Celah Pasar Denpasar Menggunakan Strategi Optimasi Kecepatan Website Anti-Boncos",
+          "slug": "optimasi-kecepatan-website-denpasar",
+          "city": "Denpasar",
+          "intent": "informational",
+          "wordTarget": 1500
+        }
+      ]
+    },
+    {
+      "pillar": "Algoritma Google",
+      "keyword": "Algoritma Google",
+      "clusters": [
+        {
+          "title": "Mengapa Eksekusi Algoritma Google di Jakarta Sering Berujung Gagal? (Analisis Kritis)",
+          "slug": "algoritma-google-jakarta",
+          "city": "Jakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Membongkar Fakta Pahit: Rahasia Algoritma Google di Bandung yang Disembunyikan Agency",
+          "slug": "algoritma-google-bandung",
+          "city": "Bandung",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Jangan Coba Algoritma Google di Pasar Surabaya Sebelum Membaca Investigasi Ini",
+          "slug": "algoritma-google-surabaya",
+          "city": "Surabaya",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Realita Algoritma Google di Yogyakarta: Uang Habis Tanpa Hasil (dan Solusi Konkretnya)",
+          "slug": "algoritma-google-yogyakarta",
+          "city": "Yogyakarta",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Strategi Algoritma Google vs Konvensional di Medan: Siapa yang Punah Duluan?",
+          "slug": "algoritma-google-medan",
+          "city": "Medan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Blueprint Rahasia Algoritma Google di Makassar: Dominasi Saat Kompetitor Tertidur",
+          "slug": "algoritma-google-makassar",
+          "city": "Makassar",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Kapan Saat yang Tepat Berhenti Membakar Uang untuk Algoritma Google di Semarang?",
+          "slug": "algoritma-google-semarang",
+          "city": "Semarang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Studi Kasus: Kebocoran Anggaran Akibat Kesalahan Algoritma Google di Palembang",
+          "slug": "algoritma-google-palembang",
+          "city": "Palembang",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Apakah Algoritma Google di Balikpapan Benar Menguntungkan, atau Sekadar Tren Sesaat?",
+          "slug": "algoritma-google-balikpapan",
+          "city": "Balikpapan",
+          "intent": "informational",
+          "wordTarget": 1500
+        },
+        {
+          "title": "Eksploitasi Celah Pasar Denpasar Menggunakan Strategi Algoritma Google Anti-Boncos",
+          "slug": "algoritma-google-denpasar",
+          "city": "Denpasar",
+          "intent": "informational",
+          "wordTarget": 1500
+        }
+      ]
+    }
+  ]
+}
