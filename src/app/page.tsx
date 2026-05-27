@@ -19,7 +19,7 @@ const TIERS = [
     period: '/bulan',
     desc: 'Bangun otoritas digital dan personal branding yang tak terkalahkan.',
     icon: Rocket,
-    color: 'text-yellow-500',
+    color: 'text-amber-500/80',
     features: [
       'Audit Otoritas Personal',
       'Riset Kata Kunci Niche',
@@ -36,7 +36,7 @@ const TIERS = [
     period: '/bulan',
     desc: 'Untuk pemilik ecommerce yang bosan dengan potongan marketplace.',
     icon: Cpu,
-    color: 'text-amber-500',
+    color: 'text-amber-400',
     features: [
       'Audit Arsitektur Konversi',
       'Sinkronisasi GSC/GA4 Harian',
@@ -54,7 +54,7 @@ const TIERS = [
     period: '/bulan',
     desc: 'Dominasi mutlak untuk jaringan enterprise volume tinggi.',
     icon: Crown,
-    color: 'text-amber-600',
+    color: 'text-amber-500',
     features: [
       'Node Sovereign Terdedikasi',
       'Optimasi AI Search (AEO/GEO)',
@@ -63,12 +63,15 @@ const TIERS = [
       'Concierge VIP 24/7',
       'Laporan Whitelabel'
     ],
-    cta: 'Jadi Berdaulat',
-    popular: false
+    cta: 'Konsultasi VIP (WhatsApp)',
+    popular: false,
+    isEnterprise: true,
+    scarcity: 'Sisa kuota: 2 slot bulan ini'
   }
 ];
 
 interface AuditResult {
+  url: string;
   finalScore: number;
   seoScore: number;
   aeoScore: number;
@@ -84,9 +87,14 @@ export default function LandingPage() {
   
   // Test Website Flow State
   const [testUrl, setTestUrl] = useState("");
-  const [testState, setTestState] = useState<"idle" | "scanning" | "result" | "error">("idle");
+  const [testState, setTestState] = useState<"idle" | "scanning" | "lead_capture" | "result" | "error">("idle");
   const [auditResult, setAuditResult] = useState<AuditResult | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  
+  // Lead Capture State
+  const [leadName, setLeadName] = useState("");
+  const [leadWa, setLeadWa] = useState("");
+  const [isSubmittingLead, setIsSubmittingLead] = useState(false);
 
   const handleTestWebsite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,11 +123,30 @@ export default function LandingPage() {
       }
       
       setAuditResult(data.data);
-      setTestState("result");
+      // Lead capture wall instead of direct result!
+      setTestState("lead_capture");
       
     } catch (err: any) {
       setErrorMessage(err.message);
       setTestState("error");
+    }
+  };
+
+  const handleSubmitLead = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!leadName || !leadWa) return;
+    
+    setIsSubmittingLead(true);
+    try {
+      // Simulate API call to save lead
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('Lead captured:', { name: leadName, wa: leadWa, url: testUrl });
+      
+      setTestState("result");
+    } catch (err) {
+      console.error("Failed to capture lead", err);
+    } finally {
+      setIsSubmittingLead(false);
     }
   };
 
@@ -170,9 +197,9 @@ export default function LandingPage() {
             </p>
           </Link>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors">Fitur</a>
-            <a href="#pricing" className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors">Harga</a>
-            <Link href="/dashboard" className="px-5 py-2 rounded-full bg-zinc-900 border border-zinc-800 text-xs font-semibold hover:border-yellow-500/50 hover:text-yellow-500 transition-all">
+            <a href="#features" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors">Fitur</a>
+            <a href="#pricing" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors">Harga</a>
+            <Link href="/dashboard" className="px-5 py-2 rounded-full bg-zinc-900 border border-zinc-800 text-[10px] font-black uppercase tracking-[0.2em] hover:border-yellow-500/50 hover:text-yellow-500 transition-all shadow-[0_0_15px_rgba(234,179,8,0.05)]">
               Dashboard
             </Link>
           </div>
@@ -190,20 +217,20 @@ export default function LandingPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 mb-8"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 mb-8 shadow-2xl"
           >
-            <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-            <span className="text-xs font-semibold text-zinc-300">Ubah website Anda menjadi mesin profit</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
+            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Pusat Komando Akuisisi</span>
           </motion.div>
           
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1]"
+            className="text-5xl md:text-7xl font-black tracking-tighter mb-8 leading-[1.1] text-white"
           >
             Website Anda <br />
-            <span className="text-zinc-500">Hanya Jadi Beban Biaya Server?</span>
+            <span className="text-zinc-600">Hanya Jadi Beban Biaya Server?</span>
           </motion.h1>
 
           <motion.p
@@ -261,65 +288,106 @@ export default function LandingPage() {
               </div>
             )}
 
+            {testState === "lead_capture" && (
+              <div className="p-8 bg-zinc-900/90 border border-amber-500/20 rounded-3xl backdrop-blur-xl text-left shadow-[0_0_40px_rgba(245,158,11,0.05)] animate-in fade-in zoom-in duration-500">
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-amber-500/10 border border-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Check className="w-8 h-8 text-amber-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Audit Selesai!</h3>
+                  <p className="text-zinc-400 text-sm">Kami menemukan <strong className="text-amber-400 font-bold">celah potensial</strong> di <span className="text-white font-semibold">{testUrl}</span>. Masukkan WhatsApp Anda untuk melihat skor dan menerima Laporan PDF Eksekutif.</p>
+                </div>
+
+                <form onSubmit={handleSubmitLead} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-2">Nama Lengkap</label>
+                    <input 
+                      type="text" 
+                      value={leadName}
+                      onChange={(e) => setLeadName(e.target.value)}
+                      placeholder="John Doe" 
+                      className="w-full bg-zinc-950 border border-white/5 outline-none text-white px-4 py-3 rounded-xl focus:border-amber-500 transition-colors placeholder:text-zinc-700"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-2">Nomor WhatsApp</label>
+                    <input 
+                      type="tel" 
+                      value={leadWa}
+                      onChange={(e) => setLeadWa(e.target.value)}
+                      placeholder="+62 812..." 
+                      className="w-full bg-zinc-950 border border-white/5 outline-none text-white px-4 py-3 rounded-xl focus:border-amber-500 transition-colors placeholder:text-zinc-700"
+                      required
+                    />
+                  </div>
+                  <button type="submit" disabled={isSubmittingLead} className="w-full py-4 mt-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold uppercase tracking-wider text-xs hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(245,158,11,0.2)]">
+                    {isSubmittingLead ? <div className="w-5 h-5 border-2 border-zinc-950/20 border-t-zinc-950 rounded-full animate-spin" /> : 'Buka Kunci Laporan Audit'} <Lock className="w-4 h-4" />
+                  </button>
+                </form>
+                <p className="text-[10px] text-center text-zinc-600 mt-6 font-medium">Data Anda aman 100%. Kami hanya akan mengirimkan PDF hasil audit ke WhatsApp ini.</p>
+              </div>
+            )}
+
             {testState === "result" && auditResult && (
-              <div className="p-8 bg-[#1a0f0f] border border-red-900/50 rounded-3xl backdrop-blur-xl text-left shadow-[0_0_50px_rgba(220,38,38,0.15)] animate-in fade-in zoom-in duration-500">
+              <div className="p-8 bg-zinc-900/95 border border-amber-500/20 rounded-3xl backdrop-blur-xl text-left shadow-[0_0_50px_rgba(245,158,11,0.05)] animate-in fade-in zoom-in duration-500">
                 <div className="flex flex-col gap-6">
                   
                   {/* Global Score Header */}
                   <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 rounded-2xl bg-red-950 border border-red-900 flex items-center justify-center shrink-0 shadow-inner">
-                      <span className="text-2xl font-bold text-red-500">{auditResult.finalScore}</span>
+                    <div className="w-16 h-16 rounded-2xl bg-zinc-950 border border-amber-500/30 flex items-center justify-center shrink-0 shadow-inner">
+                      <span className="text-2xl font-black text-amber-400">{auditResult.finalScore}</span>
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <AlertTriangle className="w-5 h-5 text-red-500" />
-                        <h3 className="text-lg font-black text-red-500 uppercase tracking-wide">KRITIS: Koma Digital</h3>
+                        <Crown className="w-5 h-5 text-amber-400 animate-pulse" />
+                        <h3 className="text-lg font-bold text-white uppercase tracking-wider">Hasil Audit Arsitektur</h3>
                       </div>
-                      <p className="text-zinc-300 text-sm leading-relaxed">
-                        AI (ChatGPT/Perplexity) <strong className="text-red-400">menolak merekomendasikan</strong> bisnis Anda di <strong className="text-white">{auditResult.url}</strong>. Jika tidak diperbaiki, Anda akan kehilangan 80% calon pembeli organik bulan ini.
+                      <p className="text-zinc-400 text-sm leading-relaxed">
+                        Ditemukan <strong className="text-amber-400 font-bold">celah kebocoran konversi</strong> pada domain <strong className="text-white font-semibold">{auditResult.url}</strong>. ChatGPT & mesin pencari AI lainnya berpotensi melewatkan produk Anda jika arsitektur data tidak segera dioptimalkan.
                       </p>
                     </div>
                   </div>
 
                   {/* 4 Pillars Score */}
-                  <div className="grid grid-cols-4 gap-4 border-y border-red-900/30 py-4">
+                  <div className="grid grid-cols-4 gap-4 border-y border-zinc-800/80 py-4">
                     <div className="text-center">
                       <p className="text-xs font-semibold text-zinc-500 mb-1">SEO Score</p>
-                      <p className={`text-xl md:text-2xl font-bold ${auditResult.seoScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.seoScore}</p>
+                      <p className={`text-xl md:text-2xl font-bold ${auditResult.seoScore > 70 ? 'text-amber-400' : 'text-zinc-400'}`}>{auditResult.seoScore}</p>
                     </div>
                     <div className="text-center border-l border-zinc-800/50">
                       <p className="text-xs font-semibold text-zinc-500 mb-1">CWV Score</p>
-                      <p className={`text-xl md:text-2xl font-bold ${auditResult.cwvScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.cwvScore}</p>
+                      <p className={`text-xl md:text-2xl font-bold ${auditResult.cwvScore > 70 ? 'text-amber-400' : 'text-zinc-400'}`}>{auditResult.cwvScore}</p>
                     </div>
                     <div className="text-center border-l border-zinc-800/50">
                       <p className="text-xs font-semibold text-zinc-500 mb-1">AEO Score</p>
-                      <p className={`text-xl md:text-2xl font-bold ${auditResult.aeoScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.aeoScore}</p>
+                      <p className={`text-xl md:text-2xl font-bold ${auditResult.aeoScore > 70 ? 'text-amber-400' : 'text-zinc-400'}`}>{auditResult.aeoScore}</p>
                     </div>
                     <div className="text-center border-l border-zinc-800/50">
                       <p className="text-xs font-semibold text-zinc-500 mb-1">GEO Score</p>
-                      <p className={`text-xl md:text-2xl font-bold ${auditResult.geoScore > 70 ? 'text-green-500' : 'text-red-500'}`}>{auditResult.geoScore}</p>
+                      <p className={`text-xl md:text-2xl font-bold ${auditResult.geoScore > 70 ? 'text-amber-400' : 'text-zinc-400'}`}>{auditResult.geoScore}</p>
                     </div>
                   </div>
 
                   {/* Analytics Status */}
                   <div className="flex gap-4 mb-2">
-                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${auditResult.hasGA ? 'bg-green-500/10 border-green-500/30 text-green-500' : 'bg-red-500/10 border-red-500/30 text-red-500'}`}>
-                       {auditResult.hasGA ? <Check className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${auditResult.hasGA ? 'bg-amber-500/5 border-amber-500/20 text-amber-400' : 'bg-zinc-900 border-zinc-800 text-zinc-500'}`}>
+                       {auditResult.hasGA ? <Check className="w-3 h-3 text-amber-400" /> : <XCircle className="w-3 h-3 text-zinc-600" />}
                        <span className="text-xs font-bold">Google Analytics (GA4)</span>
                     </div>
-                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${auditResult.hasGSC ? 'bg-green-500/10 border-green-500/30 text-green-500' : 'bg-red-500/10 border-red-500/30 text-red-500'}`}>
-                       {auditResult.hasGSC ? <Check className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${auditResult.hasGSC ? 'bg-amber-500/5 border-amber-500/20 text-amber-400' : 'bg-zinc-900 border-zinc-800 text-zinc-500'}`}>
+                       {auditResult.hasGSC ? <Check className="w-3 h-3 text-amber-400" /> : <XCircle className="w-3 h-3 text-zinc-600" />}
                        <span className="text-xs font-bold">Search Console (GSC)</span>
                     </div>
                   </div>
 
                   {/* Issues List */}
                   <div>
-                    <h4 className="text-sm font-semibold text-white mb-3">Temuan Utama:</h4>
+                    <h4 className="text-sm font-semibold text-white mb-3">Rekomendasi Perbaikan Prioritas:</h4>
                     <ul className="space-y-3 mb-6 text-sm font-medium text-zinc-400">
                       {auditResult.issues.map((issue, idx) => (
                         <li key={idx} className="flex items-start gap-2">
-                          <XCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" /> 
+                          <Check className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" /> 
                           <span>{issue}</span>
                         </li>
                       ))}
@@ -328,7 +396,7 @@ export default function LandingPage() {
 
                   <button 
                     onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white font-black uppercase tracking-wide hover:opacity-90 transition-all shadow-[0_10px_30px_rgba(220,38,38,0.3)]"
+                    className="w-full py-4 rounded-xl bg-amber-500 text-zinc-950 font-bold uppercase tracking-wider text-xs hover:bg-amber-400 transition-all shadow-[0_0_30px_rgba(245,158,11,0.2)]"
                   >
                     Selamatkan Bisnis Saya Sekarang
                   </button>
@@ -438,16 +506,16 @@ export default function LandingPage() {
                <div className="flex-1 flex flex-col justify-end gap-2 h-full relative z-10">
                   <motion.div 
                     initial={{ height: 0 }} whileInView={{ height: '40%' }} viewport={{ once: true }}
-                    className="w-full bg-red-500/20 border-t-2 border-red-500/50 rounded-t-lg flex items-center justify-center"
+                    className="w-full bg-zinc-800/40 border-t-2 border-zinc-700/60 rounded-t-lg flex items-center justify-center"
                   >
-                     <span className="text-xs font-bold text-red-500 -rotate-90">ADS</span>
+                     <span className="text-xs font-bold text-zinc-500 -rotate-90">ADS</span>
                   </motion.div>
                   <p className="text-[10px] text-center font-semibold text-zinc-500 uppercase tracking-wider">Bulan 1</p>
                </div>
                <div className="flex-1 flex flex-col justify-end gap-2 h-full relative z-10">
                   <motion.div 
                     initial={{ height: 0 }} whileInView={{ height: '40%' }} viewport={{ once: true }}
-                    className="w-full bg-red-500/20 border-t-2 border-red-500/50 rounded-t-lg"
+                    className="w-full bg-zinc-800/40 border-t-2 border-zinc-700/60 rounded-t-lg"
                   />
                   <p className="text-[10px] text-center font-semibold text-zinc-500 uppercase tracking-wider">Bulan 6</p>
                </div>
@@ -455,15 +523,15 @@ export default function LandingPage() {
                   <motion.div 
                     initial={{ height: 0 }} whileInView={{ height: '80%' }} viewport={{ once: true }}
                     transition={{ delay: 0.5 }}
-                    className="w-full bg-yellow-500/30 border-t-2 border-yellow-500 rounded-t-lg flex items-center justify-center shadow-[0_-20px_40px_rgba(234,179,8,0.1)]"
+                    className="w-full bg-amber-500/10 border-t-2 border-amber-500 rounded-t-lg flex items-center justify-center shadow-[0_-20px_40px_rgba(245,158,11,0.05)]"
                   >
-                     <span className="text-xs font-bold text-yellow-500 -rotate-90">ORGANIK</span>
+                     <span className="text-xs font-bold text-amber-400 -rotate-90">ORGANIK</span>
                   </motion.div>
                   <p className="text-[10px] text-center font-semibold text-zinc-500 uppercase tracking-wider">Bulan 12</p>
                </div>
                
                <div className="absolute top-8 left-8 p-4 bg-[#090b10]/90 backdrop-blur border border-zinc-800 rounded-xl">
-                  <p className="text-[10px] font-semibold text-yellow-500 uppercase tracking-widest mb-1">Pertumbuhan Kumulatif</p>
+                  <p className="text-[10px] font-semibold text-amber-400 uppercase tracking-widest mb-1">Pertumbuhan Kumulatif</p>
                   <p className="text-2xl font-bold text-white">+440%</p>
                </div>
             </div>
@@ -501,9 +569,9 @@ export default function LandingPage() {
         
         <div className="max-w-7xl mx-auto px-8 relative z-10">
           <div className="text-center mb-20 max-w-3xl mx-auto">
-            <h2 className="text-sm font-black text-yellow-500 mb-4 uppercase tracking-widest">Sovereign Arsenal</h2>
-            <h3 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-              Bukan Sekadar Alat, Ini <span className="text-zinc-500">Senjata Pemusnah Massal Kompetitor.</span>
+            <h2 className="text-[10px] font-black text-yellow-500 mb-4 uppercase tracking-[0.3em]">Sovereign Arsenal</h2>
+            <h3 className="text-4xl md:text-5xl font-black tracking-tighter mb-6 text-white">
+              Bukan Sekadar Alat, Ini <span className="text-zinc-600">Senjata Pemusnah Massal Kompetitor.</span>
             </h3>
             <p className="text-zinc-400 text-lg leading-relaxed">
               10 Fitur <strong className="text-white">Enterprise-grade</strong> yang didesain bukan untuk orang awam, melainkan untuk para dominator pasar yang siap mengambil alih pangsa pencarian secara brutal.
@@ -611,8 +679,8 @@ export default function LandingPage() {
       <section id="pricing" className="py-32 relative border-t border-white/5 bg-[#090b10]">
         <div className="max-w-6xl mx-auto px-8">
           <div className="text-center mb-20">
-            <h2 className="text-sm font-black text-yellow-500 mb-4">Arsitektur Harga</h2>
-            <h3 className="text-4xl font-bold tracking-tight">Pilih tingkat <span className="text-zinc-500">Dominasi</span> Anda</h3>
+            <h2 className="text-[10px] font-black text-yellow-500 mb-4 uppercase tracking-[0.3em]">Arsitektur Harga</h2>
+            <h3 className="text-4xl font-black tracking-tighter text-white">Pilih tingkat <span className="text-zinc-600">Dominasi</span> Anda</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -623,17 +691,19 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className={`p-8 rounded-3xl bg-[#131316] border transition-all relative group overflow-hidden ${
-                  tier.popular ? 'border-yellow-500/50 shadow-[0_0_50px_rgba(234,179,8,0.05)]' : 'border-zinc-800 hover:border-zinc-700'
+                className={`p-10 rounded-[2.5rem] bg-[#0c0f16]/60 border transition-all relative group overflow-hidden ${
+                  tier.popular 
+                  ? 'border-amber-500/40 shadow-[0_0_50px_rgba(245,158,11,0.06)] bg-white/[0.02] backdrop-blur-xl hover:border-amber-500/60' 
+                  : 'bg-white/[0.01] border border-white/5 hover:border-white/15 hover:bg-white/[0.03] backdrop-blur-xl'
                 }`}
               >
                 {tier.popular && (
-                  <div className="absolute top-0 right-0 px-4 py-1.5 bg-yellow-500 text-black text-[10px] font-bold uppercase tracking-wider rounded-bl-xl">
+                  <div className="absolute top-0 right-0 px-4 py-1.5 bg-amber-500 text-zinc-950 text-[10px] font-black uppercase tracking-widest rounded-bl-xl">
                     Paling Strategis
                   </div>
                 )}
                 
-                <div className={`w-12 h-12 rounded-xl bg-[#090b10] border border-zinc-800 flex items-center justify-center mb-6 ${tier.color}`}>
+                <div className={`w-12 h-12 rounded-xl bg-zinc-950 border border-white/10 flex items-center justify-center mb-6 ${tier.color}`}>
                   <tier.icon className="w-6 h-6" />
                 </div>
 
@@ -648,23 +718,37 @@ export default function LandingPage() {
                 <div className="space-y-4 mb-10">
                   {tier.features.map(f => (
                     <div key={f} className="flex items-center gap-3 text-sm text-zinc-300">
-                      <Check className={`w-4 h-4 shrink-0 ${tier.color}`} />
+                      <Check className="w-4 h-4 shrink-0 text-amber-400" />
                       <span>{f}</span>
                     </div>
                   ))}
                 </div>
 
+                {tier.scarcity && (
+                  <div className="mb-4 flex items-center gap-2 justify-center py-2.5 px-4 rounded-xl bg-amber-500/5 border border-amber-500/10 text-amber-300/80 text-xs font-semibold uppercase tracking-wider">
+                    <AlertTriangle className="w-4 h-4 text-amber-400" />
+                    {tier.scarcity}
+                  </div>
+                )}
+
                 <button 
-                  onClick={() => handleCheckout(tier.name)}
+                  onClick={() => {
+                    if (tier.isEnterprise) {
+                      const text = encodeURIComponent("Halo Tim SEOsuite, saya tertarik dengan paket Sovereign dan ingin konsultasi arsitektur Enterprise untuk bisnis saya.");
+                      window.open(`https://wa.me/6281234567890?text=${text}`, '_blank');
+                    } else {
+                      handleCheckout(tier.name);
+                    }
+                  }}
                   disabled={loading === tier.name}
-                  className={`w-full py-3.5 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 ${
+                  className={`w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 border ${
                     tier.popular 
-                    ? 'bg-yellow-500 text-black hover:bg-yellow-400' 
-                    : 'bg-zinc-800 text-white hover:bg-zinc-700'
+                    ? 'bg-amber-500 text-zinc-950 hover:bg-amber-400 border-transparent shadow-[0_0_30px_rgba(245,158,11,0.2)]' 
+                    : 'bg-zinc-900/80 hover:bg-zinc-800/80 border-white/10 text-zinc-300 hover:text-white'
                   }`}
                 >
                   {loading === tier.name ? (
-                    <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-zinc-950/20 border-t-zinc-950 rounded-full animate-spin" />
                   ) : (
                     tier.cta
                   )}
