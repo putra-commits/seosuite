@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard, Search, TrendingUp, ShieldCheck, 
-  Unlink, MapPin, Zap, Bot, Layers, Trash2, 
-  ChevronRight, Binary, Filter
+  LayoutDashboard, Search, TrendingUp, ShieldCheck,
+  Unlink, MapPin, Zap, Bot, Layers, Trash2,
+  ChevronRight, Binary, Filter, Activity
 } from 'lucide-react';
 
 const MENU = [
@@ -24,6 +24,7 @@ const MENU = [
       { name: 'Integritas Konten', href: '/content-audit', icon: ShieldCheck },
       { name: 'Audit Link', href: '/links', icon: Unlink },
       { name: 'Audit Funnel', href: '/funnel', icon: Filter },
+      { name: 'Audit Gratis ↗', href: '/cek', icon: Zap },
     ]
   },
   {
@@ -34,13 +35,21 @@ const MENU = [
       { name: 'Pilar Builder', href: '/pilar', icon: Layers },
       { name: 'Detektor Kanibal', href: '/cannibal', icon: Trash2 },
     ]
+  },
+  {
+    title: 'Engineering as Marketing',
+    items: [
+      { name: 'Before vs After', href: '/before-after', icon: TrendingUp },
+      { name: 'Benchmark', href: '/benchmark', icon: Activity },
+    ]
   }
 ];
 
 
 export default function Sidebar() {
   const pathname = usePathname();
-  if (pathname === '/') return null;
+  // Halaman publik: tidak tampilkan sidebar
+  if (pathname === '/' || pathname.startsWith('/cek') || pathname.startsWith('/hasil')) return null;
 
   return (
     <div className="w-64 h-screen border-r border-[#27272a] bg-[#09090b] flex flex-col sticky top-0 shrink-0">
