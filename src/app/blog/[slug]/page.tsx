@@ -9,20 +9,23 @@ import { ArrowLeft, BookOpen, Clock, Zap } from 'lucide-react';
 import Footer from '../../components/footer';
 
 export async function generateStaticParams() {
-  const files = fs.readdirSync(path.join(process.cwd(), 'src/content/blog'));
-  return files.map((filename) => ({
-    slug: filename.replace('.md', ''),
-  }));
+  try {
+    const dir = path.join(process.cwd(), 'src/content/blog');
+    if (!fs.existsSync(dir)) return [];
+    return fs.readdirSync(dir)
+      .filter(filename => filename.endsWith('.md') && fs.existsSync(path.join(dir, filename)))
+      .map((filename) => ({ slug: filename.replace('.md', '') }));
+  } catch {
+    return [];
+  }
 }
 
 function getPost(slug: string) {
-  const markdownWithMeta = fs.readFileSync(path.join(process.cwd(), 'src/content/blog', slug + '.md'), 'utf-8');
+  const filePath = path.join(process.cwd(), 'src/content/blog', slug + '.md');
+  if (!fs.existsSync(filePath)) throw new Error(`Post not found: ${slug}`);
+  const markdownWithMeta = fs.readFileSync(filePath, 'utf-8');
   const { data: frontmatter, content } = matter(markdownWithMeta);
-  return {
-    frontmatter,
-    slug,
-    content,
-  };
+  return { frontmatter, slug, content };
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -54,7 +57,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPost(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const { frontmatter, content } = getPost(params.slug);
+  let postData: ReturnType<typeof getPost>;
+  try {
+    postData = getPost(params.slug);
+  } catch {
+    return <div className="min-h-screen bg-[#090b10] text-white flex items-center justify-center"><p>Post tidak ditemukan.</p></div>;
+  }
+  const { frontmatter, content } = postData;
   const htmlContent = await marked.parse(content);
 
   const imagePath = frontmatter.image || '/images/blog/pilar1.png';
