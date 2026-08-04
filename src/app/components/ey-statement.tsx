@@ -1,0 +1,57 @@
+import Image from 'next/image';
+import type { SitePhoto } from '@/config/photos';
+
+/**
+ * Cetakan "statement break" EY: foto full-bleed + scrim DUA lapis,
+ * teks rata bawah. min-h WAJIB diulang di container, kalau tidak tinggi kolaps.
+ */
+export default function EyStatement({
+  id,
+  eyebrow,
+  headline,
+  body,
+  photo,
+  priority = false,
+}: {
+  id?: string;
+  eyebrow: string;
+  headline: string;
+  body?: string;
+  photo: SitePhoto;
+  priority?: boolean;
+}) {
+  return (
+    <section
+      id={id}
+      className="relative min-h-[42vh] scroll-mt-24 overflow-hidden sm:min-h-[50vh]"
+    >
+      <Image
+        src={photo.src}
+        alt={photo.alt}
+        fill
+        sizes="100vw"
+        priority={priority}
+        loading={priority ? undefined : 'lazy'}
+        className="object-cover object-center"
+      />
+      <div aria-hidden="true" className="absolute inset-0 bg-ink-900/60" />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-gradient-to-t from-ink-900 via-transparent to-ink-900/35"
+      />
+
+      <div className="relative mx-auto flex min-h-[42vh] max-w-6xl flex-col justify-end px-4 pb-12 pt-20 sm:min-h-[50vh] sm:px-6 sm:pb-14">
+        <span aria-hidden="true" className="ey-accent-bar mb-4 h-1 w-14 bg-accent" />
+        <p className="section-label text-accent">{eyebrow}</p>
+        <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+          {headline}
+        </h2>
+        {body && (
+          <p className="mt-3 line-clamp-2 max-w-lg text-sm leading-relaxed text-slate-200/90 sm:text-base">
+            {body}
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}

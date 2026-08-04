@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/admin/'],
     },
-    sitemap: 'https://seosuite.info/sitemap.xml',
+    sitemap: 'https://seo.adolo.id/sitemap.xml',
   };
 }

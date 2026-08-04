@@ -1,16 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { 
-  ArrowRight, Check, Zap, MapPin, 
-  Bot, BarChart3, Lock, Shield, 
-  Globe, ChevronRight, LayoutGrid,
-  Search, Target, Crown, Rocket, Cpu, Star, XCircle, AlertTriangle,
-  ShieldCheck, Binary, Unlink, Trash2, TrendingUp, Compass, Layers
+import {
+  ArrowRight, Check, MapPin, Bot, BarChart3, Lock, Shield,
+  Search, Crown, Rocket, Cpu, XCircle, AlertTriangle,
+  ShieldCheck, Binary, Unlink, Trash2, TrendingUp, Compass, Layers,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Footer from './components/footer';
+import SiteNav from './components/site-nav';
+import OutlineFrame from './components/outline-frame';
+import EyStatement from './components/ey-statement';
+import PhotoSplitSection from './components/photo-split-section';
+import GrowTogetherCta from './components/grow-together-cta';
+import WorkflowOrbit from './components/workflow-orbit';
+import { statementPhoto, comparisonPhoto, ctaPhoto } from '@/config/photos';
 
 const TIERS = [
   {
@@ -19,7 +23,6 @@ const TIERS = [
     period: '/bulan',
     desc: 'Bangun otoritas digital dan personal branding yang tak terkalahkan.',
     icon: Rocket,
-    color: 'text-amber-500/80',
     features: [
       'Audit Otoritas Personal',
       'Riset Kata Kunci Niche',
@@ -36,7 +39,6 @@ const TIERS = [
     period: '/bulan',
     desc: 'Untuk pemilik ecommerce yang bosan dengan potongan marketplace.',
     icon: Cpu,
-    color: 'text-amber-400',
     features: [
       'Audit Arsitektur Konversi',
       'Sinkronisasi GSC/GA4 Harian',
@@ -54,7 +56,6 @@ const TIERS = [
     period: '/bulan',
     desc: 'Dominasi mutlak untuk jaringan enterprise volume tinggi.',
     icon: Crown,
-    color: 'text-amber-500',
     features: [
       'Node Sovereign Terdedikasi',
       'Optimasi AI Search (AEO/GEO)',
@@ -84,13 +85,13 @@ interface AuditResult {
 
 export default function LandingPage() {
   const [loading, setLoading] = useState<string | null>(null);
-  
+
   // Test Website Flow State
   const [testUrl, setTestUrl] = useState("");
   const [testState, setTestState] = useState<"idle" | "scanning" | "lead_capture" | "result" | "error">("idle");
   const [auditResult, setAuditResult] = useState<AuditResult | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
-  
+
   // Lead Capture State
   const [leadName, setLeadName] = useState("");
   const [leadWa, setLeadWa] = useState("");
@@ -99,35 +100,35 @@ export default function LandingPage() {
   const handleTestWebsite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!testUrl) return;
-    
+
     let finalUrl = testUrl.trim();
     if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
       finalUrl = 'https://' + finalUrl;
       setTestUrl(finalUrl);
     }
-    
+
     setTestState("scanning");
     setErrorMessage("");
-    
+
     try {
       const res = await fetch('/api/audit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: finalUrl }),
       });
-      
+
       const data = await res.json();
-      
+
       if (!res.ok || data.error) {
         throw new Error(data.error || 'Gagal melakukan audit.');
       }
-      
+
       setAuditResult(data.data);
       // Lead capture wall instead of direct result!
       setTestState("lead_capture");
-      
-    } catch (err: any) {
-      setErrorMessage(err.message);
+
+    } catch (err: unknown) {
+      setErrorMessage(err instanceof Error ? err.message : 'Gagal melakukan audit.');
       setTestState("error");
     }
   };
@@ -135,13 +136,13 @@ export default function LandingPage() {
   const handleSubmitLead = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!leadName || !leadWa) return;
-    
+
     setIsSubmittingLead(true);
     try {
       // Simulate API call to save lead
       await new Promise(resolve => setTimeout(resolve, 1000));
       console.log('Lead captured:', { name: leadName, wa: leadWa, url: testUrl });
-      
+
       setTestState("result");
     } catch (err) {
       console.error("Failed to capture lead", err);
@@ -159,13 +160,13 @@ export default function LandingPage() {
         body: JSON.stringify({ tier: tierName }),
       });
       const data = await res.json();
-      
+
       if (data.token) {
-        // @ts-ignore
+        // @ts-expect-error — window.snap disuntik oleh skrip Midtrans Snap
         window.snap.pay(data.token, {
-          onSuccess: (result: any) => console.log('success', result),
-          onPending: (result: any) => console.log('pending', result),
-          onError: (result: any) => console.log('error', result),
+          onSuccess: (result: unknown) => console.log('success', result),
+          onPending: (result: unknown) => console.log('pending', result),
+          onError: (result: unknown) => console.log('error', result),
           onClose: () => console.log('customer closed the popup without finishing the payment'),
         });
       }
@@ -176,8 +177,10 @@ export default function LandingPage() {
     }
   };
 
+  const scrollToPricing = () => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+
   return (
-    <div className="min-h-screen bg-[#090b10] text-white selection:bg-yellow-500/30">
+    <div className="min-h-screen bg-ink text-white selection:bg-accent/20">
       {/* Midtrans Snap Script */}
       <script
         type="text/javascript"
@@ -185,505 +188,417 @@ export default function LandingPage() {
         data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
       />
 
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#090b10]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center shadow-lg shadow-yellow-500/20 group-hover:scale-105 transition-transform">
-              <Zap size={16} className="text-black fill-black" />
-            </div>
-            <p className="text-xl font-bold text-white tracking-tight">
-              SEO<span className="text-zinc-500 font-medium">suite</span>
+      {/* 1. Navigasi bersama */}
+      <SiteNav />
+
+      {/* 2. Hero + Widget Audit */}
+      <section className="hero-mesh relative flex min-h-[92vh] items-center overflow-hidden pb-20 pt-32">
+        <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center">
+          {/* Kolom kiri */}
+          <div>
+            <span aria-hidden="true" className="ey-accent-bar mb-5 h-1 w-14 bg-accent" />
+            <p className="section-label text-accent">Pusat Komando Akuisisi</p>
+            <h1 className="mt-3 font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl xl:text-6xl">
+              Website Anda <br />
+              <span className="text-gradient">Hanya Jadi Beban Biaya Server?</span>
+            </h1>
+            <p className="mt-5 line-clamp-3 max-w-xl text-base leading-relaxed text-slate-300">
+              Berhenti membakar uang untuk Paid Ads berdarah-darah. Biarkan AI kami membedah isi
+              perut website Anda dan membuktikan mengapa kompetitor mencuri 90% pelanggan Anda
+              setiap harinya.
             </p>
-          </Link>
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors">Fitur</a>
-            <a href="#pricing" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors">Harga</a>
-            <Link href="/dashboard" className="px-5 py-2 rounded-full bg-zinc-900 border border-zinc-800 text-[10px] font-black uppercase tracking-[0.2em] hover:border-yellow-500/50 hover:text-yellow-500 transition-all shadow-[0_0_15px_rgba(234,179,8,0.05)]">
-              Dashboard
-            </Link>
-          </div>
-        </div>
-      </nav>
 
-      {/* Hero */}
-      <section className="relative pt-40 pb-24 overflow-hidden min-h-[90vh] flex items-center">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-600/10 rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-600/10 rounded-full blur-[120px]" />
-        </div>
-
-        <div className="max-w-5xl mx-auto px-8 relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 mb-8 shadow-2xl"
-          >
-            <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
-            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Pusat Komando Akuisisi</span>
-          </motion.div>
-          
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-black tracking-tighter mb-8 leading-[1.1] text-white"
-          >
-            Website Anda <br />
-            <span className="text-zinc-600">Hanya Jadi Beban Biaya Server?</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-zinc-400 text-lg md:text-xl max-w-3xl mx-auto font-medium leading-relaxed mb-12"
-          >
-            Berhenti membakar uang untuk <span className="text-red-500 font-bold">Paid Ads</span> berdarah-darah. Biarkan AI kami membedah isi perut website Anda dan membuktikan <span className="text-yellow-500 font-bold">mengapa kompetitor mencuri 90% pelanggan Anda</span> setiap harinya.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3 }}
-            className="max-w-2xl mx-auto"
-          >
             {(testState === "idle" || testState === "error") && (
-              <form onSubmit={handleTestWebsite} className="flex flex-col sm:flex-row gap-4 p-2 bg-zinc-900/50 border border-zinc-800 rounded-2xl backdrop-blur-xl">
-                <input 
-                  type="text" 
+              <form onSubmit={handleTestWebsite} className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <input
+                  type="text"
                   value={testUrl}
                   onChange={(e) => setTestUrl(e.target.value)}
-                  placeholder="contoh: website-pesaing-anda.com" 
-                  className="flex-1 bg-transparent border-none outline-none text-white px-6 py-4 placeholder:text-zinc-600 font-medium"
+                  placeholder="contoh: website-pesaing-anda.com"
+                  className="flex-1 rounded-none border border-white/15 bg-black/40 px-5 py-3.5 text-white outline-none backdrop-blur-sm transition placeholder:text-slate-500 focus:border-accent/60"
                   required
                 />
-                <button type="submit" className="px-8 py-4 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-black hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-                  Bongkar Kebocoran Website <ArrowRight className="w-5 h-5" />
+                <button
+                  type="submit"
+                  className="flex items-center justify-center gap-2 rounded-none bg-accent px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-ink-900 transition hover:bg-accent-300"
+                >
+                  Bongkar Kebocoran Website <ArrowRight className="h-4 w-4" />
                 </button>
               </form>
             )}
 
-            {(testState === "idle" || testState === "error") && (
-              <motion.div 
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
-                className="mt-6 flex items-center justify-center gap-2 text-xs font-semibold text-zinc-500"
-              >
-                <Shield className="w-4 h-4 text-yellow-500" />
-                Lebih dari 4.200+ pemilik bisnis telah menyadari kebodohan strategi SEO mereka minggu ini.
-              </motion.div>
+            {testState === "error" && errorMessage && (
+              <p className="mt-4 text-sm font-medium text-red-400">{errorMessage}</p>
             )}
 
-            {testState === "error" && (
-              <p className="mt-4 text-sm text-red-500 font-medium">{errorMessage}</p>
-            )}
+            <p className="mt-4 flex items-center gap-2 text-xs text-slate-500">
+              <Shield className="h-4 w-4 shrink-0 text-accent" />
+              Lebih dari 4.200+ pemilik bisnis telah menyadari kebodohan strategi SEO mereka minggu ini.
+            </p>
+          </div>
+
+          {/* Kolom kanan — motif rectangle outline melayang */}
+          <OutlineFrame innerClassName="px-4 py-8 sm:px-8">
+            {(testState === "idle" || testState === "error") && <WorkflowOrbit />}
 
             {testState === "scanning" && (
-              <div className="p-12 bg-zinc-900/50 border border-zinc-800 rounded-3xl backdrop-blur-xl flex flex-col items-center justify-center gap-6">
-                <div className="w-12 h-12 border-4 border-yellow-500/20 border-t-yellow-500 rounded-full animate-spin" />
+              <div className="flex flex-col items-center justify-center gap-6 py-10">
+                <div className="h-12 w-12 animate-spin rounded-full border-4 border-accent/20 border-t-accent" />
                 <div className="space-y-2 text-center">
-                  <h3 className="text-xl font-bold text-white animate-pulse">Menganalisis Arsitektur AI...</h3>
-                  <p className="text-sm font-medium text-zinc-500">Membaca HTML dan mengevaluasi SEO, AEO, serta GEO.</p>
+                  <h3 className="font-display text-xl font-bold text-white">Menganalisis Arsitektur AI...</h3>
+                  <p className="text-sm text-slate-400">Membaca HTML dan mengevaluasi SEO, AEO, serta GEO.</p>
+                </div>
+                <div className="w-full space-y-3">
+                  <div className="h-3 w-full animate-pulse rounded bg-white/5" />
+                  <div className="h-3 w-4/5 animate-pulse rounded bg-white/5" />
+                  <div className="h-3 w-3/5 animate-pulse rounded bg-white/5" />
                 </div>
               </div>
             )}
 
             {testState === "lead_capture" && (
-              <div className="p-8 bg-zinc-900/90 border border-amber-500/20 rounded-3xl backdrop-blur-xl text-left shadow-[0_0_40px_rgba(245,158,11,0.05)] animate-in fade-in zoom-in duration-500">
-                <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-amber-500/10 border border-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Check className="w-8 h-8 text-amber-400" />
+              <div className="text-left">
+                <div className="mb-8 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-accent/30 bg-brand-600/15">
+                    <Check className="h-8 w-8 text-accent" />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Audit Selesai!</h3>
-                  <p className="text-zinc-400 text-sm">Kami menemukan <strong className="text-amber-400 font-bold">celah potensial</strong> di <span className="text-white font-semibold">{testUrl}</span>. Masukkan WhatsApp Anda untuk melihat skor dan menerima Laporan PDF Eksekutif.</p>
+                  <h3 className="font-display text-2xl font-bold text-white">Audit Selesai!</h3>
+                  <p className="mt-2 text-sm text-slate-400">
+                    Kami menemukan <strong className="font-bold text-accent">celah potensial</strong> di{' '}
+                    <span className="font-semibold text-white">{testUrl}</span>. Masukkan WhatsApp Anda
+                    untuk melihat skor dan menerima Laporan PDF Eksekutif.
+                  </p>
                 </div>
 
                 <form onSubmit={handleSubmitLead} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-2">Nama Lengkap</label>
-                    <input 
-                      type="text" 
+                    <label className="section-label mb-2 block text-slate-500">Nama Lengkap</label>
+                    <input
+                      type="text"
                       value={leadName}
                       onChange={(e) => setLeadName(e.target.value)}
-                      placeholder="John Doe" 
-                      className="w-full bg-zinc-950 border border-white/5 outline-none text-white px-4 py-3 rounded-xl focus:border-amber-500 transition-colors placeholder:text-zinc-700"
+                      placeholder="John Doe"
+                      className="w-full rounded-none border border-white/15 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-accent/60"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-2">Nomor WhatsApp</label>
-                    <input 
-                      type="tel" 
+                    <label className="section-label mb-2 block text-slate-500">Nomor WhatsApp</label>
+                    <input
+                      type="tel"
                       value={leadWa}
                       onChange={(e) => setLeadWa(e.target.value)}
-                      placeholder="+62 812..." 
-                      className="w-full bg-zinc-950 border border-white/5 outline-none text-white px-4 py-3 rounded-xl focus:border-amber-500 transition-colors placeholder:text-zinc-700"
+                      placeholder="+62 812..."
+                      className="w-full rounded-none border border-white/15 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-accent/60"
                       required
                     />
                   </div>
-                  <button type="submit" disabled={isSubmittingLead} className="w-full py-4 mt-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold uppercase tracking-wider text-xs hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(245,158,11,0.2)]">
-                    {isSubmittingLead ? <div className="w-5 h-5 border-2 border-zinc-950/20 border-t-zinc-950 rounded-full animate-spin" /> : 'Buka Kunci Laporan Audit'} <Lock className="w-4 h-4" />
+                  <button
+                    type="submit"
+                    disabled={isSubmittingLead}
+                    className="flex w-full items-center justify-center gap-2 rounded-none bg-accent py-3.5 text-sm font-bold uppercase tracking-wide text-ink-900 transition hover:bg-accent-300 disabled:opacity-70"
+                  >
+                    {isSubmittingLead
+                      ? <div className="h-5 w-5 animate-spin rounded-full border-2 border-ink-900/20 border-t-ink-900" />
+                      : 'Buka Kunci Laporan Audit'}
+                    <Lock className="h-4 w-4" />
                   </button>
                 </form>
-                <p className="text-[10px] text-center text-zinc-600 mt-6 font-medium">Data Anda aman 100%. Kami hanya akan mengirimkan PDF hasil audit ke WhatsApp ini.</p>
+                <p className="mt-6 text-center text-xs text-slate-500">
+                  Data Anda aman 100%. Kami hanya akan mengirimkan PDF hasil audit ke WhatsApp ini.
+                </p>
               </div>
             )}
 
             {testState === "result" && auditResult && (
-              <div className="p-8 bg-zinc-900/95 border border-amber-500/20 rounded-3xl backdrop-blur-xl text-left shadow-[0_0_50px_rgba(245,158,11,0.05)] animate-in fade-in zoom-in duration-500">
-                <div className="flex flex-col gap-6">
-                  
-                  {/* Global Score Header */}
-                  <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 rounded-2xl bg-zinc-950 border border-amber-500/30 flex items-center justify-center shrink-0 shadow-inner">
-                      <span className="text-2xl font-black text-amber-400">{auditResult.finalScore}</span>
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <Crown className="w-5 h-5 text-amber-400 animate-pulse" />
-                        <h3 className="text-lg font-bold text-white uppercase tracking-wider">Hasil Audit Arsitektur</h3>
-                      </div>
-                      <p className="text-zinc-400 text-sm leading-relaxed">
-                        Ditemukan <strong className="text-amber-400 font-bold">celah kebocoran konversi</strong> pada domain <strong className="text-white font-semibold">{auditResult.url}</strong>. ChatGPT & mesin pencari AI lainnya berpotensi melewatkan produk Anda jika arsitektur data tidak segera dioptimalkan.
-                      </p>
-                    </div>
+              <div className="flex flex-col gap-6 text-left">
+                <div className="flex items-center gap-5">
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-accent/30 bg-ink-900">
+                    <span className="font-display text-2xl font-bold text-accent">{auditResult.finalScore}</span>
                   </div>
-
-                  {/* 4 Pillars Score */}
-                  <div className="grid grid-cols-4 gap-4 border-y border-zinc-800/80 py-4">
-                    <div className="text-center">
-                      <p className="text-xs font-semibold text-zinc-500 mb-1">SEO Score</p>
-                      <p className={`text-xl md:text-2xl font-bold ${auditResult.seoScore > 70 ? 'text-amber-400' : 'text-zinc-400'}`}>{auditResult.seoScore}</p>
-                    </div>
-                    <div className="text-center border-l border-zinc-800/50">
-                      <p className="text-xs font-semibold text-zinc-500 mb-1">CWV Score</p>
-                      <p className={`text-xl md:text-2xl font-bold ${auditResult.cwvScore > 70 ? 'text-amber-400' : 'text-zinc-400'}`}>{auditResult.cwvScore}</p>
-                    </div>
-                    <div className="text-center border-l border-zinc-800/50">
-                      <p className="text-xs font-semibold text-zinc-500 mb-1">AEO Score</p>
-                      <p className={`text-xl md:text-2xl font-bold ${auditResult.aeoScore > 70 ? 'text-amber-400' : 'text-zinc-400'}`}>{auditResult.aeoScore}</p>
-                    </div>
-                    <div className="text-center border-l border-zinc-800/50">
-                      <p className="text-xs font-semibold text-zinc-500 mb-1">GEO Score</p>
-                      <p className={`text-xl md:text-2xl font-bold ${auditResult.geoScore > 70 ? 'text-amber-400' : 'text-zinc-400'}`}>{auditResult.geoScore}</p>
-                    </div>
-                  </div>
-
-                  {/* Analytics Status */}
-                  <div className="flex gap-4 mb-2">
-                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${auditResult.hasGA ? 'bg-amber-500/5 border-amber-500/20 text-amber-400' : 'bg-zinc-900 border-zinc-800 text-zinc-500'}`}>
-                       {auditResult.hasGA ? <Check className="w-3 h-3 text-amber-400" /> : <XCircle className="w-3 h-3 text-zinc-600" />}
-                       <span className="text-xs font-bold">Google Analytics (GA4)</span>
-                    </div>
-                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${auditResult.hasGSC ? 'bg-amber-500/5 border-amber-500/20 text-amber-400' : 'bg-zinc-900 border-zinc-800 text-zinc-500'}`}>
-                       {auditResult.hasGSC ? <Check className="w-3 h-3 text-amber-400" /> : <XCircle className="w-3 h-3 text-zinc-600" />}
-                       <span className="text-xs font-bold">Search Console (GSC)</span>
-                    </div>
-                  </div>
-
-                  {/* Issues List */}
                   <div>
-                    <h4 className="text-sm font-semibold text-white mb-3">Rekomendasi Perbaikan Prioritas:</h4>
-                    <ul className="space-y-3 mb-6 text-sm font-medium text-zinc-400">
-                      {auditResult.issues.map((issue, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <Check className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" /> 
-                          <span>{issue}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <h3 className="section-label text-accent">Hasil Audit Arsitektur</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-400">
+                      Ditemukan <strong className="font-bold text-accent">celah kebocoran konversi</strong> pada
+                      domain <strong className="font-semibold text-white">{auditResult.url}</strong>. ChatGPT
+                      &amp; mesin pencari AI lainnya berpotensi melewatkan produk Anda jika arsitektur data
+                      tidak segera dioptimalkan.
+                    </p>
                   </div>
-
-                  <button 
-                    onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="w-full py-4 rounded-xl bg-amber-500 text-zinc-950 font-bold uppercase tracking-wider text-xs hover:bg-amber-400 transition-all shadow-[0_0_30px_rgba(245,158,11,0.2)]"
-                  >
-                    Selamatkan Bisnis Saya Sekarang
-                  </button>
-                  <button 
-                    onClick={() => { setTestState("idle"); setTestUrl(""); }}
-                    className="w-full py-2 text-xs font-semibold text-zinc-500 hover:text-white text-center transition-colors"
-                  >
-                    Audit URL Lain
-                  </button>
                 </div>
+
+                <div className="grid grid-cols-2 gap-4 border-y border-white/10 py-4 sm:grid-cols-4">
+                  <div className="text-center">
+                    <p className="text-xs font-semibold text-slate-500">SEO Score</p>
+                    <p className={`font-display text-xl font-bold sm:text-2xl ${auditResult.seoScore > 70 ? 'text-accent' : 'text-slate-400'}`}>{auditResult.seoScore}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs font-semibold text-slate-500">CWV Score</p>
+                    <p className={`font-display text-xl font-bold sm:text-2xl ${auditResult.cwvScore > 70 ? 'text-accent' : 'text-slate-400'}`}>{auditResult.cwvScore}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs font-semibold text-slate-500">AEO Score</p>
+                    <p className={`font-display text-xl font-bold sm:text-2xl ${auditResult.aeoScore > 70 ? 'text-accent' : 'text-slate-400'}`}>{auditResult.aeoScore}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs font-semibold text-slate-500">GEO Score</p>
+                    <p className={`font-display text-xl font-bold sm:text-2xl ${auditResult.geoScore > 70 ? 'text-accent' : 'text-slate-400'}`}>{auditResult.geoScore}</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  <div className={`flex items-center gap-2 rounded-none border px-3 py-1.5 ${auditResult.hasGA ? 'border-accent/40 bg-brand-600/10 text-accent' : 'border-white/10 bg-white/5 text-slate-500'}`}>
+                    {auditResult.hasGA ? <Check className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
+                    <span className="text-xs font-bold">Google Analytics (GA4)</span>
+                  </div>
+                  <div className={`flex items-center gap-2 rounded-none border px-3 py-1.5 ${auditResult.hasGSC ? 'border-accent/40 bg-brand-600/10 text-accent' : 'border-white/10 bg-white/5 text-slate-500'}`}>
+                    {auditResult.hasGSC ? <Check className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
+                    <span className="text-xs font-bold">Search Console (GSC)</span>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="mb-3 text-sm font-semibold text-white">Rekomendasi Perbaikan Prioritas:</h4>
+                  <ul className="space-y-3 text-sm text-slate-400">
+                    {auditResult.issues.map((issue, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                        <span>{issue}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <button
+                  onClick={scrollToPricing}
+                  className="w-full rounded-none bg-accent py-3.5 text-sm font-bold uppercase tracking-wide text-ink-900 transition hover:bg-accent-300"
+                >
+                  Selamatkan Bisnis Saya Sekarang
+                </button>
+                <button
+                  onClick={() => { setTestState("idle"); setTestUrl(""); }}
+                  className="w-full text-xs font-semibold text-slate-500 transition hover:text-white"
+                >
+                  Audit URL Lain
+                </button>
               </div>
             )}
-          </motion.div>
+          </OutlineFrame>
         </div>
       </section>
 
-      {/* Pain Point Section */}
-      <section id="features" className="py-24 border-t border-white/5 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-          <div>
-            <h2 className="text-sm font-black text-yellow-500 mb-4">Masalah Tersembunyi</h2>
-            <h3 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight mb-6">
-              Website Anda <span className="text-zinc-500">Bisa Menghasilkan Lebih Banyak.</span>
-            </h3>
-            <p className="text-zinc-400 text-lg leading-relaxed mb-8">
-              Kenapa website kompetitor lebih ramai? Karena mereka menggunakan <span className="text-white font-semibold">Arsitektur Konversi</span>. SEO saja tidak cukup di era AI. Anda butuh optimasi yang membuat website Anda "berbicara" kepada mesin pencari AI dan mengarahkan trafik ke dompet Anda.
-            </p>
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50">
-                <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
-                  <BarChart3 className="w-5 h-5 text-yellow-500" />
+      {/* 3. Statement Break */}
+      <EyStatement
+        id="features"
+        eyebrow="Masalah Tersembunyi"
+        headline="Website Anda Bisa Menghasilkan Lebih Banyak."
+        body="Kenapa website kompetitor lebih ramai? Karena mereka menggunakan Arsitektur Konversi. SEO saja tidak cukup di era AI."
+        photo={statementPhoto}
+      />
+
+      {/* 4. Pain Grid + Kartu Siapa Yang Butuh */}
+      <section className="relative overflow-hidden bg-ink-900 py-16 sm:py-20">
+        <div aria-hidden="true" className="pointer-events-none absolute -left-24 top-0 h-72 w-72 rounded-full bg-brand-600/15 blur-3xl" />
+        <div aria-hidden="true" className="pointer-events-none absolute -right-16 bottom-0 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
+
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+          <p className="max-w-2xl text-base leading-relaxed text-slate-300">
+            Anda butuh optimasi yang membuat website Anda &quot;berbicara&quot; kepada mesin pencari AI
+            dan mengarahkan trafik ke dompet Anda.
+          </p>
+
+          <div className="mt-10 grid gap-6 lg:grid-cols-3">
+            <div className="card-lift rounded-2xl border border-white/10 bg-ink p-6 hover:border-accent/40">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-600/15 text-accent">
+                <BarChart3 className="h-5 w-5" />
+              </div>
+              <h3 className="mt-5 font-display text-2xl font-bold tracking-tight text-white">
+                Profit-Oriented SEO
+              </h3>
+              <p className="mt-2 text-[15px] leading-relaxed text-slate-400">
+                Bukan cuma cari ranking, tapi cari pembeli.
+              </p>
+            </div>
+
+            <div className="card-lift rounded-2xl border border-white/10 bg-ink p-6 hover:border-accent/40">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-600/15 text-accent">
+                <Bot className="h-5 w-5" />
+              </div>
+              <h3 className="mt-5 font-display text-2xl font-bold tracking-tight text-white">
+                AI Search Dominance (AEO &amp; GEO)
+              </h3>
+              <p className="mt-2 text-[15px] leading-relaxed text-slate-400">
+                Pastikan bisnis Anda jadi jawaban utama di ChatGPT &amp; Perplexity.
+              </p>
+            </div>
+
+            <OutlineFrame innerClassName="p-6">
+              <h3 className="font-display text-xl font-bold tracking-tight text-white">
+                Siapa Yang Butuh AdoloSEO?
+              </h3>
+              <div className="mt-5 space-y-4">
+                <div className="rounded-xl border border-white/10 bg-ink-800 p-4">
+                  <p className="section-label text-accent">Personal Branding</p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                    Bangun otoritas digital yang tak terbantahkan. Jadilah wajah pertama yang muncul
+                    saat nama atau bidang Anda dicari.
+                  </p>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">Profit-Oriented SEO</p>
-                  <p className="text-sm text-zinc-500">Bukan cuma cari ranking, tapi cari pembeli.</p>
+                <div className="rounded-xl border border-white/10 bg-ink-800 p-4">
+                  <p className="section-label text-accent">Pemilik Ecommerce</p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                    Bosan dengan potongan marketplace yang mencekik? Ubah toko online mandiri Anda
+                    menjadi mesin penjualan yang efisien.
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-amber-500" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">AI Search Dominance (AEO & GEO)</p>
-                  <p className="text-sm text-zinc-500">Pastikan bisnis Anda jadi jawaban utama di ChatGPT & Perplexity.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="relative">
-            <div className="p-8 rounded-3xl bg-[#131316] border border-zinc-800 shadow-2xl relative z-10">
-               <h4 className="text-xl font-bold text-white mb-6">Siapa Yang Butuh SEOsuite?</h4>
-               <div className="space-y-4">
-                  <div className="p-5 rounded-2xl bg-[#090b10] border border-zinc-800 group hover:border-yellow-500/50 transition-all">
-                     <p className="text-sm font-semibold text-yellow-500 mb-2">Personal Branding</p>
-                     <p className="text-sm text-zinc-400 leading-relaxed">Bangun otoritas digital yang tak terbantahkan. Jadilah wajah pertama yang muncul saat nama atau bidang Anda dicari.</p>
-                  </div>
-                  <div className="p-5 rounded-2xl bg-[#090b10] border border-zinc-800 group hover:border-amber-500/50 transition-all">
-                     <p className="text-sm font-semibold text-amber-500 mb-2">Pemilik Ecommerce</p>
-                     <p className="text-sm text-zinc-400 leading-relaxed">Bosan dengan potongan marketplace yang mencekik? Ubah toko online mandiri Anda menjadi mesin penjualan yang efisien.</p>
-                  </div>
-               </div>
-            </div>
-            <div className="absolute -top-10 -right-10 w-64 h-64 bg-yellow-600/5 rounded-full blur-3xl" />
+            </OutlineFrame>
           </div>
         </div>
       </section>
 
-      {/* Comparison & Research Section */}
-      <section className="py-24 bg-[#050505] relative overflow-hidden border-t border-white/5">
-        <div className="max-w-6xl mx-auto px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-24">
-            <div>
-               <h2 className="text-sm font-black text-yellow-500 mb-4">Salesman 24 Jam Non-Stop</h2>
-               <h3 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight mb-6 text-white">
-                 Jadikan ChatGPT, Gemini & Siri <span className="text-zinc-500">Sebagai Salesman Anda.</span>
-               </h3>
-               <p className="text-zinc-400 text-lg leading-relaxed mb-8">
-                 Berhenti membakar uang untuk <span className="text-red-400 font-semibold">Paid Ads</span>. Saatnya membangun aset digital yang bekerja 24 jam sehari, 7 hari seminggu tanpa minta naik gaji. Dengan menguasai <span className="text-yellow-500 font-semibold">SEO, AEO, dan GEO</span>, Anda merekrut algoritma terbesar di dunia untuk menjual produk Anda saat Anda sedang tidur.
-               </p>
-               
-               <div className="space-y-6">
-                  <div className="flex items-center gap-6">
-                     <div className="w-1.5 h-12 bg-red-500 rounded-full" />
-                     <div>
-                        <p className="text-base font-semibold text-white">Iklan Berbayar (Ads)</p>
-                        <p className="text-sm text-zinc-500">ROI Statis • Biaya Terus Meningkat • Berhenti Saat Saldo Habis</p>
-                     </div>
-                  </div>
-                  <div className="flex items-center gap-6">
-                     <div className="w-1.5 h-12 bg-yellow-500 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.5)]" />
-                     <div>
-                        <p className="text-base font-semibold text-white">Ekosistem SEO, AEO & GEO</p>
-                        <p className="text-sm text-zinc-500">ROI Eksponensial • Bekerja 24 Jam • Dipercaya oleh AI</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-
-            <div className="p-8 rounded-3xl bg-[#131316] border border-zinc-800 relative h-[360px] flex items-end gap-4">
-               {/* Mock Graph */}
-               <div className="absolute inset-0 p-8 flex flex-col justify-between pointer-events-none">
-                  <div className="border-t border-zinc-800 w-full opacity-10" />
-                  <div className="border-t border-zinc-800 w-full opacity-10" />
-                  <div className="border-t border-zinc-800 w-full opacity-20" />
-               </div>
-               
-               <div className="flex-1 flex flex-col justify-end gap-2 h-full relative z-10">
-                  <motion.div 
-                    initial={{ height: 0 }} whileInView={{ height: '40%' }} viewport={{ once: true }}
-                    className="w-full bg-zinc-800/40 border-t-2 border-zinc-700/60 rounded-t-lg flex items-center justify-center"
-                  >
-                     <span className="text-xs font-bold text-zinc-500 -rotate-90">ADS</span>
-                  </motion.div>
-                  <p className="text-[10px] text-center font-semibold text-zinc-500 uppercase tracking-wider">Bulan 1</p>
-               </div>
-               <div className="flex-1 flex flex-col justify-end gap-2 h-full relative z-10">
-                  <motion.div 
-                    initial={{ height: 0 }} whileInView={{ height: '40%' }} viewport={{ once: true }}
-                    className="w-full bg-zinc-800/40 border-t-2 border-zinc-700/60 rounded-t-lg"
-                  />
-                  <p className="text-[10px] text-center font-semibold text-zinc-500 uppercase tracking-wider">Bulan 6</p>
-               </div>
-               <div className="flex-1 flex flex-col justify-end gap-2 h-full relative z-10">
-                  <motion.div 
-                    initial={{ height: 0 }} whileInView={{ height: '80%' }} viewport={{ once: true }}
-                    transition={{ delay: 0.5 }}
-                    className="w-full bg-amber-500/10 border-t-2 border-amber-500 rounded-t-lg flex items-center justify-center shadow-[0_-20px_40px_rgba(245,158,11,0.05)]"
-                  >
-                     <span className="text-xs font-bold text-amber-400 -rotate-90">ORGANIK</span>
-                  </motion.div>
-                  <p className="text-[10px] text-center font-semibold text-zinc-500 uppercase tracking-wider">Bulan 12</p>
-               </div>
-               
-               <div className="absolute top-8 left-8 p-4 bg-[#090b10]/90 backdrop-blur border border-zinc-800 rounded-xl">
-                  <p className="text-[10px] font-semibold text-amber-400 uppercase tracking-widest mb-1">Pertumbuhan Kumulatif</p>
-                  <p className="text-2xl font-bold text-white">+440%</p>
-               </div>
-            </div>
-          </div>
-
-          {/* Trifecta Dominasi Digital */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 pt-16 border-t border-white/5">
-             <div className="space-y-3">
-                <div className="text-3xl font-bold text-white tracking-tight">1. SEO <span className="text-xs font-semibold text-yellow-500 uppercase tracking-widest block mt-2">Penakluk Google</span></div>
-                <p className="text-sm text-zinc-400 leading-relaxed pt-2">
-                  <strong className="text-white">Search Engine Optimization:</strong> Menempatkan website Anda di peringkat tertinggi pencarian tradisional Google, menyergap calon pembeli secara organik tepat saat mereka mencari solusi yang Anda tawarkan.
-                </p>
-             </div>
-             <div className="space-y-3">
-                <div className="text-3xl font-bold text-white tracking-tight">2. AEO <span className="text-xs font-semibold text-amber-500 uppercase tracking-widest block mt-2">Penakluk ChatGPT & Gemini</span></div>
-                <p className="text-sm text-zinc-400 leading-relaxed pt-2">
-                  <strong className="text-white">Answer Engine Optimization:</strong> Mengkondisikan konten Anda agar direkomendasikan sebagai "Jawaban Terbaik Mutlak" saat prospek bertanya kepada Chatbot AI pintar seputar industri Anda.
-                </p>
-             </div>
-             <div className="space-y-3">
-                <div className="text-3xl font-bold text-white tracking-tight">3. GEO <span className="text-xs font-semibold text-amber-600 uppercase tracking-widest block mt-2">Penakluk Siri & Voice AI</span></div>
-                <p className="text-sm text-zinc-400 leading-relaxed pt-2">
-                  <strong className="text-white">Generative Engine Optimization:</strong> Mengoptimasi keberadaan merek Anda agar menjadi rujukan utama saat pengguna melakukan pencarian melalui perangkat suara cerdas dan ekosistem pintar Apple.
-                </p>
-             </div>
-          </div>
-        </div>
-      </section>
-      {/* The Sovereign Arsenal Section */}
-      <section id="arsenal" className="py-24 relative border-t border-white/5 bg-[#090b10] overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-full pointer-events-none opacity-50">
-           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-yellow-600/10 rounded-full blur-[120px]" />
-           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-600/10 rounded-full blur-[120px]" />
-        </div>
-        
-        <div className="max-w-7xl mx-auto px-8 relative z-10">
-          <div className="text-center mb-20 max-w-3xl mx-auto">
-            <h2 className="text-[10px] font-black text-yellow-500 mb-4 uppercase tracking-[0.3em]">Sovereign Arsenal</h2>
-            <h3 className="text-4xl md:text-5xl font-black tracking-tighter mb-6 text-white">
-              Bukan Sekadar Alat, Ini <span className="text-zinc-600">Senjata Pemusnah Massal Kompetitor.</span>
-            </h3>
-            <p className="text-zinc-400 text-lg leading-relaxed">
-              10 Fitur <strong className="text-white">Enterprise-grade</strong> yang didesain bukan untuk orang awam, melainkan untuk para dominator pasar yang siap mengambil alih pangsa pencarian secara brutal.
+      {/* 5. Comparison Split — Ads vs Ekosistem Organik */}
+      <PhotoSplitSection
+        eyebrow="Salesman 24 Jam Non-Stop"
+        headline="Jadikan ChatGPT, Gemini & Siri Sebagai Salesman Anda."
+        body="Berhenti membakar uang untuk Paid Ads. Saatnya membangun aset digital yang bekerja 24 jam sehari, 7 hari seminggu tanpa minta naik gaji. Dengan menguasai SEO, AEO, dan GEO, Anda merekrut algoritma terbesar di dunia untuk menjual produk Anda saat Anda sedang tidur."
+        photo={comparisonPhoto}
+      >
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <div className="rounded-none border border-white/15 bg-black/35 p-4 backdrop-blur-sm">
+            <p className="text-base font-semibold text-white">Iklan Berbayar (Ads)</p>
+            <p className="mt-1 text-sm text-slate-400">
+              ROI Statis • Biaya Terus Meningkat • Berhenti Saat Saldo Habis
             </p>
           </div>
+          <div className="rounded-none border border-accent/40 bg-black/35 p-4 backdrop-blur-sm">
+            <p className="text-base font-semibold text-white">Ekosistem SEO, AEO &amp; GEO</p>
+            <p className="mt-1 text-sm text-accent">
+              ROI Eksponensial • Bekerja 24 Jam • Dipercaya oleh AI
+            </p>
+          </div>
+        </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            {/* Pillar 1: Pertahanan */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-8">
-                 <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center">
-                    <Shield className="w-5 h-5 text-zinc-400" />
-                 </div>
-                 <div>
-                    <h4 className="text-xl font-bold text-white">Integritas & Audit</h4>
-                    <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Pilar Pertahanan</p>
-                 </div>
+        {/* Mock bar-chart */}
+        <div className="relative mt-8 flex h-[260px] items-end gap-4 rounded-2xl border border-white/10 bg-ink-800 p-6">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex flex-col justify-between p-6">
+            <div className="w-full border-t border-white/10" />
+            <div className="w-full border-t border-white/10" />
+            <div className="w-full border-t border-white/10" />
+          </div>
+
+          <div className="relative z-10 flex h-full flex-1 flex-col justify-end gap-2">
+            <motion.div
+              initial={{ height: 0 }} whileInView={{ height: '40%' }} viewport={{ once: true }}
+              className="flex w-full items-center justify-center rounded-t-lg bg-slate-700"
+            >
+              <span className="-rotate-90 text-xs font-bold text-slate-300">ADS</span>
+            </motion.div>
+            <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-slate-500">Bulan 1</p>
+          </div>
+          <div className="relative z-10 flex h-full flex-1 flex-col justify-end gap-2">
+            <motion.div
+              initial={{ height: 0 }} whileInView={{ height: '40%' }} viewport={{ once: true }}
+              className="w-full rounded-t-lg bg-slate-700"
+            />
+            <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-slate-500">Bulan 6</p>
+          </div>
+          <div className="relative z-10 flex h-full flex-1 flex-col justify-end gap-2">
+            <motion.div
+              initial={{ height: 0 }} whileInView={{ height: '80%' }} viewport={{ once: true }}
+              transition={{ delay: 0.5 }}
+              className="flex w-full items-center justify-center rounded-t-lg bg-gradient-to-t from-brand-600 to-accent"
+            >
+              <span className="-rotate-90 text-xs font-bold text-ink-900">ORGANIK</span>
+            </motion.div>
+            <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-slate-500">Bulan 12</p>
+          </div>
+
+          <div className="absolute left-6 top-6 rounded-none border border-white/15 bg-black/50 p-3 backdrop-blur-sm">
+            <p className="section-label text-accent">Pertumbuhan Kumulatif</p>
+            <p className="font-display text-2xl font-bold text-white">+440%</p>
+          </div>
+        </div>
+      </PhotoSplitSection>
+
+      {/* 6. Trifecta SEO / AEO / GEO */}
+      <section className="bg-ink-900 py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              {
+                no: '01',
+                title: 'SEO — Penakluk Google',
+                desc: 'Search Engine Optimization: Menempatkan website Anda di peringkat tertinggi pencarian tradisional Google, menyergap calon pembeli secara organik tepat saat mereka mencari solusi yang Anda tawarkan.',
+              },
+              {
+                no: '02',
+                title: 'AEO — Penakluk ChatGPT & Gemini',
+                desc: 'Answer Engine Optimization: Mengkondisikan konten Anda agar direkomendasikan sebagai "Jawaban Terbaik Mutlak" saat prospek bertanya kepada Chatbot AI pintar seputar industri Anda.',
+              },
+              {
+                no: '03',
+                title: 'GEO — Penakluk Siri & Voice AI',
+                desc: 'Generative Engine Optimization: Mengoptimasi keberadaan merek Anda agar menjadi rujukan utama saat pengguna melakukan pencarian melalui perangkat suara cerdas dan ekosistem pintar Apple.',
+              },
+            ].map((item) => (
+              <div
+                key={item.no}
+                className="card-lift relative overflow-hidden rounded-2xl border border-white/10 bg-ink p-7 hover:border-accent/40"
+              >
+                <div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand-600/15 blur-3xl" />
+                <p className="relative font-mono text-sm font-semibold tracking-[0.25em] text-accent">{item.no}</p>
+                <h3 className="relative mt-4 font-display text-2xl font-bold tracking-tight text-white">
+                  {item.title}
+                </h3>
+                <p className="relative mt-3 text-[15px] leading-relaxed text-slate-400">{item.desc}</p>
               </div>
-              
-              <ArsenalCard 
-                icon={<Binary />} color="zinc"
-                title="Audit Teknis" 
-                desc="Temukan dan musnahkan error 404, masalah rendering JS, dan hambatan indexing yang mencegah Google merayapi situs Anda." 
-              />
-              <ArsenalCard 
-                icon={<ShieldCheck />} color="zinc"
-                title="Integritas Konten" 
-                desc="Pindai plagiarisme, keyword stuffing, dan thin content yang membuat algoritma Google menghukum ranking Anda." 
-              />
-              <ArsenalCard 
-                icon={<Unlink />} color="zinc"
-                title="Audit Link" 
-                desc="Deteksi backlink toxic dan spam yang diam-diam menyabotase otoritas domain Anda dari belakang." 
-              />
-              <ArsenalCard 
-                icon={<Trash2 />} color="zinc"
-                title="Detektor Kanibal" 
-                desc="Hentikan halaman web Anda sendiri saling membunuh dan berebut ranking untuk kata kunci yang sama." 
-              />
-            </div>
-
-            {/* Pillar 2: Intelejen */}
-            <div className="space-y-6 mt-12 lg:mt-0">
-              <div className="flex items-center gap-3 mb-8">
-                 <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-                    <Target className="w-5 h-5 text-amber-500" />
-                 </div>
-                 <div>
-                    <h4 className="text-xl font-bold text-white">Kecerdasan Pasar</h4>
-                    <p className="text-xs font-semibold text-amber-600 uppercase tracking-widest">Pilar Intelejen</p>
-                 </div>
-              </div>
-
-              <ArsenalCard 
-                icon={<Search />} color="amber"
-                title="Riset Kata Kunci" 
-                desc="Intai kata kunci 'Golden Ratio' ber-volume tinggi dengan persaingan rendah yang diabaikan kompetitor Anda." 
-              />
-              <ArsenalCard 
-                icon={<TrendingUp />} color="amber"
-                title="Analitik Trending" 
-                desc="Tunggangi gelombang pencarian real-time dan jadilah yang pertama mempublikasikan tren sebelum pasar menyadarinya." 
-              />
-              <ArsenalCard 
-                icon={<MapPin />} color="amber"
-                title="Sovereign Lokal" 
-                desc="Dominasi Google Maps dan pencarian 'Near Me' untuk memonopoli pelanggan di wilayah geografis Anda." 
-              />
-            </div>
-
-            {/* Pillar 3: Penyerangan */}
-            <div className="space-y-6 mt-12 lg:mt-0">
-              <div className="flex items-center gap-3 mb-8">
-                 <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
-                    <Rocket className="w-5 h-5 text-yellow-500" />
-                 </div>
-                 <div>
-                    <h4 className="text-xl font-bold text-white">Ekspansi & Konversi</h4>
-                    <p className="text-xs font-semibold text-yellow-600 uppercase tracking-widest">Pilar Penyerangan</p>
-                 </div>
-              </div>
-
-              <ArsenalCard 
-                icon={<Compass />} color="yellow"
-                title="Arsitektur Funnel" 
-                desc="Bedah dan tambal kebocoran di halaman konversi Anda. Ubah trafik dingin menjadi pembeli fanatik." 
-              />
-              <ArsenalCard 
-                icon={<Bot />} color="yellow"
-                title="AEO & GEO Readiness" 
-                desc="Injeksi sinyal AI ke dalam konten agar ChatGPT, Gemini, dan Siri selalu merekomendasikan produk Anda." 
-              />
-              <ArsenalCard 
-                icon={<Layers />} color="yellow"
-                title="Pilar Builder" 
-                desc="Bangun kluster topik raksasa (Silo Architecture) yang memaksa Google memandang Anda sebagai otoritas absolut." 
-              />
-            </div>
-
+            ))}
           </div>
         </div>
       </section>
-      {/* Pricing */}
-      <section id="pricing" className="py-32 relative border-t border-white/5 bg-[#090b10]">
-        <div className="max-w-6xl mx-auto px-8">
-          <div className="text-center mb-20">
-            <h2 className="text-[10px] font-black text-yellow-500 mb-4 uppercase tracking-[0.3em]">Arsitektur Harga</h2>
-            <h3 className="text-4xl font-black tracking-tighter text-white">Pilih tingkat <span className="text-zinc-600">Dominasi</span> Anda</h3>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* 7. Sovereign Arsenal */}
+      <section id="arsenal" className="scroll-mt-24 bg-ink py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <span aria-hidden="true" className="ey-accent-bar mb-4 h-1 w-14 bg-accent" />
+          <p className="section-label text-accent">Sovereign Arsenal</p>
+          <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">
+            Bukan Sekadar Alat, Ini Senjata Pemusnah Massal Kompetitor.
+          </h2>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-300">
+            10 Fitur Enterprise-grade yang didesain bukan untuk orang awam, melainkan untuk para
+            dominator pasar yang siap mengambil alih pangsa pencarian secara brutal.
+          </p>
+
+          {PILLARS.map((pillar) => (
+            <div key={pillar.label} className="mt-14">
+              <div className="hairline-gradient" />
+              <p className="section-label mt-5 text-slate-500">
+                {pillar.label} — {pillar.title}
+              </p>
+              <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {pillar.items.map((item) => (
+                  <ArsenalCard key={item.title} icon={item.icon} title={item.title} desc={item.desc} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 8. Pricing */}
+      <section id="pricing" className="relative scroll-mt-24 overflow-hidden bg-ink-900 py-16 sm:py-20">
+        <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/3 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-brand-600/12 blur-3xl" />
+
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+          <span aria-hidden="true" className="ey-accent-bar mb-4 h-1 w-14 bg-accent" />
+          <p className="section-label text-accent">Arsitektur Harga</p>
+          <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">
+            Pilih tingkat Dominasi Anda
+          </h2>
+
+          <div className="mt-12 grid gap-6 lg:grid-cols-3 lg:items-start">
             {TIERS.map((tier, i) => (
               <motion.div
                 key={tier.name}
@@ -691,64 +606,70 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className={`p-10 rounded-[2.5rem] bg-[#0c0f16]/60 border transition-all relative group overflow-hidden ${
-                  tier.popular 
-                  ? 'border-amber-500/40 shadow-[0_0_50px_rgba(245,158,11,0.06)] bg-white/[0.02] backdrop-blur-xl hover:border-amber-500/60' 
-                  : 'bg-white/[0.01] border border-white/5 hover:border-white/15 hover:bg-white/[0.03] backdrop-blur-xl'
+                className={`card-lift relative rounded-2xl border border-white/10 bg-ink p-7 ${
+                  tier.popular
+                    ? 'border-accent/50 shadow-[0_0_60px_-15px_rgba(34,211,238,0.35)] lg:-mt-4 lg:scale-[1.03]'
+                    : ''
                 }`}
               >
                 {tier.popular && (
-                  <div className="absolute top-0 right-0 px-4 py-1.5 bg-amber-500 text-zinc-950 text-[10px] font-black uppercase tracking-widest rounded-bl-xl">
+                  <div className="absolute -top-3 left-7 rounded-none bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-ink-900">
                     Paling Strategis
                   </div>
                 )}
-                
-                <div className={`w-12 h-12 rounded-xl bg-zinc-950 border border-white/10 flex items-center justify-center mb-6 ${tier.color}`}>
-                  <tier.icon className="w-6 h-6" />
+
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600/15 text-accent">
+                  <tier.icon className="h-6 w-6" />
                 </div>
 
-                <h4 className="text-xl font-bold text-white mb-2">{tier.name}</h4>
-                <p className="text-sm text-zinc-500 mb-8 leading-relaxed">{tier.desc}</p>
-                
-                <div className="flex items-baseline gap-1 mb-8">
-                  <span className="text-3xl font-bold text-white tracking-tight">{tier.price}</span>
-                  <span className="text-sm text-zinc-500 font-medium">{tier.period}</span>
+                <h3 className="mt-5 font-display text-xl font-bold text-white">{tier.name}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-400">{tier.desc}</p>
+
+                <div className="mt-6 flex items-baseline gap-1">
+                  <span className="font-display text-4xl font-bold text-white">{tier.price}</span>
+                  <span className="text-sm text-slate-500">{tier.period}</span>
                 </div>
 
-                <div className="space-y-4 mb-10">
+                <div className="mt-6 space-y-3">
                   {tier.features.map(f => (
-                    <div key={f} className="flex items-center gap-3 text-sm text-zinc-300">
-                      <Check className="w-4 h-4 shrink-0 text-amber-400" />
+                    <div key={f} className="flex items-center gap-3 text-sm text-slate-300">
+                      <Check className="h-4 w-4 shrink-0 text-accent" />
                       <span>{f}</span>
                     </div>
                   ))}
                 </div>
 
                 {tier.scarcity && (
-                  <div className="mb-4 flex items-center gap-2 justify-center py-2.5 px-4 rounded-xl bg-amber-500/5 border border-amber-500/10 text-amber-300/80 text-xs font-semibold uppercase tracking-wider">
-                    <AlertTriangle className="w-4 h-4 text-amber-400" />
+                  <p className="mt-6 flex items-center gap-2 text-xs text-slate-500">
+                    <AlertTriangle className="h-4 w-4 shrink-0 text-accent" />
                     {tier.scarcity}
-                  </div>
+                  </p>
                 )}
 
-                <button 
+                <button
                   onClick={() => {
                     if (tier.isEnterprise) {
-                      const text = encodeURIComponent("Halo Tim SEOsuite, saya tertarik dengan paket Sovereign dan ingin konsultasi arsitektur Enterprise untuk bisnis saya.");
+                      const text = encodeURIComponent("Halo Tim AdoloSEO, saya tertarik dengan paket Sovereign dan ingin konsultasi arsitektur Enterprise untuk bisnis saya.");
                       window.open(`https://wa.me/6281234567890?text=${text}`, '_blank');
                     } else {
                       handleCheckout(tier.name);
                     }
                   }}
                   disabled={loading === tier.name}
-                  className={`w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 border ${
-                    tier.popular 
-                    ? 'bg-amber-500 text-zinc-950 hover:bg-amber-400 border-transparent shadow-[0_0_30px_rgba(245,158,11,0.2)]' 
-                    : 'bg-zinc-900/80 hover:bg-zinc-800/80 border-white/10 text-zinc-300 hover:text-white'
+                  className={`mt-8 flex w-full items-center justify-center gap-2 py-3.5 text-sm transition ${
+                    tier.popular
+                      ? 'rounded-none bg-accent font-bold uppercase tracking-wide text-ink-900 hover:bg-accent-300'
+                      : 'rounded-none border border-white/25 bg-white/5 font-semibold text-white backdrop-blur-sm hover:bg-white/10'
                   }`}
                 >
                   {loading === tier.name ? (
-                    <div className="w-5 h-5 border-2 border-zinc-950/20 border-t-zinc-950 rounded-full animate-spin" />
+                    <div
+                      className={`h-5 w-5 animate-spin rounded-full border-2 ${
+                        tier.popular
+                          ? 'border-ink-900/20 border-t-ink-900'
+                          : 'border-white/20 border-t-white'
+                      }`}
+                    />
                   ) : (
                     tier.cta
                   )}
@@ -759,59 +680,72 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="py-32 relative border-t border-white/5 bg-[#050505] overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-yellow-600/10 rounded-full blur-[120px]" />
-        </div>
-        <div className="max-w-4xl mx-auto px-8 text-center relative z-10">
-          <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-6">
-            Siap Mendominasi <br /> <span className="text-yellow-500">Pencarian AI?</span>
-          </h2>
-          <p className="text-zinc-400 text-lg md:text-xl font-medium leading-relaxed mb-12 max-w-2xl mx-auto">
-            Berhenti membiarkan kompetitor mencuri calon pembeli Anda. Bangun kedaulatan digital yang bekerja 24 jam penuh tanpa henti.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button 
-              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-              className="px-8 py-4 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-black hover:opacity-90 transition-opacity flex items-center justify-center gap-2 w-full sm:w-auto"
-            >
-              Mulai Dominasi Sekarang <ArrowRight className="w-5 h-5" />
-            </button>
-            <button 
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="px-8 py-4 rounded-xl bg-zinc-900 border border-zinc-800 text-white font-bold hover:bg-zinc-800 transition-colors w-full sm:w-auto"
-            >
-              Audit Website Gratis
-            </button>
-          </div>
-        </div>
-      </section>
+      {/* 9. Final CTA */}
+      <GrowTogetherCta
+        eyebrow="Kedaulatan Digital"
+        headline="Siap Mendominasi Pencarian AI?"
+        body="Berhenti membiarkan kompetitor mencuri calon pembeli Anda. Bangun kedaulatan digital yang bekerja 24 jam penuh tanpa henti."
+        photo={ctaPhoto}
+      >
+        <button
+          onClick={scrollToPricing}
+          className="flex items-center justify-center gap-2 rounded-none bg-accent px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-ink-900 transition hover:bg-accent-300"
+        >
+          Mulai Dominasi Sekarang <ArrowRight className="h-4 w-4" />
+        </button>
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="rounded-none border border-white/30 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/10"
+        >
+          Audit Website Gratis
+        </button>
+      </GrowTogetherCta>
 
+      {/* 10. Footer */}
       <Footer />
     </div>
   );
 }
 
-function ArsenalCard({ icon, title, desc, color }: any) {
-  const colorMap: any = {
-    zinc: 'hover:border-zinc-500',
-    amber: 'hover:border-amber-500',
-    yellow: 'hover:border-yellow-500',
-  };
-  const iconColorMap: any = {
-    zinc: 'text-zinc-400 group-hover:text-white',
-    amber: 'text-amber-600 group-hover:text-amber-400',
-    yellow: 'text-yellow-600 group-hover:text-yellow-400',
-  };
+const PILLARS = [
+  {
+    label: 'Pilar Pertahanan',
+    title: 'Integritas & Audit',
+    items: [
+      { icon: <Binary className="h-5 w-5" />, title: 'Audit Teknis', desc: 'Temukan dan musnahkan error 404, masalah rendering JS, dan hambatan indexing yang mencegah Google merayapi situs Anda.' },
+      { icon: <ShieldCheck className="h-5 w-5" />, title: 'Integritas Konten', desc: 'Pindai plagiarisme, keyword stuffing, dan thin content yang membuat algoritma Google menghukum ranking Anda.' },
+      { icon: <Unlink className="h-5 w-5" />, title: 'Audit Link', desc: 'Deteksi backlink toxic dan spam yang diam-diam menyabotase otoritas domain Anda dari belakang.' },
+      { icon: <Trash2 className="h-5 w-5" />, title: 'Detektor Kanibal', desc: 'Hentikan halaman web Anda sendiri saling membunuh dan berebut ranking untuk kata kunci yang sama.' },
+    ],
+  },
+  {
+    label: 'Pilar Intelejen',
+    title: 'Kecerdasan Pasar',
+    items: [
+      { icon: <Search className="h-5 w-5" />, title: 'Riset Kata Kunci', desc: "Intai kata kunci 'Golden Ratio' ber-volume tinggi dengan persaingan rendah yang diabaikan kompetitor Anda." },
+      { icon: <TrendingUp className="h-5 w-5" />, title: 'Analitik Trending', desc: 'Tunggangi gelombang pencarian real-time dan jadilah yang pertama mempublikasikan tren sebelum pasar menyadarinya.' },
+      { icon: <MapPin className="h-5 w-5" />, title: 'Sovereign Lokal', desc: "Dominasi Google Maps dan pencarian 'Near Me' untuk memonopoli pelanggan di wilayah geografis Anda." },
+    ],
+  },
+  {
+    label: 'Pilar Penyerangan',
+    title: 'Ekspansi & Konversi',
+    items: [
+      { icon: <Compass className="h-5 w-5" />, title: 'Arsitektur Funnel', desc: 'Bedah dan tambal kebocoran di halaman konversi Anda. Ubah trafik dingin menjadi pembeli fanatik.' },
+      { icon: <Bot className="h-5 w-5" />, title: 'AEO & GEO Readiness', desc: 'Injeksi sinyal AI ke dalam konten agar ChatGPT, Gemini, dan Siri selalu merekomendasikan produk Anda.' },
+      { icon: <Layers className="h-5 w-5" />, title: 'Pilar Builder', desc: 'Bangun kluster topik raksasa (Silo Architecture) yang memaksa Google memandang Anda sebagai otoritas absolut.' },
+    ],
+  },
+];
 
+function ArsenalCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
-    <div className={`p-6 rounded-3xl bg-[#131316] border border-zinc-800 transition-all duration-300 group cursor-default ${colorMap[color]}`}>
-      <div className={`w-12 h-12 rounded-xl bg-[#090b10] border border-zinc-800 flex items-center justify-center mb-5 transition-colors ${iconColorMap[color]}`}>
+    <div className="card-lift rounded-2xl border border-white/10 bg-ink-800 p-5 hover:border-accent/40">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-600/15 text-accent">
         {icon}
       </div>
-      <h5 className="text-lg font-bold text-white mb-2 tracking-tight group-hover:text-white transition-colors">{title}</h5>
-      <p className="text-sm text-zinc-500 leading-relaxed font-medium">{desc}</p>
+      <h3 className="mt-4 font-display text-lg font-bold leading-snug tracking-tight text-white">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-slate-400">{desc}</p>
     </div>
   );
 }

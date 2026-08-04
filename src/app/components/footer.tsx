@@ -2,126 +2,116 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Zap, Lock, Globe, Shield, Award } from 'lucide-react';
+import { Lock, Globe, Shield } from 'lucide-react';
+import { AdoloSeoMark } from './logo';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative z-10 bg-[#040609] border-t border-white/5 pt-20 pb-10 px-8 text-zinc-400 font-sans selection:bg-amber-500/20">
+    <footer className="mt-auto bg-ink-900 text-slate-400 selection:bg-accent/20">
+      <div className="hairline-gradient" />
+
       {/* Ambient background glow */}
-      <div className="absolute top-0 right-[15%] w-[300px] h-[300px] bg-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="relative">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-[15%] top-0 h-[300px] w-[300px] rounded-full bg-brand-600/10 blur-[120px]"
+        />
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-        
-        {/* Column 1: Brand & Charter */}
-        <div className="flex flex-col gap-6">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-yellow-500 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/20 group-hover:scale-105 transition-transform">
-              <Zap size={20} className="text-black fill-black" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-black tracking-tight text-white leading-none">
-                SEO<span className="text-yellow-500">suite</span>
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
+          {/* Kolom 1: identitas */}
+          <div className="flex flex-col gap-5">
+            <Link href="/" className="flex items-center gap-3">
+              <AdoloSeoMark className="h-10 w-10" />
+              <span className="flex flex-col">
+                <span className="font-display text-lg font-bold leading-none tracking-tight text-white">
+                  Adolo<span className="text-gradient">SEO</span>
+                </span>
+                <span className="section-label mt-1.5 leading-none text-slate-500">
+                  TEFA ACADEMY × UNMAHA
+                </span>
               </span>
-              <span className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.18em] leading-none mt-1.5">
-                TEFA ACADEMY × UNMAHA
-              </span>
-            </div>
-          </Link>
-          <p className="text-xs text-zinc-500 leading-relaxed">
-            Platform kedaulatan digital untuk optimasi profit dan otoritas brand. Dibangun oleh talenta terbaik melalui program Teaching Factory (TEFA) Universitas Mahakarya Asia.
-          </p>
-          <div className="flex items-center gap-2 text-[9px] text-zinc-500 font-black uppercase tracking-widest bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-xl w-fit">
-            <Shield className="w-3.5 h-3.5 text-yellow-500/80" /> Active Protection Guard
-          </div>
-        </div>
-
-        {/* Column 2: Ecosystem Bernas Mahakarya Asia (SEO Cross-Linking) */}
-        <div className="flex flex-col gap-5">
-          <h4 className="text-xs font-black uppercase tracking-widest text-white border-b border-white/5 pb-2">
-            Ecosystem Bernas Mahakarya Asia
-          </h4>
-          <ul className="space-y-2.5 text-[11px] font-semibold text-zinc-400">
-            <li>
-              <a href="https://bernas.id" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 text-zinc-300 transition-colors block">
-                • BERNAS (Media & Portal Intelektual)
-              </a>
-            </li>
-            <li>
-              <a href="https://unmaha.ac.id" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 text-zinc-300 transition-colors block">
-                • UNMAHA (Universitas Mahakarya Asia)
-              </a>
-            </li>
-            <li>
-              <a href="https://agenc1st.id" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 text-zinc-300 transition-colors block">
-                • Agenc1st (Tech-Enabled Agency & PMB)
-              </a>
-            </li>
-            <li>
-              <a href="https://seosuite.info" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 text-zinc-300 transition-colors block">
-                • SEOsuite (AEO/GEO Answer Engine Platform)
-              </a>
-            </li>
-            <li>
-              <a href="https://adoloweb.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 text-zinc-300 transition-colors block">
-                • AdoloWeb (AI-Native B2B Growth Engine)
-              </a>
-            </li>
-            <li>
-              <a href="https://omniads.ai" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 text-zinc-300 transition-colors block">
-                • OmniAds (AI-Powered Ads Optimization)
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        {/* Column 3: Quick Navigation */}
-        <div className="flex flex-col gap-5">
-          <h4 className="text-xs font-black uppercase tracking-widest text-white border-b border-white/5 pb-2">
-            Quick Links
-          </h4>
-          <ul className="space-y-3 text-xs font-bold text-zinc-500">
-            <li><Link href="#pricing" className="hover:text-white transition-colors block">• ROI & Pricing</Link></li>
-            <li><Link href="#features" className="hover:text-white transition-colors block">• Platform Features</Link></li>
-            <li><Link href="/blog" className="hover:text-amber-400 text-yellow-500/90 transition-colors font-extrabold block">⭐ Sovereign Intel Blog</Link></li>
-            <li>
-              <a href="https://unmaha.ac.id" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors block">
-                • PMB UNMAHA Resmi
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        {/* Column 4: Secured & Credits */}
-        <div className="flex flex-col gap-5 items-start lg:items-end">
-          <h4 className="text-xs font-black uppercase tracking-widest text-white border-b border-white/5 pb-2 w-full lg:text-right">
-            Security & Trust
-          </h4>
-          <div className="flex flex-col gap-3 items-start lg:items-end w-full">
-            <div className="flex items-center gap-2 px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl w-fit">
-              <Lock className="w-3.5 h-3.5 text-zinc-500" />
-              <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Secured by SSL</span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl w-fit">
-              <Globe className="w-3.5 h-3.5 text-zinc-500" />
-              <a href="https://autoprofit.id" target="_blank" rel="noopener noreferrer" className="text-[10px] font-black text-zinc-400 uppercase tracking-widest hover:text-amber-400">
-                73+ autoprofit.id Apps
-              </a>
+            </Link>
+            <p className="text-sm leading-relaxed">
+              Platform kedaulatan digital untuk optimasi profit dan otoritas brand. Dibangun oleh
+              talenta terbaik melalui program Teaching Factory (TEFA) Universitas Mahakarya Asia.
+            </p>
+            <div className="flex w-fit items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+              <Shield className="h-3.5 w-3.5 text-accent" /> Active Protection Guard
             </div>
           </div>
-        </div>
 
+          {/* Kolom 2: ekosistem */}
+          <div>
+            <p className="section-label text-slate-500">Ecosystem Bernas Mahakarya Asia</p>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              <li>
+                <a href="https://bernas.id" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+                  BERNAS (Media &amp; Portal Intelektual)
+                </a>
+              </li>
+              <li>
+                <a href="https://unmaha.ac.id" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+                  UNMAHA (Universitas Mahakarya Asia)
+                </a>
+              </li>
+              <li>
+                {/* TODO Putu: agenc1st.id sedang diserahkan ke partner — putuskan apakah tautan ini tetap dipertahankan. */}
+                <a href="https://agenc1st.id" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+                  Agenc1st (Tech-Enabled Agency &amp; PMB)
+                </a>
+              </li>
+              <li>
+                <a href="https://adoloweb.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+                  AdoloWeb (AI-Native B2B Growth Engine)
+                </a>
+              </li>
+              <li>
+                <a href="https://omniads.ai" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+                  OmniAds (AI-Powered Ads Optimization)
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Kolom 3: quick links */}
+          <div>
+            <p className="section-label text-slate-500">Quick Links</p>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              <li><Link href="/#pricing" className="transition hover:text-white">ROI &amp; Pricing</Link></li>
+              <li><Link href="/#features" className="transition hover:text-white">Platform Features</Link></li>
+              <li><Link href="/blog" className="text-accent transition hover:text-white">Sovereign Intel Blog</Link></li>
+              <li>
+                <a href="https://unmaha.ac.id" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+                  PMB UNMAHA Resmi
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Kolom 4: security & trust */}
+          <div>
+            <p className="section-label text-slate-500">Security &amp; Trust</p>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              <li className="flex items-center gap-2">
+                <Lock className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+                <span>Secured by SSL</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Globe className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+                <a href="https://autoprofit.id" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+                  73+ autoprofit.id Apps
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
 
-      <div className="h-px bg-white/5 max-w-7xl mx-auto mb-8" />
-
-      {/* Dynamic year, TEFA credits, and active links */}
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6 text-[10px] text-zinc-650 font-bold uppercase tracking-widest">
-        <p className="text-center lg:text-left text-zinc-500">
-          © {currentYear} SEOsuite AI. Hak Cipta Dilindungi.
-        </p>
-        <p className="text-center text-zinc-500 font-extrabold tracking-wider max-w-lg lg:max-w-none">
+      <div className="border-t border-white/5 py-5 text-center text-xs text-slate-500">
+        <p>© {currentYear} AdoloSEO. Hak Cipta Dilindungi.</p>
+        <p className="mt-1">
           Developed by Teaching Factory (TEFA) Student Developers × PT ADOLO COACHING MENTORING.
         </p>
       </div>

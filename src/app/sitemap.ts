@@ -3,7 +3,7 @@ import path from 'path';
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://seosuite.info';
+  const baseUrl = 'https://seo.adolo.id';
 
   const sitemapData: MetadataRoute.Sitemap = [
     {
