@@ -75,14 +75,24 @@ export default async function BlogIndex() {
                 key={post.slug}
                 className="card-lift group flex h-full flex-col overflow-hidden rounded-2xl bg-ink ring-1 ring-white/10 transition hover:ring-accent/40"
               >
+                {/* Ke-36 hero artikel masih artwork AI HITAM + NEON KUNING-EMAS
+                    (palet lama yang dibuang). Sampai gambarnya diregenerasi
+                    dengan palet biru-cyan, treatment duotone yang sama persis
+                    dengan photo-split-section.tsx (grayscale + multiply + screen)
+                    mengunci massa visual halaman blog ke palet terkunci. */}
                 <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-white/10">
                   <Image
                     src={imagePath}
                     alt={post.title ?? 'Artikel AdoloSEO'}
                     fill
                     sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover grayscale transition-transform duration-500 group-hover:scale-105"
                   />
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-gradient-to-tr from-brand-900/80 via-brand-700/40 to-accent/25 mix-blend-multiply"
+                  />
+                  <div aria-hidden="true" className="absolute inset-0 bg-brand-500/15 mix-blend-screen" />
                   <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent opacity-80" />
 
                   {/* Watermark AdoloSEO */}
@@ -99,7 +109,7 @@ export default async function BlogIndex() {
                     <span className="section-label rounded-full border border-white/10 bg-white/5 px-3 py-1 text-accent">
                       {post.category || 'Intelijen'}
                     </span>
-                    <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+                    <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
                       <Clock className="h-3 w-3" /> {new Date(post.date ?? 0).toLocaleDateString('id-ID')}
                     </span>
                   </div>
@@ -112,7 +122,7 @@ export default async function BlogIndex() {
                     {post.description}
                   </p>
 
-                  <div className="mt-6 flex items-center gap-2 border-t border-white/10 pt-5 text-xs font-bold text-slate-500 transition group-hover:text-white">
+                  <div className="mt-6 flex items-center gap-2 border-t border-white/10 pt-5 text-xs font-bold text-slate-400 transition group-hover:text-white">
                     Baca Selengkapnya <ArrowRight className="h-4 w-4" />
                   </div>
                 </div>

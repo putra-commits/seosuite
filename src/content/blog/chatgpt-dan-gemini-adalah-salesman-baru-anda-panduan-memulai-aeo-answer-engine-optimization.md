@@ -21,7 +21,7 @@ Untuk melakukan ini, Anda harus memahami konsep:
 
 ### Merekrut Pasukan Salesman AI 24/7
 
-Fitur **AEO & GEO Readiness** di SEOsuite membedah kesiapan website Anda untuk direkomendasikan oleh AI. Kami mengaudit struktur *markup* Anda dan memberikan instruksi persis tentang apa yang harus diubah agar Siri dan ChatGPT mulai merekomendasikan produk Anda setiap kali ada prospek yang bertanya.
+Fitur **AEO & GEO Readiness** di AdoloSEO membedah kesiapan website Anda untuk direkomendasikan oleh AI. Kami mengaudit struktur *markup* Anda dan memberikan instruksi persis tentang apa yang harus diubah agar Siri dan ChatGPT mulai merekomendasikan produk Anda setiap kali ada prospek yang bertanya.
 
 Jangan menjadi dinosaurus digital. Berinvestasilah pada "Sovereign SEO" sekarang juga, dan jadikan seluruh ekosistem AI dunia sebagai pasukan *salesman* Anda yang bekerja 24 jam penuh.
 

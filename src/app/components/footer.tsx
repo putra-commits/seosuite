@@ -28,7 +28,7 @@ export default function Footer() {
                 <span className="font-display text-lg font-bold leading-none tracking-tight text-white">
                   Adolo<span className="text-gradient">SEO</span>
                 </span>
-                <span className="section-label mt-1.5 leading-none text-slate-500">
+                <span className="section-label mt-1.5 leading-none text-slate-400">
                   TEFA ACADEMY × UNMAHA
                 </span>
               </span>
@@ -44,7 +44,7 @@ export default function Footer() {
 
           {/* Kolom 2: ekosistem */}
           <div>
-            <p className="section-label text-slate-500">Ecosystem Bernas Mahakarya Asia</p>
+            <p className="section-label text-slate-400">Ecosystem Bernas Mahakarya Asia</p>
             <ul className="mt-4 space-y-2.5 text-sm">
               <li>
                 <a href="https://bernas.id" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
@@ -77,7 +77,7 @@ export default function Footer() {
 
           {/* Kolom 3: quick links */}
           <div>
-            <p className="section-label text-slate-500">Quick Links</p>
+            <p className="section-label text-slate-400">Quick Links</p>
             <ul className="mt-4 space-y-2.5 text-sm">
               <li><Link href="/#pricing" className="transition hover:text-white">ROI &amp; Pricing</Link></li>
               <li><Link href="/#features" className="transition hover:text-white">Platform Features</Link></li>
@@ -92,14 +92,14 @@ export default function Footer() {
 
           {/* Kolom 4: security & trust */}
           <div>
-            <p className="section-label text-slate-500">Security &amp; Trust</p>
+            <p className="section-label text-slate-400">Security &amp; Trust</p>
             <ul className="mt-4 space-y-2.5 text-sm">
               <li className="flex items-center gap-2">
-                <Lock className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+                <Lock className="h-3.5 w-3.5 shrink-0 text-slate-400" />
                 <span>Secured by SSL</span>
               </li>
               <li className="flex items-center gap-2">
-                <Globe className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+                <Globe className="h-3.5 w-3.5 shrink-0 text-slate-400" />
                 <a href="https://autoprofit.id" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
                   73+ autoprofit.id Apps
                 </a>
@@ -109,7 +109,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-white/5 py-5 text-center text-xs text-slate-500">
+      <div className="border-t border-white/5 py-5 text-center text-xs text-slate-400">
         <p>© {currentYear} AdoloSEO. Hak Cipta Dilindungi.</p>
         <p className="mt-1">
           Developed by Teaching Factory (TEFA) Student Developers × PT ADOLO COACHING MENTORING.

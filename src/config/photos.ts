@@ -16,7 +16,14 @@ export const comparisonPhoto: SitePhoto = {
   alt: 'Tim bekerja bersama menyusun strategi pertumbuhan digital',
 };
 
+/**
+ * WAJIB berorientasi LANSKAP. Foto ini dipakai sebagai banner lebar
+ * (min-h-[70vh], object-cover) di dua tempat: CTA penutup halaman depan dan
+ * CTA bawah setiap artikel. Sebelumnya memakai jakarta-skyline.jpg yang
+ * berukuran 1400x2100 (POTRET 2:3) sehingga hanya ±29% tinggi tengah gambar
+ * yang terlihat — langit dan garis cakrawalanya hilang, tersisa pita gedung.
+ */
 export const ctaPhoto: SitePhoto = {
-  src: '/brand/photos/jakarta-skyline.jpg',
-  alt: 'Cakrawala kota Jakarta dari ketinggian',
+  src: '/brand/photos/hero-jakarta-dusk.jpg',
+  alt: 'Cakrawala kota Jakarta menjelang senja',
 };

@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     description: 'Transformasi website Anda menjadi aset kedaulatan digital. Audit AEO, GEO, dan optimasi konversi.',
     url: 'https://seo.adolo.id',
     siteName: 'AdoloSEO',
-    images: [{ url: '/brand/adoloseo-512.png', width: 512, height: 512 }],
+    images: [{ url: '/brand/og-adoloseo-1200x630.png', width: 1200, height: 630, alt: 'AdoloSEO — Arsitektur Pendapatan & Intelijen SEO' }],
     locale: 'id_ID',
     type: 'website',
   },
@@ -38,14 +38,14 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'AdoloSEO — Arsitektur Pendapatan & Intelijen SEO',
     description: 'Transformasi website Anda menjadi aset kedaulatan digital.',
-    images: ['/brand/adoloseo-512.png'],
+    images: ['/brand/og-adoloseo-1200x630.png'],
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id" className={`${plusJakarta.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
-      <body suppressHydrationWarning className="bg-ink text-slate-100 antialiased">
+      <body suppressHydrationWarning className="bg-[#09090b] text-[#fafafa] antialiased">
         <div className="flex min-h-screen">
           <Sidebar />
           <main className="flex-1 min-w-0 overflow-y-auto">

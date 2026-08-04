@@ -21,7 +21,7 @@ Misalnya, alih-alih bertarung di "Jual Sepatu", Anda mendominasi "Jual Sepatu La
 
 ### Intelejen SEO Adalah Kunci Monopoli
 
-Fitur **Riset Kata Kunci & Analitik Trending** di dalam SEOsuite dirancang untuk melakukan *X-Ray* terhadap pasar. 
+Fitur **Riset Kata Kunci & Analitik Trending** di dalam AdoloSEO dirancang untuk melakukan *X-Ray* terhadap pasar. 
 
 1. Kami memantau *Search Console* kompetitor (melalui sinyal metrik) untuk menemukan celah yang mereka lewatkan.
 2. Kami menyajikan metrik kesulitan (*Keyword Difficulty*) dan memprioritaskan kata kunci dengan ROI tertinggi.

@@ -76,9 +76,9 @@ export default function Sidebar() {
                         : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
                     }`}
                   >
-                    <item.icon className={`w-4 h-4 ${isActive ? 'text-amber-500' : 'text-zinc-500 group-hover:text-zinc-300'}`} />
+                    <item.icon className={`w-4 h-4 ${isActive ? 'text-accent' : 'text-zinc-500 group-hover:text-zinc-300'}`} />
                     <span className="flex-1">{item.name}</span>
-                    {isActive && <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />}
+                    {isActive && <div className="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_8px_color-mix(in_srgb,var(--accent)_60%,transparent)]" />}
                   </Link>
                 );
               })}

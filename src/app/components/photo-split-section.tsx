@@ -45,7 +45,11 @@ export default function PhotoSplitSection({
           <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
             {headline}
           </h2>
-          <p className="mt-3 line-clamp-3 text-[15px] leading-relaxed text-slate-300">{body}</p>
+          {/* TANPA line-clamp: naskah 264 karakter di kolom ~480px kehilangan
+              ±30% isinya di balik elipsis BAHKAN di desktop — dan yang hilang
+              justru kalimat proposisi nilainya. Naskah penjualan tidak boleh
+              disembunyikan; kalau kepanjangan, pendekkan naskahnya. */}
+          <p className="mt-3 text-[15px] leading-relaxed text-slate-300">{body}</p>
           {children}
         </div>
       </div>

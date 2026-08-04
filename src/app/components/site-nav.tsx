@@ -42,7 +42,7 @@ export default function SiteNav() {
         <div className="flex items-center gap-2">
           <Link
             href="/dashboard"
-            className="rounded-lg bg-gradient-to-r from-brand-600 to-accent-700 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-brand-600/20 transition hover:brightness-110"
+            className="rounded-lg bg-gradient-to-r from-brand-600 to-accent px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-brand-600/20 transition hover:brightness-110"
           >
             Dashboard
           </Link>

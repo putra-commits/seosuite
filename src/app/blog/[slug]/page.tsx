@@ -5,6 +5,7 @@ import { marked } from 'marked';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { Clock, ArrowRight } from 'lucide-react';
 import Footer from '../../components/footer';
 import SiteNav from '../../components/site-nav';
@@ -67,11 +68,11 @@ export default async function BlogPost(props: { params: Promise<{ slug: string }
   try {
     postData = getPost(params.slug);
   } catch {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-ink text-white">
-        <p>Post tidak ditemukan.</p>
-      </div>
-    );
+    // notFound() -> status HTTP 404 SUNGGUHAN. Sebelumnya UI 404 dikembalikan
+    // dengan status 200 (soft-404): 120 berkas .mdx di folder yang sama tidak
+    // punya halaman detail, dan soft-404 justru lebih buruk bagi SEO karena
+    // mesin pencari tetap mengindeksnya.
+    notFound();
   }
   const { frontmatter, content } = postData;
   const htmlContent = await marked.parse(content);
@@ -84,14 +85,21 @@ export default async function BlogPost(props: { params: Promise<{ slug: string }
 
       {/* Article Header */}
       <header className="relative overflow-hidden pb-20 pt-24">
+        {/* Duotone sama seperti kartu /blog: hero artikel masih artwork
+            hitam + neon kuning-emas dari palet lama. */}
         <Image
           src={imagePath}
           alt={frontmatter.title ?? 'Artikel AdoloSEO'}
           fill
           sizes="100vw"
           priority
-          className="pointer-events-none object-cover opacity-20"
+          className="pointer-events-none object-cover opacity-20 grayscale"
         />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-tr from-brand-900/80 via-brand-700/40 to-accent/25 mix-blend-multiply"
+        />
+        <div aria-hidden="true" className="absolute inset-0 bg-brand-500/15 mix-blend-screen" />
         <div aria-hidden="true" className="absolute inset-0 bg-ink-900/60" />
         <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-transparent" />
 
@@ -115,7 +123,7 @@ export default async function BlogPost(props: { params: Promise<{ slug: string }
             <span className="section-label rounded-full border border-accent/30 bg-brand-600/10 px-3 py-1 text-accent">
               {frontmatter.category || 'Intelijen'}
             </span>
-            <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+            <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
               <Clock className="h-3 w-3" /> {new Date(frontmatter.date ?? 0).toLocaleDateString('id-ID')}
             </span>
           </div>
@@ -142,7 +150,6 @@ export default async function BlogPost(props: { params: Promise<{ slug: string }
         headline="Website Anda Sedang Sekarat?"
         body='Sebagian besar website bisnis menderita "Koma Digital" tanpa disadari pemiliknya. Masukkan URL Anda dan biarkan AI kami membongkar kebocoran fatal yang membuat kompetitor mencuri pelanggan Anda.'
         photo={ctaPhoto}
-        clampBody={false}
       >
         <Link
           href="/"

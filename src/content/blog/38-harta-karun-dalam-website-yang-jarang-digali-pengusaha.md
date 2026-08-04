@@ -77,4 +77,4 @@ Berikut adalah **38 Harta Karun** di dalam website Anda yang mungkin selama ini 
 
 Berhentilah memperlakukan website Anda seperti kartu nama digital seharga 5 juta. Website Anda adalah real estat digital yang nilainya bisa melebihi ruko 5 lantai di Sudirman, jika Anda tahu cara mengoperasikannya.
 
-Sudah saatnya berhenti membakar uang untuk pameran fisik 3 hari. Gunakan **SEOsuite** untuk mengaktifkan ke-38 Harta Karun ini, dan biarkan seluruh AI di dunia bekerja 24 jam sehari sebagai pasukan *salesman* Anda.
+Sudah saatnya berhenti membakar uang untuk pameran fisik 3 hari. Gunakan **AdoloSEO** untuk mengaktifkan ke-38 Harta Karun ini, dan biarkan seluruh AI di dunia bekerja 24 jam sehari sebagai pasukan *salesman* Anda.

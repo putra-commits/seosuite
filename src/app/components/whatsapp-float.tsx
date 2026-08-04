@@ -2,18 +2,24 @@
 
 import { MessageCircle } from 'lucide-react';
 
-// TODO Putu: 6281234567890 masih nomor PLACEHOLDER, bukan nomor Adolo.
-// Ganti dengan nomor WhatsApp resmi sebelum kampanye dijalankan.
+import { waLink } from '@/config/contact';
+
+// Nomor placeholder 6281234567890 SUDAH DIBUANG. Nomor tujuan sekarang berasal
+// dari satu sumber: src/config/contact.ts (bisa ditimpa lewat env
+// NEXT_PUBLIC_WHATSAPP_NUMBER tanpa mengubah kode).
 export default function WhatsAppFloat() {
   const handleWhatsAppClick = () => {
-    const text = encodeURIComponent("Halo Tim AdoloSEO, saya tertarik dengan Arsitektur Konversi dan ingin mendiskusikan potensi dominasi pasar untuk bisnis saya.");
-    window.open(`https://wa.me/6281234567890?text=${text}`, '_blank');
+    window.open(
+      waLink('Halo Tim AdoloSEO, saya tertarik dengan Arsitektur Konversi dan ingin mendiskusikan potensi dominasi pasar untuk bisnis saya.'),
+      '_blank',
+      'noopener,noreferrer',
+    );
   };
 
   return (
     <button
       onClick={handleWhatsAppClick}
-      className="group fixed bottom-6 right-6 z-50 flex items-center justify-center rounded-full bg-gradient-to-r from-brand-600 to-accent p-4 text-white shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-transform duration-300 hover:scale-110"
+      className="group fixed bottom-6 right-6 z-50 flex items-center justify-center rounded-full bg-gradient-to-r from-brand-600 to-accent p-4 text-white shadow-[0_0_30px_color-mix(in_srgb,var(--brand)_35%,transparent)] transition-transform duration-300 hover:scale-110"
       aria-label="Konsultasi Enterprise WhatsApp"
     >
       <MessageCircle className="h-8 w-8" />

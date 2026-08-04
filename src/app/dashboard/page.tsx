@@ -48,7 +48,7 @@ export default function Dashboard() {
         <div className="relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 mb-6">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Pusat Komando SEOsuite v3.0</span>
+            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Pusat Komando AdoloSEO v3.0</span>
           </div>
           <h1 className="text-6xl font-black tracking-tighter mb-6 text-white">
             Pusat <span className="text-zinc-600">Pendapatan</span>
@@ -230,7 +230,7 @@ export default function Dashboard() {
             </div>
           </Link>
           <p className="text-[10px] text-zinc-500 font-black tracking-[0.4em] uppercase">
-            © 2026 SOVEREIGN TECHNOLOGY <span className="text-zinc-800 mx-2">|</span> SEOsuite v3.0
+            © 2026 SOVEREIGN TECHNOLOGY <span className="text-zinc-800 mx-2">|</span> AdoloSEO v3.0
           </p>
         </div>
       </footer>

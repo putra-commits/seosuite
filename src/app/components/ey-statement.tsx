@@ -43,11 +43,13 @@ export default function EyStatement({
       <div className="relative mx-auto flex min-h-[42vh] max-w-6xl flex-col justify-end px-4 pb-12 pt-20 sm:min-h-[50vh] sm:px-6 sm:pb-14">
         <span aria-hidden="true" className="ey-accent-bar mb-4 h-1 w-14 bg-accent" />
         <p className="section-label text-accent">{eyebrow}</p>
-        <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+        {/* max-w-2xl dipertahankan seperti komponen asli adolo.id — measure
+            pendek itu justru ciri tipografi editorial EY. */}
+        <h2 className="mt-2 max-w-2xl font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
           {headline}
         </h2>
         {body && (
-          <p className="mt-3 line-clamp-2 max-w-lg text-sm leading-relaxed text-slate-200/90 sm:text-base">
+          <p className="mt-3 max-w-lg text-sm leading-relaxed text-slate-200/90 sm:text-base">
             {body}
           </p>
         )}

@@ -7,6 +7,7 @@ import {
   ShieldCheck, Binary, Unlink, Trash2, TrendingUp, Compass, Layers,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Script from 'next/script';
 import Footer from './components/footer';
 import SiteNav from './components/site-nav';
 import OutlineFrame from './components/outline-frame';
@@ -15,6 +16,7 @@ import PhotoSplitSection from './components/photo-split-section';
 import GrowTogetherCta from './components/grow-together-cta';
 import WorkflowOrbit from './components/workflow-orbit';
 import { statementPhoto, comparisonPhoto, ctaPhoto } from '@/config/photos';
+import { waLink } from '@/config/contact';
 
 const TIERS = [
   {
@@ -71,6 +73,18 @@ const TIERS = [
   }
 ];
 
+type MidtransSnap = {
+  pay: (
+    token: string,
+    callbacks: {
+      onSuccess?: (result: unknown) => void;
+      onPending?: (result: unknown) => void;
+      onError?: (result: unknown) => void;
+      onClose?: () => void;
+    },
+  ) => void;
+};
+
 interface AuditResult {
   url: string;
   finalScore: number;
@@ -95,7 +109,9 @@ export default function LandingPage() {
   // Lead Capture State
   const [leadName, setLeadName] = useState("");
   const [leadWa, setLeadWa] = useState("");
-  const [isSubmittingLead, setIsSubmittingLead] = useState(false);
+
+  // Pesan kegagalan checkout yang TERLIHAT pengguna (dulu gagal diam-diam).
+  const [checkoutError, setCheckoutError] = useState("");
 
   const handleTestWebsite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -133,26 +149,40 @@ export default function LandingPage() {
     }
   };
 
-  const handleSubmitLead = async (e: React.FormEvent) => {
+  /**
+   * Gerbang kontak. Data nama + WhatsApp TIDAK dikirim ke server mana pun dan
+   * TIDAK ditulis ke database — halaman ini tidak punya endpoint lead, dan
+   * baris Lead yang dibuat /api/audit belum punya kolom nama/WA (butuh migrasi
+   * Prisma, keputusan terpisah). Karena itu naskahnya sudah diperbaiki agar
+   * tidak lagi menjanjikan "Laporan PDF dikirim ke WhatsApp": data ini hanya
+   * dipakai di browser untuk menyusun pesan WhatsApp yang dikirim PENGGUNA
+   * sendiri lewat tombol di panel hasil.
+   */
+  const handleSubmitLead = (e: React.FormEvent) => {
     e.preventDefault();
     if (!leadName || !leadWa) return;
+    setTestState("result");
+  };
 
-    setIsSubmittingLead(true);
-    try {
-      // Simulate API call to save lead
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Lead captured:', { name: leadName, wa: leadWa, url: testUrl });
-
-      setTestState("result");
-    } catch (err) {
-      console.error("Failed to capture lead", err);
-    } finally {
-      setIsSubmittingLead(false);
-    }
+  const auditWaMessage = () => {
+    const nama = leadName || '(belum diisi)';
+    const wa = leadWa || '(belum diisi)';
+    const skor = auditResult
+      ? `Skor total ${auditResult.finalScore} (SEO ${auditResult.seoScore} / AEO ${auditResult.aeoScore} / GEO ${auditResult.geoScore} / CWV ${auditResult.cwvScore})`
+      : 'Skor belum tersedia';
+    return [
+      'Halo Tim AdoloSEO, saya baru menjalankan audit gratis di seo.adolo.id.',
+      `Nama: ${nama}`,
+      `WhatsApp: ${wa}`,
+      `Website: ${auditResult?.url || testUrl}`,
+      skor,
+      'Mohon dibantu tindak lanjutnya.',
+    ].join('\n');
   };
 
   const handleCheckout = async (tierName: string) => {
     setLoading(tierName);
+    setCheckoutError("");
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
@@ -161,17 +191,38 @@ export default function LandingPage() {
       });
       const data = await res.json();
 
-      if (data.token) {
-        // @ts-expect-error — window.snap disuntik oleh skrip Midtrans Snap
-        window.snap.pay(data.token, {
-          onSuccess: (result: unknown) => console.log('success', result),
-          onPending: (result: unknown) => console.log('pending', result),
-          onError: (result: unknown) => console.log('error', result),
-          onClose: () => console.log('customer closed the popup without finishing the payment'),
-        });
+      // Sebelumnya hanya `if (data.token)` tanpa cabang else: HTTP 400/500
+      // GAGAL DIAM-DIAM — spinner berhenti dan pengguna tidak diberi tahu apa pun.
+      if (!res.ok || !data.token) {
+        setCheckoutError(
+          data?.error ||
+            'Gerbang pembayaran sedang tidak bisa dihubungi. Silakan lanjut lewat WhatsApp.',
+        );
+        return;
       }
+
+      // window.snap disuntik oleh skrip Midtrans Snap; tidak ada di tipe Window.
+      const snap = (window as unknown as { snap?: MidtransSnap }).snap;
+      if (!snap) {
+        setCheckoutError(
+          'Skrip pembayaran gagal dimuat (kemungkinan diblokir pemblokir iklan). Silakan lanjut lewat WhatsApp.',
+        );
+        return;
+      }
+
+      snap.pay(data.token, {
+        onSuccess: (result: unknown) => console.log('success', result),
+        onPending: (result: unknown) => console.log('pending', result),
+        onError: () => setCheckoutError('Pembayaran gagal diproses. Silakan coba lagi atau hubungi kami lewat WhatsApp.'),
+        onClose: () => console.log('customer closed the popup without finishing the payment'),
+      });
     } catch (err) {
       console.error(err);
+      setCheckoutError(
+        err instanceof Error
+          ? `Gagal memulai pembayaran: ${err.message}`
+          : 'Gagal memulai pembayaran. Silakan hubungi kami lewat WhatsApp.',
+      );
     } finally {
       setLoading(null);
     }
@@ -181,11 +232,18 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-ink text-white selection:bg-accent/20">
-      {/* Midtrans Snap Script */}
-      <script
-        type="text/javascript"
+      {/* Midtrans Snap Script.
+          CATATAN JALUR UANG (diteruskan ke Putu, BUKAN diperbaiki di sini):
+          URL-nya masih app.sandbox.midtrans.com — warisan dari sebelum desain
+          ulang (base bfe86fa). Sandbox berarti popup pembayaran TIDAK PERNAH
+          menagih uang sungguhan. Cocokkan dengan catatan Money Door Audit
+          sebelum kampanye apa pun diarahkan ke halaman ini.
+          Dipindah dari <script> mentah ke next/script agar tidak memblokir
+          render (lint @next/next/no-sync-scripts). */}
+      <Script
         src="https://app.sandbox.midtrans.com/snap/snap.js"
         data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+        strategy="afterInteractive"
       />
 
       {/* 1. Navigasi bersama */}
@@ -202,7 +260,7 @@ export default function LandingPage() {
               Website Anda <br />
               <span className="text-gradient">Hanya Jadi Beban Biaya Server?</span>
             </h1>
-            <p className="mt-5 line-clamp-3 max-w-xl text-base leading-relaxed text-slate-300">
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-300">
               Berhenti membakar uang untuk Paid Ads berdarah-darah. Biarkan AI kami membedah isi
               perut website Anda dan membuktikan mengapa kompetitor mencuri 90% pelanggan Anda
               setiap harinya.
@@ -231,7 +289,7 @@ export default function LandingPage() {
               <p className="mt-4 text-sm font-medium text-red-400">{errorMessage}</p>
             )}
 
-            <p className="mt-4 flex items-center gap-2 text-xs text-slate-500">
+            <p className="mt-4 flex items-center gap-2 text-xs text-slate-400">
               <Shield className="h-4 w-4 shrink-0 text-accent" />
               Lebih dari 4.200+ pemilik bisnis telah menyadari kebodohan strategi SEO mereka minggu ini.
             </p>
@@ -265,14 +323,14 @@ export default function LandingPage() {
                   <h3 className="font-display text-2xl font-bold text-white">Audit Selesai!</h3>
                   <p className="mt-2 text-sm text-slate-400">
                     Kami menemukan <strong className="font-bold text-accent">celah potensial</strong> di{' '}
-                    <span className="font-semibold text-white">{testUrl}</span>. Masukkan WhatsApp Anda
-                    untuk melihat skor dan menerima Laporan PDF Eksekutif.
+                    <span className="font-semibold text-white">{testUrl}</span>. Isi nama dan nomor
+                    WhatsApp Anda untuk membuka skor lengkapnya di layar berikutnya.
                   </p>
                 </div>
 
                 <form onSubmit={handleSubmitLead} className="space-y-4">
                   <div>
-                    <label className="section-label mb-2 block text-slate-500">Nama Lengkap</label>
+                    <label className="section-label mb-2 block text-slate-400">Nama Lengkap</label>
                     <input
                       type="text"
                       value={leadName}
@@ -283,7 +341,7 @@ export default function LandingPage() {
                     />
                   </div>
                   <div>
-                    <label className="section-label mb-2 block text-slate-500">Nomor WhatsApp</label>
+                    <label className="section-label mb-2 block text-slate-400">Nomor WhatsApp</label>
                     <input
                       type="tel"
                       value={leadWa}
@@ -295,17 +353,16 @@ export default function LandingPage() {
                   </div>
                   <button
                     type="submit"
-                    disabled={isSubmittingLead}
-                    className="flex w-full items-center justify-center gap-2 rounded-none bg-accent py-3.5 text-sm font-bold uppercase tracking-wide text-ink-900 transition hover:bg-accent-300 disabled:opacity-70"
+                    className="flex w-full items-center justify-center gap-2 rounded-none bg-accent py-3.5 text-sm font-bold uppercase tracking-wide text-ink-900 transition hover:bg-accent-300"
                   >
-                    {isSubmittingLead
-                      ? <div className="h-5 w-5 animate-spin rounded-full border-2 border-ink-900/20 border-t-ink-900" />
-                      : 'Buka Kunci Laporan Audit'}
+                    Buka Hasil Audit
                     <Lock className="h-4 w-4" />
                   </button>
                 </form>
-                <p className="mt-6 text-center text-xs text-slate-500">
-                  Data Anda aman 100%. Kami hanya akan mengirimkan PDF hasil audit ke WhatsApp ini.
+                <p className="mt-6 text-center text-xs leading-relaxed text-slate-400">
+                  Data ini tetap di browser Anda — dipakai hanya untuk menyiapkan pesan WhatsApp
+                  yang Anda kirim sendiri. Tidak ada pengiriman otomatis dan tidak ada laporan PDF:
+                  hasil audit tampil penuh di layar berikutnya.
                 </p>
               </div>
             )}
@@ -329,29 +386,29 @@ export default function LandingPage() {
 
                 <div className="grid grid-cols-2 gap-4 border-y border-white/10 py-4 sm:grid-cols-4">
                   <div className="text-center">
-                    <p className="text-xs font-semibold text-slate-500">SEO Score</p>
+                    <p className="text-xs font-semibold text-slate-400">SEO Score</p>
                     <p className={`font-display text-xl font-bold sm:text-2xl ${auditResult.seoScore > 70 ? 'text-accent' : 'text-slate-400'}`}>{auditResult.seoScore}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs font-semibold text-slate-500">CWV Score</p>
+                    <p className="text-xs font-semibold text-slate-400">CWV Score</p>
                     <p className={`font-display text-xl font-bold sm:text-2xl ${auditResult.cwvScore > 70 ? 'text-accent' : 'text-slate-400'}`}>{auditResult.cwvScore}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs font-semibold text-slate-500">AEO Score</p>
+                    <p className="text-xs font-semibold text-slate-400">AEO Score</p>
                     <p className={`font-display text-xl font-bold sm:text-2xl ${auditResult.aeoScore > 70 ? 'text-accent' : 'text-slate-400'}`}>{auditResult.aeoScore}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs font-semibold text-slate-500">GEO Score</p>
+                    <p className="text-xs font-semibold text-slate-400">GEO Score</p>
                     <p className={`font-display text-xl font-bold sm:text-2xl ${auditResult.geoScore > 70 ? 'text-accent' : 'text-slate-400'}`}>{auditResult.geoScore}</p>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                  <div className={`flex items-center gap-2 rounded-none border px-3 py-1.5 ${auditResult.hasGA ? 'border-accent/40 bg-brand-600/10 text-accent' : 'border-white/10 bg-white/5 text-slate-500'}`}>
+                  <div className={`flex items-center gap-2 rounded-none border px-3 py-1.5 ${auditResult.hasGA ? 'border-accent/40 bg-brand-600/10 text-accent' : 'border-white/10 bg-white/5 text-slate-400'}`}>
                     {auditResult.hasGA ? <Check className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
                     <span className="text-xs font-bold">Google Analytics (GA4)</span>
                   </div>
-                  <div className={`flex items-center gap-2 rounded-none border px-3 py-1.5 ${auditResult.hasGSC ? 'border-accent/40 bg-brand-600/10 text-accent' : 'border-white/10 bg-white/5 text-slate-500'}`}>
+                  <div className={`flex items-center gap-2 rounded-none border px-3 py-1.5 ${auditResult.hasGSC ? 'border-accent/40 bg-brand-600/10 text-accent' : 'border-white/10 bg-white/5 text-slate-400'}`}>
                     {auditResult.hasGSC ? <Check className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
                     <span className="text-xs font-bold">Search Console (GSC)</span>
                   </div>
@@ -375,9 +432,19 @@ export default function LandingPage() {
                 >
                   Selamatkan Bisnis Saya Sekarang
                 </button>
+                {/* Satu-satunya jalur pengiriman yang benar-benar bekerja:
+                    pengguna sendiri yang menekan kirim di WhatsApp. */}
+                <a
+                  href={waLink(auditWaMessage())}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex w-full items-center justify-center gap-2 rounded-none border border-accent/40 bg-white/5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                >
+                  Kirim Ringkasan Ini ke Tim via WhatsApp
+                </a>
                 <button
                   onClick={() => { setTestState("idle"); setTestUrl(""); }}
-                  className="w-full text-xs font-semibold text-slate-500 transition hover:text-white"
+                  className="w-full text-xs font-semibold text-slate-400 transition hover:text-white"
                 >
                   Audit URL Lain
                 </button>
@@ -389,15 +456,16 @@ export default function LandingPage() {
 
       {/* 3. Statement Break */}
       <EyStatement
-        id="features"
         eyebrow="Masalah Tersembunyi"
         headline="Website Anda Bisa Menghasilkan Lebih Banyak."
         body="Kenapa website kompetitor lebih ramai? Karena mereka menggunakan Arsitektur Konversi. SEO saja tidak cukup di era AI."
         photo={statementPhoto}
       />
 
-      {/* 4. Pain Grid + Kartu Siapa Yang Butuh */}
-      <section className="relative overflow-hidden bg-ink-900 py-16 sm:py-20">
+      {/* 4. Pain Grid + Kartu Siapa Yang Butuh
+           id="features" WAJIB di sini (bukan di <EyStatement>): menekan "Fitur"
+           di nav harus mendarat di grid fitur, bukan di foto statement break. */}
+      <section id="features" className="relative scroll-mt-24 overflow-hidden bg-ink-900 py-16 sm:py-20">
         <div aria-hidden="true" className="pointer-events-none absolute -left-24 top-0 h-72 w-72 rounded-full bg-brand-600/15 blur-3xl" />
         <div aria-hidden="true" className="pointer-events-none absolute -right-16 bottom-0 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
 
@@ -494,14 +562,14 @@ export default function LandingPage() {
             >
               <span className="-rotate-90 text-xs font-bold text-slate-300">ADS</span>
             </motion.div>
-            <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-slate-500">Bulan 1</p>
+            <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-slate-400">Bulan 1</p>
           </div>
           <div className="relative z-10 flex h-full flex-1 flex-col justify-end gap-2">
             <motion.div
               initial={{ height: 0 }} whileInView={{ height: '40%' }} viewport={{ once: true }}
               className="w-full rounded-t-lg bg-slate-700"
             />
-            <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-slate-500">Bulan 6</p>
+            <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-slate-400">Bulan 6</p>
           </div>
           <div className="relative z-10 flex h-full flex-1 flex-col justify-end gap-2">
             <motion.div
@@ -511,7 +579,7 @@ export default function LandingPage() {
             >
               <span className="-rotate-90 text-xs font-bold text-ink-900">ORGANIK</span>
             </motion.div>
-            <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-slate-500">Bulan 12</p>
+            <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-slate-400">Bulan 12</p>
           </div>
 
           <div className="absolute left-6 top-6 rounded-none border border-white/15 bg-black/50 p-3 backdrop-blur-sm">
@@ -574,7 +642,7 @@ export default function LandingPage() {
           {PILLARS.map((pillar) => (
             <div key={pillar.label} className="mt-14">
               <div className="hairline-gradient" />
-              <p className="section-label mt-5 text-slate-500">
+              <p className="section-label mt-5 text-slate-400">
                 {pillar.label} — {pillar.title}
               </p>
               <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -608,7 +676,7 @@ export default function LandingPage() {
                 transition={{ delay: i * 0.1 }}
                 className={`card-lift relative rounded-2xl border border-white/10 bg-ink p-7 ${
                   tier.popular
-                    ? 'border-accent/50 shadow-[0_0_60px_-15px_rgba(34,211,238,0.35)] lg:-mt-4 lg:scale-[1.03]'
+                    ? 'border-accent/50 shadow-[0_0_60px_-15px_color-mix(in_srgb,var(--accent)_35%,transparent)] lg:-mt-4 lg:scale-[1.03]'
                     : ''
                 }`}
               >
@@ -627,7 +695,7 @@ export default function LandingPage() {
 
                 <div className="mt-6 flex items-baseline gap-1">
                   <span className="font-display text-4xl font-bold text-white">{tier.price}</span>
-                  <span className="text-sm text-slate-500">{tier.period}</span>
+                  <span className="text-sm text-slate-400">{tier.period}</span>
                 </div>
 
                 <div className="mt-6 space-y-3">
@@ -640,7 +708,7 @@ export default function LandingPage() {
                 </div>
 
                 {tier.scarcity && (
-                  <p className="mt-6 flex items-center gap-2 text-xs text-slate-500">
+                  <p className="mt-6 flex items-center gap-2 text-xs text-slate-400">
                     <AlertTriangle className="h-4 w-4 shrink-0 text-accent" />
                     {tier.scarcity}
                   </p>
@@ -649,8 +717,11 @@ export default function LandingPage() {
                 <button
                   onClick={() => {
                     if (tier.isEnterprise) {
-                      const text = encodeURIComponent("Halo Tim AdoloSEO, saya tertarik dengan paket Sovereign dan ingin konsultasi arsitektur Enterprise untuk bisnis saya.");
-                      window.open(`https://wa.me/6281234567890?text=${text}`, '_blank');
+                      window.open(
+                        waLink('Halo Tim AdoloSEO, saya tertarik dengan paket Sovereign dan ingin konsultasi arsitektur Enterprise untuk bisnis saya.'),
+                        '_blank',
+                        'noopener,noreferrer',
+                      );
                     } else {
                       handleCheckout(tier.name);
                     }
@@ -677,6 +748,26 @@ export default function LandingPage() {
               </motion.div>
             ))}
           </div>
+
+          {checkoutError && (
+            <div
+              role="alert"
+              className="mt-8 flex flex-col gap-3 border border-red-500/40 bg-red-500/10 px-5 py-4 text-sm text-red-200 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <span className="flex items-start gap-2">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                {checkoutError}
+              </span>
+              <a
+                href={waLink('Halo Tim AdoloSEO, saya gagal menyelesaikan pembayaran di halaman harga dan ingin dibantu.')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 border border-white/30 bg-white/5 px-4 py-2 text-center text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-white/10"
+              >
+                Lanjut via WhatsApp
+              </a>
+            </div>
+          )}
         </div>
       </section>
 

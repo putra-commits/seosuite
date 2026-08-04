@@ -21,7 +21,7 @@ Kebanyakan *agency* web design hanya peduli pada estetika. Mereka menambahkan an
 
 ### Audit Teknis Adalah Penyelamat Anda
 
-Inilah mengapa fitur **Audit Teknis** di *SEOsuite* diciptakan. Kami tidak melihat warna atau font. Kami menggunakan mesin analitik untuk membongkar "jeroan" website Anda. Kami mencari *error 404* tersembunyi, kanibalisasi kata kunci, dan struktur tautan (link) yang beracun.
+Inilah mengapa fitur **Audit Teknis** di *AdoloSEO* diciptakan. Kami tidak melihat warna atau font. Kami menggunakan mesin analitik untuk membongkar "jeroan" website Anda. Kami mencari *error 404* tersembunyi, kanibalisasi kata kunci, dan struktur tautan (link) yang beracun.
 
-Jangan biarkan website puluhan juta Anda hanya menjadi brosur digital yang mati. Sudah waktunya Anda beralih menggunakan SEOsuite dan mengubah website tersebut menjadi mesin *revenue* yang sebenarnya!
+Jangan biarkan website puluhan juta Anda hanya menjadi brosur digital yang mati. Sudah waktunya Anda beralih menggunakan AdoloSEO dan mengubah website tersebut menjadi mesin *revenue* yang sebenarnya!
 
