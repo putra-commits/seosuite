@@ -13,10 +13,22 @@ interface PilarCluster {
   }>;
 }
 
-// ── Geo-SEO cities (10 kota GEO-SEO Matrix) ──────────────────────────────────
+// ── Geo-SEO cities (30 titik GEO-SEO Matrix: Rute Transit Nasional & Lokal) ──
 const GEO_CITIES = [
-  'Jakarta', 'Bandung', 'Surabaya', 'Yogyakarta', 'Medan',
-  'Makassar', 'Semarang', 'Palembang', 'Balikpapan', 'Denpasar',
+  // Cluster Sumbagsel & Lampung (Rute Kereta/Transit ke Baturaja)
+  'Baturaja', 'Belitang', 'Muaradua', 'Way Kanan', 'Kotabumi', 
+  'Bandar Lampung', 'Palembang', 'Prabumulih', 'Muara Enim', 'Tanjung Enim', 
+  'Lahat', 'Lubuklinggau', 'Martapura', 
+  
+  // Episentrum
+  'Yogyakarta', 'Jakarta', 'Kalibata',
+  
+  // Cluster Jawa Tengah/Barat (Basis Pelajar yang berkiblat ke Jogja)
+  'Semarang', 'Surakarta', 'Purwokerto', 'Cirebon', 'Magelang',
+  
+  // Cluster Jabodetabek (Hyperlocal KRL & Busway ke Kalibata City)
+  'Bogor', 'Depok', 'Bekasi', 'Tangerang', 'Tangerang Selatan', 
+  'Cikarang', 'Bojonggede', 'Pasar Minggu', 'Manggarai'
 ];
 
 // ── Intent classifier ─────────────────────────────────────────────────────────
@@ -75,7 +87,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Provide keywords array' }, { status: 400 });
     }
 
-    const targetCities = (cities && cities.length > 0 ? cities : GEO_CITIES).slice(0, 10);
+    const targetCities = (cities && cities.length > 0 ? cities : GEO_CITIES).slice(0, 30);
     const kwList       = keywords.slice(0, 100); // max 100 keywords
 
     const clusters: PilarCluster[] = kwList.map(kw => ({
