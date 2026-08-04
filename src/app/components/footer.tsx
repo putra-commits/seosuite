@@ -184,59 +184,6 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-
-        {/* Column 4: Sertifikasi & Kontak */}
-        <div className="flex flex-col gap-5">
-          <h4 className="text-xs font-black uppercase tracking-widest text-white border-b border-white/5 pb-2">
-            Sertifikasi & Kemitraan
-          </h4>
-          <ul className="space-y-3.5 text-xs font-semibold text-zinc-500">
-            <li className="flex items-center gap-2">
-              <Award className="w-4 h-4 text-zinc-500 shrink-0" />
-              <a href="https://lsafglobal.com" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors">
-                LSAF Global ACCA / FIA Qualification
-              </a>
-            </li>
-            <li className="flex items-center gap-2">
-              <Award className="w-4 h-4 text-zinc-500 shrink-0" />
-              <a href="https://csainstitute.or.id" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors">
-                CSA® Certified Securities Analyst
-              </a>
-            </li>
-            <li className="flex items-center gap-2">
-              <Heart className="w-4 h-4 text-zinc-500 shrink-0" />
-              <span className="text-zinc-500 font-normal">Kemendikbudristek Ditjen Vokasi</span>
-            </li>
-            <li className="pt-3 border-t border-white/5 flex items-center gap-2 text-zinc-400 font-bold">
-              <MessageCircle className="w-4 h-4 text-zinc-500 shrink-0" />
-              <a href="https://wa.me/62811283522" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-                Official WA: +62 811-283-522
-              </a>
-            </li>
-            <li className="flex items-start gap-2 text-zinc-500">
-              <MapPin className="w-4 h-4 text-zinc-500 shrink-0 mt-0.5" />
-              <span className="font-normal text-[11px] leading-relaxed">
-                Jakarta & Yogyakarta, Indonesia
-              </span>
-            </li>
-          </ul>
-        </div>
-
-      </div>
-
-      <div className="h-px bg-white/5 max-w-7xl mx-auto mb-8" />
-
-      {/* Bottom Copyright */}
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] text-zinc-600 font-bold uppercase tracking-widest">
-        <p className="text-center md:text-left">
-          © {currentYear} SEOsuite AI. Hak Cipta Dilindungi. <br className="md:hidden" />
-          <span className="text-zinc-500">Developed by Teaching Factory (TEFA) Student Developers × PT ADOLO COACHING MENTORING.</span>
-        </p>
-        <div className="flex items-center gap-6">
-          <span>TEFA Accredited</span>
-          <span>|</span>
-          <span>Sovereign Platform</span>
-        </div>
       </div>
 
       <div className="border-t border-white/5 py-5 text-center text-xs text-slate-500">
