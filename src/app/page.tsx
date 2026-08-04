@@ -16,7 +16,7 @@ import PhotoSplitSection from './components/photo-split-section';
 import GrowTogetherCta from './components/grow-together-cta';
 import WorkflowOrbit from './components/workflow-orbit';
 import { statementPhoto, comparisonPhoto, ctaPhoto } from '@/config/photos';
-import { waLink } from '@/config/contact';
+import { PEMBAYARAN_ONLINE_AKTIF, waLink } from '@/config/contact';
 
 const TIERS = [
   {
@@ -240,11 +240,16 @@ export default function LandingPage() {
           sebelum kampanye apa pun diarahkan ke halaman ini.
           Dipindah dari <script> mentah ke next/script agar tidak memblokir
           render (lint @next/next/no-sync-scripts). */}
-      <Script
-        src="https://app.sandbox.midtrans.com/snap/snap.js"
-        data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
-        strategy="afterInteractive"
-      />
+      {/* Skrip Midtrans hanya dimuat kalau pembayaran online memang aktif.
+          Selama dimatikan, halaman publik tidak menarik skrip pihak ketiga
+          sama sekali — lebih ringan dan tidak ada popup bayar yang menyesatkan. */}
+      {PEMBAYARAN_ONLINE_AKTIF && (
+        <Script
+          src="https://app.sandbox.midtrans.com/snap/snap.js"
+          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+          strategy="afterInteractive"
+        />
+      )}
 
       {/* 1. Navigasi bersama */}
       <SiteNav />
@@ -716,9 +721,16 @@ export default function LandingPage() {
 
                 <button
                   onClick={() => {
-                    if (tier.isEnterprise) {
+                    // Selama PEMBAYARAN_ONLINE_AKTIF false, SEMUA tier ditutup manual
+                    // lewat WhatsApp — bukan cuma tier Enterprise. Lihat alasannya di
+                    // src/config/contact.ts (kunci Midtrans milik entitas lain + sandbox).
+                    if (tier.isEnterprise || !PEMBAYARAN_ONLINE_AKTIF) {
                       window.open(
-                        waLink('Halo Tim AdoloSEO, saya tertarik dengan paket Sovereign dan ingin konsultasi arsitektur Enterprise untuk bisnis saya.'),
+                        waLink(
+                          tier.isEnterprise
+                            ? 'Halo Tim AdoloSEO, saya tertarik dengan paket Sovereign dan ingin konsultasi arsitektur Enterprise untuk bisnis saya.'
+                            : `Halo Tim AdoloSEO, saya ingin mengambil paket ${tier.name} (${tier.price}). Mohon dibantu prosesnya.`,
+                        ),
                         '_blank',
                         'noopener,noreferrer',
                       );

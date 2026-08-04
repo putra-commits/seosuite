@@ -19,3 +19,25 @@ export const WHATSAPP_NUMBER =
 export function waLink(message: string): string {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
+
+/**
+ * Saklar pembayaran online.
+ *
+ * DIMATIKAN 4 Agu 2026 atas keputusan Putu. Alasannya bukan teknis:
+ * kunci Midtrans di lingkungan ini milik entitas lain (Yayasan), bukan
+ * PT Adolo Coaching Mentoring yang menjual AdoloSEO. Menyalakannya berarti
+ * uang penjualan mendarat di rekening entitas yang salah — masalah
+ * pembukuan dan pajak, bukan sekadar konfigurasi.
+ *
+ * Skripnya juga masih menunjuk app.sandbox.midtrans.com, jadi kalaupun
+ * dinyalakan sekarang, popup pembayaran tidak akan pernah menagih uang
+ * sungguhan sementara pelanggan mengira sudah membayar.
+ *
+ * Selama false: seluruh tier ditutup manual lewat WhatsApp, dan skrip
+ * Midtrans Snap tidak dimuat sama sekali.
+ *
+ * Untuk menyalakan nanti: pastikan kunci Midtrans PT ACM sudah terpasang
+ * DAN src/app/page.tsx sudah menunjuk app.midtrans.com (bukan sandbox),
+ * baru ubah nilai di bawah jadi true.
+ */
+export const PEMBAYARAN_ONLINE_AKTIF = false;
