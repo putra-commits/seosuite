@@ -55,7 +55,7 @@ export default function TrendingPage() {
           {/* Main Trends List */}
           <div className="lg:col-span-2 space-y-4">
             <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-blue-500" />
+              <TrendingUp className="w-4 h-4 text-amber-500" />
               Volume Pencarian Harian
             </h3>
             <div className="space-y-3">
@@ -112,10 +112,10 @@ export default function TrendingPage() {
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl bg-blue-500/5 border border-blue-500/10 text-center">
+            <div className="p-6 rounded-2xl bg-amber-500/5 border border-amber-500/10 text-center">
               <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-2">Wawasan Regional</p>
               <div className="flex items-center justify-center gap-2 text-zinc-300 mb-2">
-                <Globe className="w-4 h-4 text-blue-500" />
+                <Globe className="w-4 h-4 text-amber-500" />
                 <span className="text-xs font-bold">{data.geo} / Indonesia</span>
               </div>
               <p className="text-[10px] text-zinc-500">

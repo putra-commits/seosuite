@@ -1,0 +1,34 @@
+<svg viewBox="0 0 512 512" width="512" height="512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AdoloSEO">
+  <title>AdoloSEO</title>
+  <defs>
+    <linearGradient id="asRibbon" x1="0.06" y1="0.04" x2="0.94" y2="0.96">
+      <stop offset="0%" stop-color="#67e8f9" />
+      <stop offset="28%" stop-color="#22d3ee" />
+      <stop offset="62%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1e3a8a" />
+    </linearGradient>
+    <linearGradient id="asFold" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#1e3a8a" />
+      <stop offset="55%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#22d3ee" />
+    </linearGradient>
+    <linearGradient id="asLens" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0%" stop-color="#67e8f9" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+  </defs>
+
+  <!-- Pita segitiga tertutup: siluet keluarga Adolo (counter segitiga di dalam) -->
+  <path
+    d="M283.97 109.08 L424.03 374.92 Q452 428 392 428 L120 428 Q60 428 87.97 374.92 L228.03 109.08 Q256 56 283.97 109.08 Z"
+    fill="none" stroke="url(#asRibbon)" stroke-width="62" stroke-linejoin="round" />
+
+  <!-- Lipatan pita (mobius) melintas di dalam counter -->
+  <path
+    d="M132 370 C 176 342 216 382 258 366 C 300 350 338 366 372 374"
+    fill="none" stroke="url(#asFold)" stroke-width="26" stroke-linecap="round" opacity="0.9" />
+
+  <!-- Glyph sub-brand: kaca pembesar (cincin + GAGANG) disarangkan di counter -->
+  <circle cx="256" cy="268" r="48" fill="none" stroke="url(#asLens)" stroke-width="22" />
+  <path d="M289.9 301.9 L316 328" fill="none" stroke="url(#asLens)" stroke-width="22" stroke-linecap="round" />
+</svg>

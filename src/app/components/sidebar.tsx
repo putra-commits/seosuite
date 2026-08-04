@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard, Search, TrendingUp, ShieldCheck, 
-  Unlink, MapPin, Zap, Bot, Layers, Trash2, 
-  ChevronRight, Binary, Filter
+  LayoutDashboard, Search, TrendingUp, ShieldCheck,
+  Unlink, MapPin, Bot, Layers, Trash2,
+  Binary, Filter
 } from 'lucide-react';
+import { AdoloSeoMark } from './logo';
 
 const MENU = [
   {
@@ -40,18 +41,20 @@ const MENU = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  if (pathname === '/') return null;
+  // Sidebar alat hanya untuk rute alat. Halaman publik (/ dan /blog) tidak boleh
+  // menampilkannya — sebelumnya bocor tampil di seluruh rute blog.
+  if (pathname === '/' || pathname === '/blog' || pathname.startsWith('/blog/')) return null;
 
   return (
     <div className="w-64 h-screen border-r border-[#27272a] bg-[#09090b] flex flex-col sticky top-0 shrink-0">
       <div className="p-6 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-          <Zap className="w-5 h-5 text-white fill-white" />
-        </div>
-        <div>
-          <h1 className="font-bold text-sm tracking-tight text-white uppercase italic">SEO<span className="text-zinc-600">suite</span></h1>
-          <p className="text-[10px] text-zinc-500 font-medium tracking-widest">Enterprise v3.0</p>
-        </div>
+        <Link href="/" className="flex items-center gap-3 group">
+          <AdoloSeoMark className="h-8 w-8" />
+          <div>
+            <h1 className="font-bold text-sm tracking-tight text-white">Adolo<span className="text-gradient">SEO</span></h1>
+            <p className="text-[10px] text-zinc-500 font-medium tracking-widest">Enterprise v3.0</p>
+          </div>
+        </Link>
       </div>
 
       <nav className="flex-1 px-3 overflow-y-auto pb-6">
@@ -68,14 +71,14 @@ export default function Sidebar() {
                     key={item.href}
                     href={item.href}
                     className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all group ${
-                      isActive 
-                        ? 'bg-zinc-800 text-white font-medium shadow-sm' 
+                      isActive
+                        ? 'bg-zinc-800 text-white font-medium shadow-sm'
                         : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
                     }`}
                   >
-                    <item.icon className={`w-4 h-4 ${isActive ? 'text-blue-500' : 'text-zinc-500 group-hover:text-zinc-300'}`} />
+                    <item.icon className={`w-4 h-4 ${isActive ? 'text-accent' : 'text-zinc-500 group-hover:text-zinc-300'}`} />
                     <span className="flex-1">{item.name}</span>
-                    {isActive && <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />}
+                    {isActive && <div className="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_8px_color-mix(in_srgb,var(--accent)_60%,transparent)]" />}
                   </Link>
                 );
               })}

@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id          String   @id @default(cuid())
+  url         String
+  seoScore    Int
+  aeoScore    Int
+  geoScore    Int
+  cwvScore    Int      @default(0)
+  hasGA       Boolean  @default(false)
+  hasGSC      Boolean  @default(false)
+  finalScore  Int
+  issues      Json     // Array of strings
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  status      String   @default("NEW") // NEW, CONTACTED, CONVERTED
+}

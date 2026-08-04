@@ -44,21 +44,21 @@ export default function AeoGeoPage() {
         {/* AI Intelligence Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
            <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 border-l-violet-500/50 border-l-2">
-              <div className="text-3xl font-black text-white italic mb-1">4.4x</div>
+              <div className="text-3xl font-black text-white mb-1">4.4x</div>
               <p className="text-[10px] font-black text-violet-500 uppercase tracking-widest mb-2">Conversion Value</p>
               <p className="text-[10px] text-zinc-500 font-bold leading-relaxed">
                 Trafik yang datang dari sitasi AI memiliki nilai konversi 4.4x lebih tinggi dibanding trafik organik biasa.
               </p>
            </div>
-           <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 border-l-blue-500/50 border-l-2">
-              <div className="text-3xl font-black text-white italic mb-1">60%</div>
-              <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Zero-Click Search</p>
+           <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 border-l-amber-500/50 border-l-2">
+              <div className="text-3xl font-black text-white mb-1">60%</div>
+              <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-2">Zero-Click Search</p>
               <p className="text-[10px] text-zinc-500 font-bold leading-relaxed">
                 60% pencarian kini berakhir tanpa klik. Menjadi "Jawaban Utama" di AI adalah satu-satunya cara bertahan.
               </p>
            </div>
            <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 border-l-emerald-500/50 border-l-2">
-              <div className="text-3xl font-black text-white italic mb-1">35%</div>
+              <div className="text-3xl font-black text-white mb-1">35%</div>
               <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-2">Citation Boost</p>
               <p className="text-[10px] text-zinc-500 font-bold leading-relaxed">
                 Mendapatkan sitasi di AI Overviews meningkatkan CTR (Click-Through Rate) hingga 35% lebih besar.
@@ -72,7 +72,7 @@ export default function AeoGeoPage() {
         <input 
           ref={inputRef}
           type="url" 
-          placeholder="https://seosuite.info/blog/contoh-artikel" 
+          placeholder="https://contoh-website-anda.com/blog/artikel" 
           value={url}
           onChange={e => setUrl(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && run()}
@@ -100,7 +100,7 @@ export default function AeoGeoPage() {
           {/* Summary Scores */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { label: 'Answer Engine', value: data.aeoScore, color: 'text-blue-500', sub: 'Efisiensi AEO' },
+              { label: 'Answer Engine', value: data.aeoScore, color: 'text-amber-500', sub: 'Efisiensi AEO' },
               { label: 'Generative AI', value: data.geoScore, color: 'text-violet-500', sub: 'Visibilitas GEO' },
               { label: 'Skor AI Ready', value: data.overallScore, color: data.overallScore >= 70 ? 'text-emerald-500' : 'text-amber-500', sub: 'Indeks Komposit' },
             ].map(s => (
@@ -121,7 +121,7 @@ export default function AeoGeoPage() {
                   onClick={() => setTab(t)}
                   className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition-all ${
                     tab === t 
-                      ? (t === 'AEO' ? 'bg-blue-600 text-white' : 'bg-violet-600 text-white') 
+                      ? (t === 'AEO' ? 'bg-amber-600 text-white' : 'bg-violet-600 text-white') 
                       : 'text-zinc-500 hover:text-zinc-300'
                   }`}
                 >

@@ -1,304 +1,169 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import * as cheerio from 'cheerio';
+import Groq from 'groq-sdk';
+import { PrismaClient } from '@prisma/client';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-interface AuditResult {
-  label: string;
-  pass: boolean;
-  detail: string;
-  severity: 'critical' | 'warn' | 'info';
-}
-interface AuditSection {
-  id: string;
-  title: string;
-  results: AuditResult[];
+const prisma = new PrismaClient();
+
+// Inisialisasi Groq. Jika API key belum diset di .env, kita tangkap errornya
+let groq: Groq | null = null;
+try {
+  groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+} catch (e) {
+  console.warn("Groq init failed, API Key might be missing.");
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-async function safeFetch(url: string, timeout = 10000): Promise<{ status: number; html: string; headers: Record<string, string> }> {
+export async function POST(req: Request) {
   try {
-    const res = await fetch(url, {
-      signal: AbortSignal.timeout(timeout),
-      headers: { 'User-Agent': 'SEOsuite-Bot/1.0 (+https://seosuite.info)' },
-      redirect: 'follow',
-    });
-    const html = await res.text().catch(() => '');
-    const headers: Record<string, string> = {};
-    res.headers.forEach((v, k) => { headers[k] = v; });
-    return { status: res.status, html, headers };
-  } catch {
-    return { status: 0, html: '', headers: {} };
-  }
-}
+    const body = await req.json();
+    const { url } = body;
 
-function check(label: string, pass: boolean, detail: string, severity: AuditResult['severity'] = 'warn'): AuditResult {
-  return { label, pass, detail, severity };
-}
-
-function extractMeta(html: string, name: string): string {
-  const m = html.match(new RegExp(`<meta[^>]+(?:name|property)=["']${name}["'][^>]+content=["']([^"']+)["']`, 'i'))
-    || html.match(new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:name|property)=["']${name}["']`, 'i'));
-  return m?.[1]?.trim() || '';
-}
-
-// ── Section Auditors ──────────────────────────────────────────────────────────
-
-async function auditRobots(base: string): Promise<AuditSection> {
-  const r = await safeFetch(`${base}/robots.txt`, 8000);
-  const results: AuditResult[] = [];
-
-  results.push(check('robots.txt accessible', r.status === 200, `HTTP ${r.status}`, 'critical'));
-
-  if (r.html) {
-    results.push(check('Has Sitemap directive', r.html.includes('Sitemap:'), r.html.includes('Sitemap:') ? 'Sitemap directive found' : 'Missing Sitemap directive', 'critical'));
+    if (!url) {
+      return NextResponse.json({ error: 'URL wajib diisi' }, { status: 400 });
+    }
     
-    // Parse Googlebot block properly
-    const lines = r.html.split('\n').map(l => l.trim());
-    let inTargetBlock = false;
-    let googlebotBlocked = false;
-    for (const line of lines) {
-      if (line.toLowerCase().startsWith('user-agent:')) {
-        const agent = line.split(':')[1]?.trim().toLowerCase();
-        inTargetBlock = agent === 'googlebot' || agent === '*';
-      }
-      if (inTargetBlock && line.toLowerCase().startsWith('disallow:')) {
-        const path = line.split(':')[1]?.trim();
-        if (path === '/' || path === '') googlebotBlocked = true;
+    // Pastikan URL memiliki http:// atau https://
+    let finalUrl = url.trim();
+    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+      finalUrl = 'https://' + finalUrl;
+    }
+
+    // 1. Scraping Ringan
+    const fetchRes = await fetch(finalUrl, { 
+      headers: { 'User-Agent': 'SEOsuite-Auditor/1.0' },
+      next: { revalidate: 0 } // Bypass cache
+    }).catch(() => null);
+    
+    if (!fetchRes || !fetchRes.ok) {
+      return NextResponse.json({ error: 'Gagal mengakses URL tersebut. Pastikan URL valid dan dapat diakses publik.' }, { status: 400 });
+    }
+
+    const html = await fetchRes.text();
+    const $ = cheerio.load(html);
+
+    // 2. Analisis SEO & CWV Heuristik
+    const title = $('title').text() || '';
+    const description = $('meta[name="description"]').attr('content') || '';
+    const h1 = $('h1').text() || '';
+    
+    // Hitung Skor SEO kasar
+    let seoScore = 100;
+    const seoIssues = [];
+    if (!title || title.length < 10) { seoScore -= 20; seoIssues.push('Title terlalu pendek atau hilang.'); }
+    if (!description || description.length < 50) { seoScore -= 20; seoIssues.push('Meta description tidak optimal.'); }
+    if (!h1) { seoScore -= 15; seoIssues.push('Tag H1 tidak ditemukan (struktur dokumen buruk).'); }
+
+    // CWV Heuristics
+    let cwvScore = 95;
+    const imagesWithoutLazy = $('img:not([loading="lazy"])').length;
+    if (imagesWithoutLazy > 3) {
+      cwvScore -= 15;
+      seoIssues.push(`Ditemukan ${imagesWithoutLazy} gambar tanpa optimasi lazy-loading (LCP Lambat).`);
+    }
+    if (html.length > 300000) { // Jika HTML > 300KB
+      cwvScore -= 25;
+      seoIssues.push('Ukuran DOM terlalu besar, berisiko merusak skor TBT (Total Blocking Time).');
+    }
+    if (cwvScore < 0) cwvScore = 20;
+
+    // GA & GSC Detection
+    const hasGA = html.includes('googletagmanager.com/gtag/js') || html.includes('google-analytics.com/analytics.js') || html.includes('G-');
+    const hasGSC = html.includes('<meta name="google-site-verification"');
+
+    if (!hasGA) seoIssues.push('Sistem analitik pelacakan pengunjung (GA4) tidak terdeteksi.');
+    if (!hasGSC) seoIssues.push('Website belum diverifikasi di Google Search Console (Blind SEO).');
+
+    // 3. Analisis AEO & GEO via Groq AI
+    // Ambil teks utama saja (hapus script/style)
+    $('script, style, nav, footer, iframe, noscript').remove();
+    const mainText = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 5000); // Batasi 5000 karakter
+
+    const prompt = `
+Anda adalah Auditor AEO (Answer Engine Optimization) dan GEO (Generative Engine Optimization).
+Analisis teks website ini secara ketat (berikan skor rendah jika tidak dioptimasi dengan baik):
+"${mainText}"
+
+Evaluasi berdasarkan kriteria berikut dan berikan format JSON murni:
+{
+  "aeoScore": <number 0-100>,
+  "geoScore": <number 0-100>,
+  "aeoIssues": ["issue 1", "issue 2"],
+  "geoIssues": ["issue 1", "issue 2"]
+}
+
+Panduan Penilaian:
+- AEO tinggi jika teks memiliki struktur FAQ, jawaban langsung, atau paragraf informatif padat yang disukai ChatGPT/Perplexity. Jika hanya berisi teks marketing murahan, beri skor di bawah 40.
+- GEO tinggi jika entitas bisnis, brand, kredibilitas, dan otoritas lokal/global disebutkan secara eksplisit. Jika entitas tidak jelas, beri skor di bawah 35.
+JANGAN berikan teks selain JSON.
+`;
+
+    // Default Fallback (Trigger Psikologis)
+    let aiResult = {
+      aeoScore: 35,
+      geoScore: 28,
+      aeoIssues: ['Tidak ditemukan struktur data yang disukai AI pencari.'],
+      geoIssues: ['Entitas bisnis tidak terbangun (Zero-Click Search Optimization gagal).']
+    };
+
+    if (groq) {
+      try {
+        const response = await groq.chat.completions.create({
+          model: 'llama-3.3-70b-versatile',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.1,
+          response_format: { type: 'json_object' }
+        });
+        const responseText = response.choices[0]?.message?.content || '{}';
+        
+        // Ekstrak JSON
+        const parsed = JSON.parse(responseText);
+        if (parsed.aeoScore !== undefined) {
+          aiResult = parsed;
+        }
+      } catch (e) {
+        console.error('Groq error, fallback to default', e);
       }
     }
-    results.push(check('Googlebot not blocked', !googlebotBlocked, googlebotBlocked ? 'Googlebot is BLOCKED' : 'Googlebot can crawl freely', 'critical'));
 
-    const sitemaps = r.html.match(/Sitemap:\s*.+/g) || [];
-    results.push(check(`Sitemap count (${sitemaps.length})`, sitemaps.length > 0, sitemaps.length ? sitemaps.join(' | ') : 'No sitemaps in robots.txt', 'warn'));
-    results.push(check('No Unsplash ban needed', !r.html.includes('unsplash.com'), 'robots.txt OK', 'info'));
-  }
+    // Gabungkan Hasil
+    const finalScore = Math.floor((seoScore + aiResult.aeoScore + aiResult.geoScore + cwvScore) / 4);
+    const combinedIssues = [
+      ...seoIssues,
+      ...aiResult.aeoIssues,
+      ...aiResult.geoIssues
+    ].slice(0, 6); // Maksimal 6 peringatan
 
-  return { id: 'robots', title: '🤖 Robots.txt', results };
-}
-
-async function auditSitemap(base: string): Promise<AuditSection> {
-  const results: AuditResult[] = [];
-
-  // Sitemap index
-  const si = await safeFetch(`${base}/sitemap.xml`, 8000);
-  results.push(check('sitemap.xml accessible', si.status === 200, `HTTP ${si.status}`, 'critical'));
-  if (si.html) {
-    const isSitemapIndex = si.html.includes('<sitemapindex') || si.html.includes('<sitemap>');
-    const urlCount       = (si.html.match(/<loc>/g) || []).length;
-    results.push(check('Is sitemap index', isSitemapIndex, isSitemapIndex ? `Index with ${urlCount} entries` : `Plain sitemap (${urlCount} URLs)`, 'info'));
-    results.push(check('Has lastmod', si.html.includes('<lastmod>'), si.html.includes('<lastmod>') ? 'lastmod present' : 'Missing lastmod', 'warn'));
-  }
-
-  // News sitemap
-  const sn = await safeFetch(`${base}/sitemap-news.xml`, 6000);
-  results.push(check('sitemap-news.xml accessible', sn.status === 200 || sn.status === 304, `HTTP ${sn.status}`, 'warn'));
-
-  // Pages sitemap
-  const sp = await safeFetch(`${base}/sitemap-pages.xml`, 6000);
-  results.push(check('sitemap-pages.xml accessible', sp.status === 200 || sp.status === 304, `HTTP ${sp.status}`, 'info'));
-
-  return { id: 'sitemap', title: '🗺️ Sitemap', results };
-}
-
-async function auditOnPage(base: string, html: string): Promise<AuditSection> {
-  const results: AuditResult[] = [];
-
-  // Title
-  const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-  const title      = titleMatch?.[1]?.trim() || '';
-  results.push(check('Title tag present', !!title, title ? `"${title.slice(0, 60)}" (${title.length}ch)` : 'Missing title', 'critical'));
-  results.push(check('Title length (30–60ch)', title.length >= 30 && title.length <= 60, `${title.length} chars`, 'warn'));
-
-  // Description
-  const desc = extractMeta(html, 'description');
-  results.push(check('Meta description present', !!desc, desc ? `${desc.length} chars` : 'Missing meta description', 'critical'));
-  results.push(check('Description length (120–160ch)', desc.length >= 120 && desc.length <= 160, `${desc.length} chars`, 'warn'));
-
-  // H1
-  const h1s = html.match(/<h1[^>]*>/gi) || [];
-  results.push(check('Single H1 tag', h1s.length === 1, `${h1s.length} H1 found`, h1s.length === 0 ? 'critical' : h1s.length > 1 ? 'warn' : 'info'));
-
-  // Canonical
-  const canonical = html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i)?.[1] || '';
-  results.push(check('Canonical URL set', !!canonical, canonical || 'Missing canonical', 'warn'));
-
-  // OG tags
-  const ogTitle = extractMeta(html, 'og:title');
-  const ogDesc  = extractMeta(html, 'og:description');
-  const ogImg   = extractMeta(html, 'og:image');
-  results.push(check('OpenGraph complete', !!(ogTitle && ogDesc && ogImg), `title:${!!ogTitle} desc:${!!ogDesc} img:${!!ogImg}`, 'warn'));
-
-  // Hreflang
-  const hreflangs = (html.match(/hreflang=["'][^"']+["']/gi) || []).length;
-  results.push(check('Hreflang tags present', hreflangs > 0, `${hreflangs} hreflang attributes`, 'info'));
-
-  return { id: 'onpage', title: '📄 On-Page SEO', results };
-}
-
-async function auditSchema(html: string): Promise<AuditSection> {
-  const results: AuditResult[] = [];
-
-  const schemaBlocks = html.match(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi) || [];
-  results.push(check(`Schema blocks (${schemaBlocks.length})`, schemaBlocks.length > 0, `${schemaBlocks.length} JSON-LD blocks found`, 'critical'));
-
-  const allSchemas = schemaBlocks.join(' ');
-  const hasOrg      = allSchemas.includes('"Organization"') || allSchemas.includes('"NewsMediaOrganization"');
-  const hasWebSite  = allSchemas.includes('"WebSite"');
-  const hasArticle  = allSchemas.includes('"NewsArticle"') || allSchemas.includes('"Article"');
-  const hasBreadcrumb = allSchemas.includes('"BreadcrumbList"');
-
-  results.push(check('Organization schema',  hasOrg,       hasOrg ? 'Found' : 'Missing', 'warn'));
-  results.push(check('WebSite schema',        hasWebSite,   hasWebSite ? 'Found (enables Sitelinks SearchBox)' : 'Missing', 'warn'));
-  results.push(check('Article/NewsArticle',   hasArticle,   hasArticle ? 'Found' : 'Not found on homepage (OK for non-article pages)', 'info'));
-  results.push(check('BreadcrumbList schema', hasBreadcrumb, hasBreadcrumb ? 'Found' : 'Missing (helps rich results)', 'info'));
-
-  return { id: 'schema', title: '🔖 Structured Data', results };
-}
-
-async function auditHeaders(base: string): Promise<AuditSection> {
-  const results: AuditResult[] = [];
-  const r = await safeFetch(base, 8000);
-  const h = r.headers;
-
-  results.push(check('HSTS (Strict-Transport-Security)', !!h['strict-transport-security'], h['strict-transport-security'] || 'Missing — add max-age=31536000; includeSubDomains; preload', 'critical'));
-  results.push(check('X-Content-Type-Options',  h['x-content-type-options'] === 'nosniff', h['x-content-type-options'] || 'Missing — add nosniff', 'warn'));
-  results.push(check('X-Frame-Options or CSP',   !!(h['x-frame-options'] || h['content-security-policy']), h['x-frame-options'] || h['content-security-policy'] || 'Missing', 'warn'));
-  results.push(check('Cache-Control present',    !!h['cache-control'], h['cache-control'] || 'Missing — no caching config', 'info'));
-  results.push(check('Content-Type UTF-8',       (h['content-type'] || '').includes('utf-8'), h['content-type'] || 'Missing', 'warn'));
-  results.push(check('HTTP/2+ protocol',         r.status > 0, r.status > 0 ? 'Connected' : 'Failed to connect', 'info'));
-
-  // HTTPS redirect
-  if (base.startsWith('https://')) {
-    const http = await safeFetch(base.replace('https://', 'http://'), 5000);
-    results.push(check('HTTP → HTTPS redirect', http.status >= 301 && http.status <= 308, `HTTP ${http.status}`, 'critical'));
-  }
-
-  return { id: 'headers', title: '🛡️ Security Headers', results };
-}
-
-async function auditSpeed(base: string): Promise<AuditSection> {
-  const results: AuditResult[] = [];
-  const pages = [
-    { path: '/', label: 'Homepage' },
-    { path: '/sitemap.xml', label: 'Sitemap' },
-  ];
-
-  for (const p of pages) {
-    const t0 = Date.now();
-    const r  = await safeFetch(`${base}${p.path}`, 10000);
-    const ms = Date.now() - t0;
-    const ok = ms < 800;
-    const warn = ms < 1500;
-    results.push(check(
-      `TTFB ${p.label}`,
-      ok,
-      `${ms}ms ${ok ? '✓ fast' : warn ? '⚠️ moderate' : '🔴 slow'}`,
-      ok ? 'info' : warn ? 'warn' : 'critical',
-    ));
-    results.push(check(`${p.label} returns 2xx`, r.status >= 200 && r.status < 400, `HTTP ${r.status}`, 'warn'));
-  }
-
-  // CWV via PSI (if API key set)
-  const apiKey = process.env.PSI_API_KEY;
-  if (apiKey) {
-    try {
-      const psiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(base)}&strategy=mobile&key=${apiKey}&category=performance`;
-      const psi = await fetch(psiUrl, { signal: AbortSignal.timeout(30000) });
-      if (psi.ok) {
-        const data = await psi.json();
-        const lcp  = data?.lighthouseResult?.audits?.['largest-contentful-paint']?.displayValue || 'N/A';
-        const cls  = data?.lighthouseResult?.audits?.['cumulative-layout-shift']?.displayValue   || 'N/A';
-        const score = Math.round((data?.lighthouseResult?.categories?.performance?.score || 0) * 100);
-        results.push(check('PSI Performance Score', score >= 70, `Mobile: ${score}/100`, score >= 90 ? 'info' : score >= 70 ? 'warn' : 'critical'));
-        results.push(check('LCP (Largest Contentful Paint)', true, lcp, 'info'));
-        results.push(check('CLS (Cumulative Layout Shift)', true, cls, 'info'));
+    // Simpan ke Database
+    await prisma.lead.create({
+      data: {
+        url: finalUrl,
+        seoScore,
+        aeoScore: aiResult.aeoScore,
+        geoScore: aiResult.geoScore,
+        cwvScore,
+        hasGA,
+        hasGSC,
+        finalScore,
+        issues: combinedIssues,
       }
-    } catch { /* PSI failed, non-critical */ }
-  } else {
-    results.push(check('PageSpeed Insights', false, 'Set PSI_API_KEY in .env.local to enable CWV data', 'info'));
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        url: finalUrl,
+        finalScore,
+        seoScore,
+        aeoScore: aiResult.aeoScore,
+        geoScore: aiResult.geoScore,
+        cwvScore,
+        hasGA,
+        hasGSC,
+        issues: combinedIssues
+      }
+    });
+
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
-
-  return { id: 'speed', title: '⚡ Speed & CWV', results };
-}
-
-async function auditLinks(base: string, html: string): Promise<AuditSection> {
-  const results: AuditResult[] = [];
-
-  // Extract all internal links
-  const hrefs = [...html.matchAll(/href=["']([^"'#?]+)["']/gi)]
-    .map(m => m[1])
-    .filter(h => h.startsWith('/') || h.startsWith(base))
-    .filter(h => !h.match(/\.(css|js|png|jpg|webp|svg|ico|woff|pdf)$/i))
-    .map(h => h.startsWith('/') ? `${base}${h}` : h)
-    .slice(0, 15); // sample 15 links
-
-  const unique = [...new Set(hrefs)].slice(0, 10);
-  results.push(check(`Internal links found`, unique.length > 0, `${unique.length} unique links sampled`, 'info'));
-
-  // Check 5 links for 404s
-  const broken: string[] = [];
-  await Promise.all(
-    unique.slice(0, 5).map(async link => {
-      const r = await safeFetch(link, 5000);
-      if (r.status === 404 || r.status === 0) broken.push(link);
-    })
-  );
-  results.push(check('No broken internal links (sample)', broken.length === 0, broken.length ? `Broken: ${broken.slice(0,3).join(', ')}` : `5 links checked — all OK`, broken.length > 0 ? 'critical' : 'info'));
-
-  return { id: 'links', title: '🔗 Links & Crawl', results };
-}
-
-// ── Score Calculator ──────────────────────────────────────────────────────────
-function calcScore(sections: AuditSection[]): number {
-  const all = sections.flatMap(s => s.results);
-  const total = all.length;
-  if (total === 0) return 0;
-  
-  const passed = all.filter(r => r.pass).length;
-  const critFails = all.filter(r => !r.pass && r.severity === 'critical').length;
-
-  // Base score = pass rate, with critical penalty
-  const base = (passed / total) * 100;
-  const penalty = critFails * 4;
-  return Math.max(0, Math.min(100, Math.round(base - penalty)));
-}
-
-// ── Route Handler ─────────────────────────────────────────────────────────────
-export async function GET(req: NextRequest) {
-  const url = req.nextUrl.searchParams.get('url');
-  if (!url) return NextResponse.json({ error: 'Missing url param' }, { status: 400 });
-
-  let base: string;
-  try {
-    const u = new URL(url);
-    base = `${u.protocol}//${u.host}`;
-  } catch {
-    return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
-  }
-
-  // Fetch homepage HTML
-  const homepage = await safeFetch(base, 12000);
-  if (homepage.status === 0) {
-    return NextResponse.json({ error: `Could not reach ${base}` }, { status: 502 });
-  }
-
-  // Run all sections in parallel
-  const [robots, sitemap, onpage, schema, headers, speed, links] = await Promise.all([
-    auditRobots(base),
-    auditSitemap(base),
-    auditOnPage(base, homepage.html),
-    auditSchema(homepage.html),
-    auditHeaders(base),
-    auditSpeed(base),
-    auditLinks(base, homepage.html),
-  ]);
-
-  const sections = [robots, sitemap, onpage, schema, headers, speed, links];
-  const score    = calcScore(sections);
-
-  return NextResponse.json({
-    url: base,
-    score,
-    sections,
-    timestamp: new Date().toISOString(),
-  });
 }
