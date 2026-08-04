@@ -72,7 +72,7 @@ export default function AeoGeoPage() {
         <input 
           ref={inputRef}
           type="url" 
-          placeholder="https://seosuite.info/blog/contoh-artikel" 
+          placeholder="https://contoh-website-anda.com/blog/artikel" 
           value={url}
           onChange={e => setUrl(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && run()}

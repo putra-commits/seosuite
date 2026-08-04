@@ -67,7 +67,7 @@ export default function LocalSeoPage() {
         <input 
           ref={inputRef}
           type="url" 
-          placeholder="https://seosuite.info" 
+          placeholder="https://contoh-website-anda.com" 
           value={url}
           onChange={e => setUrl(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && run()}
