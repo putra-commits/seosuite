@@ -3,11 +3,10 @@
 import { useState } from 'react';
 import {
   ArrowRight, Check, MapPin, Bot, BarChart3, Lock, Shield,
-  Search, Crown, Rocket, Cpu, XCircle, AlertTriangle,
+  Search, XCircle, AlertTriangle,
   ShieldCheck, Binary, Unlink, Trash2, TrendingUp, Compass, Layers,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import Script from 'next/script';
 import Footer from './components/footer';
 import SiteNav from './components/site-nav';
 import OutlineFrame from './components/outline-frame';
@@ -16,74 +15,7 @@ import PhotoSplitSection from './components/photo-split-section';
 import GrowTogetherCta from './components/grow-together-cta';
 import WorkflowOrbit from './components/workflow-orbit';
 import { statementPhoto, comparisonPhoto, ctaPhoto } from '@/config/photos';
-import { PEMBAYARAN_ONLINE_AKTIF, waLink } from '@/config/contact';
-
-const TIERS = [
-  {
-    name: 'Personal',
-    price: 'Rp 499.000',
-    period: '/bulan',
-    desc: 'Bangun otoritas digital dan personal branding yang tak terkalahkan.',
-    icon: Rocket,
-    features: [
-      'Audit Otoritas Personal',
-      'Riset Kata Kunci Niche',
-      'Monitor Core Web Vitals',
-      '1 Properti Domain',
-      'Optimasi Media Sosial'
-    ],
-    cta: 'Mulai Branding',
-    popular: false
-  },
-  {
-    name: 'Merchant',
-    price: 'Rp 1.499.000',
-    period: '/bulan',
-    desc: 'Untuk pemilik ecommerce yang bosan dengan potongan marketplace.',
-    icon: Cpu,
-    features: [
-      'Audit Arsitektur Konversi',
-      'Sinkronisasi GSC/GA4 Harian',
-      'Pemantauan Pirate Funnel',
-      'Strategi Bebas Marketplace',
-      '5 Properti Domain',
-      'Respon Prioritas'
-    ],
-    cta: 'Kejar Profit',
-    popular: true
-  },
-  {
-    name: 'Sovereign',
-    price: 'Rp 4.999.000',
-    period: '/bulan',
-    desc: 'Dominasi mutlak untuk jaringan enterprise volume tinggi.',
-    icon: Crown,
-    features: [
-      'Node Sovereign Terdedikasi',
-      'Optimasi AI Search (AEO/GEO)',
-      'Pelindung Kanibalisasi Konten',
-      'Domain Tak Terbatas',
-      'Concierge VIP 24/7',
-      'Laporan Whitelabel'
-    ],
-    cta: 'Konsultasi VIP (WhatsApp)',
-    popular: false,
-    isEnterprise: true,
-    scarcity: 'Sisa kuota: 2 slot bulan ini'
-  }
-];
-
-type MidtransSnap = {
-  pay: (
-    token: string,
-    callbacks: {
-      onSuccess?: (result: unknown) => void;
-      onPending?: (result: unknown) => void;
-      onError?: (result: unknown) => void;
-      onClose?: () => void;
-    },
-  ) => void;
-};
+import { waLink } from '@/config/contact';
 
 interface AuditResult {
   url: string;
@@ -98,7 +30,6 @@ interface AuditResult {
 }
 
 export default function LandingPage() {
-  const [loading, setLoading] = useState<string | null>(null);
 
   // Test Website Flow State
   const [testUrl, setTestUrl] = useState("");
@@ -111,7 +42,6 @@ export default function LandingPage() {
   const [leadWa, setLeadWa] = useState("");
 
   // Pesan kegagalan checkout yang TERLIHAT pengguna (dulu gagal diam-diam).
-  const [checkoutError, setCheckoutError] = useState("");
 
   const handleTestWebsite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -180,82 +110,17 @@ export default function LandingPage() {
     ].join('\n');
   };
 
-  const handleCheckout = async (tierName: string) => {
-    setLoading(tierName);
-    setCheckoutError("");
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tier: tierName }),
-      });
-      const data = await res.json();
-
-      // Sebelumnya hanya `if (data.token)` tanpa cabang else: HTTP 400/500
-      // GAGAL DIAM-DIAM — spinner berhenti dan pengguna tidak diberi tahu apa pun.
-      if (!res.ok || !data.token) {
-        setCheckoutError(
-          data?.error ||
-            'Gerbang pembayaran sedang tidak bisa dihubungi. Silakan lanjut lewat WhatsApp.',
-        );
-        return;
-      }
-
-      // window.snap disuntik oleh skrip Midtrans Snap; tidak ada di tipe Window.
-      const snap = (window as unknown as { snap?: MidtransSnap }).snap;
-      if (!snap) {
-        setCheckoutError(
-          'Skrip pembayaran gagal dimuat (kemungkinan diblokir pemblokir iklan). Silakan lanjut lewat WhatsApp.',
-        );
-        return;
-      }
-
-      snap.pay(data.token, {
-        onSuccess: (result: unknown) => console.log('success', result),
-        onPending: (result: unknown) => console.log('pending', result),
-        onError: () => setCheckoutError('Pembayaran gagal diproses. Silakan coba lagi atau hubungi kami lewat WhatsApp.'),
-        onClose: () => console.log('customer closed the popup without finishing the payment'),
-      });
-    } catch (err) {
-      console.error(err);
-      setCheckoutError(
-        err instanceof Error
-          ? `Gagal memulai pembayaran: ${err.message}`
-          : 'Gagal memulai pembayaran. Silakan hubungi kami lewat WhatsApp.',
-      );
-    } finally {
-      setLoading(null);
-    }
-  };
-
-  const scrollToPricing = () => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToLayanan = () => document.getElementById('layanan')?.scrollIntoView({ behavior: 'smooth' });
 
   return (
     <div className="min-h-screen bg-ink text-white selection:bg-accent/20">
-      {/* Midtrans Snap Script.
-          CATATAN JALUR UANG (diteruskan ke Putu, BUKAN diperbaiki di sini):
-          URL-nya masih app.sandbox.midtrans.com — warisan dari sebelum desain
-          ulang (base bfe86fa). Sandbox berarti popup pembayaran TIDAK PERNAH
-          menagih uang sungguhan. Cocokkan dengan catatan Money Door Audit
-          sebelum kampanye apa pun diarahkan ke halaman ini.
-          Dipindah dari <script> mentah ke next/script agar tidak memblokir
-          render (lint @next/next/no-sync-scripts). */}
-      {/* Skrip Midtrans hanya dimuat kalau pembayaran online memang aktif.
-          Selama dimatikan, halaman publik tidak menarik skrip pihak ketiga
-          sama sekali — lebih ringan dan tidak ada popup bayar yang menyesatkan. */}
-      {PEMBAYARAN_ONLINE_AKTIF && (
-        <Script
-          src="https://app.sandbox.midtrans.com/snap/snap.js"
-          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
-          strategy="afterInteractive"
-        />
-      )}
-
       {/* 1. Navigasi bersama */}
       <SiteNav />
 
       {/* 2. Hero + Widget Audit */}
-      <section className="hero-mesh relative flex min-h-[92vh] items-center overflow-hidden pb-20 pt-32">
+      {/* id="audit" dipakai tombol "Jalankan Audit" di section Layanan —
+          widget auditnya memang tinggal di dalam hero, bukan section sendiri. */}
+      <section id="audit" className="hero-mesh relative flex min-h-[92vh] scroll-mt-24 items-center overflow-hidden pb-20 pt-32">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center">
           {/* Kolom kiri */}
           <div>
@@ -432,7 +297,7 @@ export default function LandingPage() {
                 </div>
 
                 <button
-                  onClick={scrollToPricing}
+                  onClick={scrollToLayanan}
                   className="w-full rounded-none bg-accent py-3.5 text-sm font-bold uppercase tracking-wide text-ink-900 transition hover:bg-accent-300"
                 >
                   Selamatkan Bisnis Saya Sekarang
@@ -661,125 +526,106 @@ export default function LandingPage() {
       </section>
 
       {/* 8. Pricing */}
-      <section id="pricing" className="relative scroll-mt-24 overflow-hidden bg-ink-900 py-16 sm:py-20">
+      {/* Bekas section harga. AdoloSEO TIDAK menjual langganan.
+          Alasannya ada di komentar kepala berkas patch dan di PR: mesin ini
+          belum punya Tenant/User/Subscription, jadi langganan tidak bisa
+          ditagih maupun dibatasi; dan jasapromo.id sudah menjual SEO dikelola
+          dengan mesin yang sama. Auditnya gratis, penutupnya lewat jasapromo. */}
+      <section id="layanan" className="relative scroll-mt-24 overflow-hidden bg-ink-900 py-16 sm:py-20">
         <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/3 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-brand-600/12 blur-3xl" />
 
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-          <span aria-hidden="true" className="ey-accent-bar mb-4 h-1 w-14 bg-accent" />
-          <p className="section-label text-accent">Arsitektur Harga</p>
-          <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">
-            Pilih tingkat Dominasi Anda
+          <span aria-hidden="true" className="ey-accent-bar mb-4 h-1 w-14 bg-amber-400" />
+          <p className="section-label text-amber-300">Setelah Audit</p>
+          <h2 className="mt-2 max-w-2xl font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">
+            Auditnya gratis. Yang berbayar adalah perbaikannya.
           </h2>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
+            Audit di atas menunjukkan di mana website Anda bocor. Memperbaikinya butuh
+            pengerjaan &mdash; dan itu dikerjakan oleh tim, bukan oleh Anda sendiri.
+          </p>
 
-          <div className="mt-12 grid gap-6 lg:grid-cols-3 lg:items-start">
-            {TIERS.map((tier, i) => (
-              <motion.div
-                key={tier.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className={`card-lift relative rounded-2xl border border-white/10 bg-ink p-7 ${
-                  tier.popular
-                    ? 'border-accent/50 shadow-[0_0_60px_-15px_color-mix(in_srgb,var(--accent)_35%,transparent)] lg:-mt-4 lg:scale-[1.03]'
-                    : ''
-                }`}
+          <div className="mt-12 grid gap-6 lg:grid-cols-2 lg:items-stretch">
+            {/* Kartu 1: audit gratis */}
+            <div className="card-lift flex flex-col rounded-2xl border border-white/10 bg-ink p-7">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600/15 text-accent">
+                <Search className="h-6 w-6" />
+              </div>
+              <h3 className="mt-5 font-display text-xl font-bold text-white">Audit Gratis</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                Tanpa biaya, tanpa kartu kredit. Jalankan sendiri, sekarang juga.
+              </p>
+              <ul className="mt-6 flex-1 space-y-3 text-sm text-slate-300">
+                {[
+                  'Skor SEO, AEO, dan GEO website Anda',
+                  'Pemeriksaan Core Web Vitals',
+                  'Deteksi pemasangan Google Analytics & Search Console',
+                  'Daftar masalah yang ditemukan, apa adanya',
+                ].map((butir) => (
+                  <li key={butir} className="flex items-start gap-2.5">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                    <span>{butir}</span>
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                onClick={() => document.getElementById('audit')?.scrollIntoView({ behavior: 'smooth' })}
+                className="mt-8 flex w-full items-center justify-center gap-2 rounded-none bg-accent py-3.5 text-sm font-bold uppercase tracking-wide text-ink-900 transition hover:bg-accent-300"
               >
-                {tier.popular && (
-                  <div className="absolute -top-3 left-7 rounded-none bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-ink-900">
-                    Paling Strategis
-                  </div>
-                )}
+                Jalankan Audit <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
 
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600/15 text-accent">
-                  <tier.icon className="h-6 w-6" />
-                </div>
-
-                <h3 className="mt-5 font-display text-xl font-bold text-white">{tier.name}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-400">{tier.desc}</p>
-
-                <div className="mt-6 flex items-baseline gap-1">
-                  <span className="font-display text-4xl font-bold text-white">{tier.price}</span>
-                  <span className="text-sm text-slate-400">{tier.period}</span>
-                </div>
-
-                <div className="mt-6 space-y-3">
-                  {tier.features.map(f => (
-                    <div key={f} className="flex items-center gap-3 text-sm text-slate-300">
-                      <Check className="h-4 w-4 shrink-0 text-accent" />
-                      <span>{f}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {tier.scarcity && (
-                  <p className="mt-6 flex items-center gap-2 text-xs text-slate-400">
-                    <AlertTriangle className="h-4 w-4 shrink-0 text-accent" />
-                    {tier.scarcity}
-                  </p>
-                )}
-
-                <button
-                  onClick={() => {
-                    // Selama PEMBAYARAN_ONLINE_AKTIF false, SEMUA tier ditutup manual
-                    // lewat WhatsApp — bukan cuma tier Enterprise. Lihat alasannya di
-                    // src/config/contact.ts (kunci Midtrans milik entitas lain + sandbox).
-                    if (tier.isEnterprise || !PEMBAYARAN_ONLINE_AKTIF) {
-                      window.open(
-                        waLink(
-                          tier.isEnterprise
-                            ? 'Halo Tim AdoloSEO, saya tertarik dengan paket Sovereign dan ingin konsultasi arsitektur Enterprise untuk bisnis saya.'
-                            : `Halo Tim AdoloSEO, saya ingin mengambil paket ${tier.name} (${tier.price}). Mohon dibantu prosesnya.`,
-                        ),
-                        '_blank',
-                        'noopener,noreferrer',
-                      );
-                    } else {
-                      handleCheckout(tier.name);
-                    }
-                  }}
-                  disabled={loading === tier.name}
-                  className={`mt-8 flex w-full items-center justify-center gap-2 py-3.5 text-sm transition ${
-                    tier.popular
-                      ? 'rounded-none bg-accent font-bold uppercase tracking-wide text-ink-900 hover:bg-accent-300'
-                      : 'rounded-none border border-white/25 bg-white/5 font-semibold text-white backdrop-blur-sm hover:bg-white/10'
-                  }`}
-                >
-                  {loading === tier.name ? (
-                    <div
-                      className={`h-5 w-5 animate-spin rounded-full border-2 ${
-                        tier.popular
-                          ? 'border-ink-900/20 border-t-ink-900'
-                          : 'border-white/20 border-t-white'
-                      }`}
-                    />
-                  ) : (
-                    tier.cta
-                  )}
-                </button>
-              </motion.div>
-            ))}
-          </div>
-
-          {checkoutError && (
-            <div
-              role="alert"
-              className="mt-8 flex flex-col gap-3 border border-red-500/40 bg-red-500/10 px-5 py-4 text-sm text-red-200 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <span className="flex items-start gap-2">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-                {checkoutError}
-              </span>
+            {/* Kartu 2: dikerjakan tim, lewat jasapromo */}
+            <div className="card-lift flex flex-col rounded-2xl border border-amber-400/40 bg-ink p-7">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-400/15 text-amber-300">
+                <TrendingUp className="h-6 w-6" />
+              </div>
+              <h3 className="mt-5 font-display text-xl font-bold text-white">Dikerjakan Tim</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                Layanan SEO dikelola oleh JasaPromo &mdash; memakai mesin audit yang sama
+                dengan halaman ini.
+              </p>
+              <p className="mt-6 font-display text-3xl font-bold text-white">
+                mulai Rp 1.000.000<span className="ml-1 text-base font-normal text-slate-400">/bulan</span>
+              </p>
+              <ul className="mt-6 flex-1 space-y-3 text-sm text-slate-300">
+                {[
+                  'Audit SEO menyeluruh + optimasi on-page',
+                  'Riset dan penargetan kata kunci',
+                  'Strategi konten dan pemantauan peringkat',
+                  'Laporan berkala dari tim yang mengerjakan',
+                ].map((butir) => (
+                  <li key={butir} className="flex items-start gap-2.5">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+                    <span>{butir}</span>
+                  </li>
+                ))}
+              </ul>
               <a
-                href={waLink('Halo Tim AdoloSEO, saya gagal menyelesaikan pembayaran di halaman harga dan ingin dibantu.')}
+                href="https://jasapromo.id/layanan/seo"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="shrink-0 border border-white/30 bg-white/5 px-4 py-2 text-center text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-white/10"
+                className="mt-8 flex w-full items-center justify-center gap-2 rounded-none bg-amber-400 py-3.5 text-sm font-bold uppercase tracking-wide text-slate-950 transition hover:bg-amber-300"
               >
-                Lanjut via WhatsApp
+                Lihat Paket JasaPromo <ArrowRight className="h-4 w-4" />
               </a>
             </div>
-          )}
+          </div>
+
+          <p className="mt-8 text-sm text-slate-400">
+            Kebutuhan berskala besar atau butuh penanganan lintas kanal?{' '}
+            <a
+              href={waLink('Halo Tim Adolo, saya baru menjalankan audit di seo.adolo.id dan kebutuhan saya berskala besar. Mohon dibantu.')}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white underline underline-offset-4 transition hover:text-accent"
+            >
+              bicara langsung dengan tim
+            </a>
+            .
+          </p>
         </div>
       </section>
 
@@ -791,7 +637,7 @@ export default function LandingPage() {
         photo={ctaPhoto}
       >
         <button
-          onClick={scrollToPricing}
+          onClick={scrollToLayanan}
           className="flex items-center justify-center gap-2 rounded-none bg-accent px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-ink-900 transition hover:bg-accent-300"
         >
           Mulai Dominasi Sekarang <ArrowRight className="h-4 w-4" />

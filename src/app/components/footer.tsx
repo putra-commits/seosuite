@@ -1,18 +1,108 @@
-'use client';
-
+/**
+ * Footer AdoloSEO — mengikuti struktur footer adolo.id
+ * (`/var/www/adolo.id/src/components/site-footer.tsx`) supaya satu keluarga:
+ * 4 kolom = identitas / produk / perusahaan / legal, dengan lencana status
+ * berwarna sama (emerald=production, sky=beta, amber=segera hadir).
+ *
+ * Yang DIBUANG dari footer lama beserta alasannya:
+ * - "Ecosystem Bernas Mahakarya Asia" -> footer adolo.id mendaftar produk
+ *   keluarga Adolo, bukan payung lintas-entitas.
+ * - agenc1st.id dan adoloweb.com -> domainnya tidak ada (DNS gagal resolve).
+ * - autoprofit.id -> balas 502.
+ * - "TEFA ACADEMY x UNMAHA" & "Developed by TEFA Student Developers" ->
+ *   UNMAHA punya merek institusional sendiri yang sengaja dipisahkan dari
+ *   sisi komersial Adolo. Menyebut "dibangun mahasiswa" juga melemahkan
+ *   posisi harga paket Rp4.999.000.
+ * - "Secured by SSL" -> setiap situs punya SSL; itu bukan pembeda.
+ */
 import React from 'react';
 import Link from 'next/link';
-import { Lock, Globe, Shield } from 'lucide-react';
 import { AdoloSeoMark } from './logo';
+import {
+  TAUTAN_LEGAL,
+  TAUTAN_PERUSAHAAN,
+  produkBerstatus,
+  type Produk,
+  type StatusProduk,
+} from '@/config/ekosistem';
+
+const GAYA_LENCANA: Record<StatusProduk, string> = {
+  production: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300',
+  beta: 'border-sky-400/30 bg-sky-400/10 text-sky-300',
+  soon: 'border-amber-400/30 bg-amber-400/10 text-amber-300',
+};
+
+const LABEL_KELOMPOK: Record<StatusProduk, { judul: string; warna: string }> = {
+  production: { judul: 'Production', warna: 'text-emerald-500/80' },
+  beta: { judul: 'Beta', warna: 'text-sky-500/80' },
+  soon: { judul: 'Segera hadir', warna: 'text-amber-500/80' },
+};
+
+function TautanProduk({ produk }: { produk: Produk }) {
+  // Situs ini sendiri: ditaut ke beranda, bukan keluar.
+  if (produk.nama === 'AdoloSEO') {
+    return (
+      <Link href="/" className="inline-flex flex-wrap items-center text-white transition hover:text-accent">
+        {produk.nama}
+        <span className="ml-1.5 text-[10px] font-normal uppercase tracking-wide text-slate-500">
+          Anda di sini
+        </span>
+      </Link>
+    );
+  }
+
+  // Aturan yang diwarisi dari canLinkExternally() di adolo.id: produk 'soon'
+  // TIDAK ditaut keluar. Inilah yang dulu tidak ada, sehingga tiga tautan
+  // mati sempat tayang di footer.
+  if (produk.status === 'soon') {
+    return <span className="inline-flex flex-wrap items-center text-slate-500">{produk.nama}</span>;
+  }
+
+  return (
+    <a
+      href={produk.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex flex-wrap items-center transition hover:text-white"
+    >
+      {produk.nama}
+      {produk.status !== 'production' && (
+        <span
+          className={`ml-1.5 rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${GAYA_LENCANA[produk.status]}`}
+        >
+          {LABEL_KELOMPOK[produk.status].judul}
+        </span>
+      )}
+    </a>
+  );
+}
+
+function KelompokProduk({ status }: { status: StatusProduk }) {
+  const daftar = produkBerstatus(status);
+  if (daftar.length === 0) return null;
+  const { judul, warna } = LABEL_KELOMPOK[status];
+
+  return (
+    <div>
+      <p className={`mb-2 text-[10px] font-semibold uppercase tracking-wider ${warna}`}>{judul}</p>
+      <ul className="space-y-2">
+        {daftar.map((produk) => (
+          <li key={produk.nama}>
+            <TautanProduk produk={produk} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  const tahun = new Date().getFullYear();
 
   return (
     <footer className="mt-auto bg-ink-900 text-slate-400 selection:bg-accent/20">
       <div className="hairline-gradient" />
 
-      {/* Ambient background glow */}
       <div className="relative">
         <div
           aria-hidden="true"
@@ -20,100 +110,84 @@ export default function Footer() {
         />
 
         <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
-          {/* Kolom 1: identitas */}
-          <div className="flex flex-col gap-5">
-            <Link href="/" className="flex items-center gap-3">
+          {/* Kolom 1: identitas — badan hukum yang sama dengan adolo.id */}
+          <div>
+            <Link href="/" className="inline-flex items-center gap-3" aria-label="AdoloSEO">
               <AdoloSeoMark className="h-10 w-10" />
-              <span className="flex flex-col">
-                <span className="font-display text-lg font-bold leading-none tracking-tight text-white">
-                  Adolo<span className="text-gradient">SEO</span>
-                </span>
-                <span className="section-label mt-1.5 leading-none text-slate-400">
-                  TEFA ACADEMY × UNMAHA
-                </span>
+              <span className="font-display text-lg font-bold tracking-tight text-white">
+                Adolo<span className="text-gradient">SEO</span>
               </span>
             </Link>
-            <p className="text-sm leading-relaxed">
-              Platform kedaulatan digital untuk optimasi profit dan otoritas brand. Dibangun oleh
-              talenta terbaik melalui program Teaching Factory (TEFA) Universitas Mahakarya Asia.
+            <p className="mt-3 text-sm leading-relaxed">
+              PT Adolo Coaching Mentoring
+              <br />
+              IDX Tower, Jl. Jend. Sudirman, Jakarta Selatan
             </p>
-            <div className="flex w-fit items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-              <Shield className="h-3.5 w-3.5 text-accent" /> Active Protection Guard
+            <p className="mt-4 text-xs text-slate-500">
+              Bagian dari ekosistem{' '}
+              <a
+                href="https://adolo.id"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 underline underline-offset-2 transition hover:text-white"
+              >
+                adolo.id
+              </a>
+            </p>
+          </div>
+
+          {/* Kolom 2: produk keluarga Adolo */}
+          <div>
+            <p className="section-label text-slate-400">Produk</p>
+            <div className="mt-4 space-y-5 text-sm">
+              <KelompokProduk status="production" />
+              <KelompokProduk status="beta" />
+              <KelompokProduk status="soon" />
             </div>
           </div>
 
-          {/* Kolom 2: ekosistem */}
+          {/* Kolom 3: perusahaan — halaman adolo.id, tidak diduplikasi di sini */}
           <div>
-            <p className="section-label text-slate-400">Ecosystem Bernas Mahakarya Asia</p>
+            <p className="section-label text-slate-400">Perusahaan</p>
             <ul className="mt-4 space-y-2.5 text-sm">
-              <li>
-                <a href="https://bernas.id" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
-                  BERNAS (Media &amp; Portal Intelektual)
-                </a>
-              </li>
-              <li>
-                <a href="https://unmaha.ac.id" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
-                  UNMAHA (Universitas Mahakarya Asia)
-                </a>
-              </li>
-              <li>
-                {/* TODO Putu: agenc1st.id sedang diserahkan ke partner — putuskan apakah tautan ini tetap dipertahankan. */}
-                <a href="https://agenc1st.id" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
-                  Agenc1st (Tech-Enabled Agency &amp; PMB)
-                </a>
-              </li>
-              <li>
-                <a href="https://adoloweb.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
-                  AdoloWeb (AI-Native B2B Growth Engine)
-                </a>
-              </li>
-              <li>
-                <a href="https://omniads.ai" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
-                  OmniAds (AI-Powered Ads Optimization)
-                </a>
-              </li>
+              {TAUTAN_PERUSAHAAN.map((tautan) => (
+                <li key={tautan.href}>
+                  <a
+                    href={tautan.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition hover:text-white"
+                  >
+                    {tautan.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Kolom 3: quick links */}
+          {/* Kolom 4: legal — satu badan hukum, satu set dokumen */}
           <div>
-            <p className="section-label text-slate-400">Quick Links</p>
+            <p className="section-label text-slate-400">Legal</p>
             <ul className="mt-4 space-y-2.5 text-sm">
-              <li><Link href="/#pricing" className="transition hover:text-white">ROI &amp; Pricing</Link></li>
-              <li><Link href="/#features" className="transition hover:text-white">Platform Features</Link></li>
-              <li><Link href="/blog" className="text-accent transition hover:text-white">Sovereign Intel Blog</Link></li>
-              <li>
-                <a href="https://unmaha.ac.id" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
-                  PMB UNMAHA Resmi
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Kolom 4: security & trust */}
-          <div>
-            <p className="section-label text-slate-400">Security &amp; Trust</p>
-            <ul className="mt-4 space-y-2.5 text-sm">
-              <li className="flex items-center gap-2">
-                <Lock className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-                <span>Secured by SSL</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Globe className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-                <a href="https://autoprofit.id" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
-                  73+ autoprofit.id Apps
-                </a>
-              </li>
+              {TAUTAN_LEGAL.map((tautan) => (
+                <li key={tautan.href}>
+                  <a
+                    href={tautan.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition hover:text-white"
+                  >
+                    {tautan.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
       </div>
 
-      <div className="border-t border-white/5 py-5 text-center text-xs text-slate-400">
-        <p>© {currentYear} AdoloSEO. Hak Cipta Dilindungi.</p>
-        <p className="mt-1">
-          Developed by Teaching Factory (TEFA) Student Developers × PT ADOLO COACHING MENTORING.
-        </p>
+      <div className="border-t border-white/5 py-5 text-center text-xs text-slate-500">
+        &copy; {tahun} PT Adolo Coaching Mentoring
       </div>
     </footer>
   );
