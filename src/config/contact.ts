@@ -9,7 +9,12 @@
  * berkas ini di produksi — set env var berikut lalu restart PM2:
  *   NEXT_PUBLIC_WHATSAPP_NUMBER=628xxxxxxxxxx   (format internasional, tanpa +)
  */
-const FALLBACK_WHATSAPP = '6287796885208';
+// DIUBAH 4 Agu 2026 dari 5208 ke 6780. Alasannya bukan preferensi:
+// nomor 5208 terdaftar di WhatsApp atas nama "Jasa Promo ID", sehingga
+// pembeli Adolo mendarat di chat bermerek lain. adolo.id sendiri sudah
+// memindahkan seluruh CTA-nya ke 6780 hari ini (PR #79 repo adolo.id).
+// AdoloSEO ikut, supaya satu ekosistem satu pintu.
+const FALLBACK_WHATSAPP = '6287796886780';
 
 /** Nomor WhatsApp tujuan, format wa.me (internasional, tanpa tanda +). */
 export const WHATSAPP_NUMBER =
