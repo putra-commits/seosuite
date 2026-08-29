@@ -29,13 +29,29 @@ export default function AdminLeadsPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [token, setToken] = useState('');
+  const [tokenInput, setTokenInput] = useState('');
+  const [authError, setAuthError] = useState('');
 
-  async function fetchLeads() {
+  async function fetchLeads(activeToken: string) {
+    if (!activeToken) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
-      const res = await fetch('/api/leads');
+      const res = await fetch('/api/leads', {
+        headers: { Authorization: `Bearer ${activeToken}` },
+      });
+      if (res.status === 401) {
+        setAuthError('Token admin salah atau ADMIN_TOKEN belum diset di server.');
+        setToken('');
+        sessionStorage.removeItem('seosuite_admin_token');
+        return;
+      }
       const data = await res.json();
       if (data.leads) {
+        setAuthError('');
         setLeads(data.leads);
       }
     } catch (err) {
@@ -46,7 +62,9 @@ export default function AdminLeadsPage() {
   }
 
   useEffect(() => {
-    fetchLeads();
+    const saved = sessionStorage.getItem('seosuite_admin_token') || '';
+    setToken(saved);
+    fetchLeads(saved);
   }, []);
 
   async function handleStatusChange(id: string, newStatus: StoredAuditRecord['status']) {
@@ -54,7 +72,7 @@ export default function AdminLeadsPage() {
     try {
       const res = await fetch('/api/leads', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ id, status: newStatus }),
       });
       if (res.ok) {
@@ -94,6 +112,45 @@ export default function AdminLeadsPage() {
     return matchSearch && matchStatus;
   });
 
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-[#040609] text-zinc-100 font-sans flex items-center justify-center px-6">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            const t = tokenInput.trim();
+            if (!t) return;
+            sessionStorage.setItem('seosuite_admin_token', t);
+            setToken(t);
+            setTokenInput('');
+            fetchLeads(t);
+          }}
+          className="w-full max-w-sm rounded-2xl border border-white/10 bg-zinc-950/80 p-8"
+        >
+          <h1 className="text-xl font-semibold mb-2">Admin SEOsuite</h1>
+          <p className="text-sm text-zinc-400 mb-6">
+            Masukkan token admin untuk membuka database prospek.
+          </p>
+          <input
+            type="password"
+            value={tokenInput}
+            onChange={(e) => setTokenInput(e.target.value)}
+            placeholder="Token admin"
+            autoComplete="off"
+            className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none focus:border-amber-400"
+          />
+          {authError && <p className="mt-3 text-sm text-rose-400">{authError}</p>}
+          <button
+            type="submit"
+            className="mt-5 w-full rounded-lg bg-amber-400 px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-amber-300"
+          >
+            Masuk
+          </button>
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#040609] text-zinc-100 font-sans">
       {/* Top Bar */}
@@ -113,7 +170,7 @@ export default function AdminLeadsPage() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={fetchLeads}
+              onClick={() => fetchLeads(token)}
               disabled={loading}
               className="p-2 rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] text-zinc-300 transition-all cursor-pointer"
               title="Refresh Data"

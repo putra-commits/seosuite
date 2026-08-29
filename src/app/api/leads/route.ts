@@ -4,8 +4,13 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllLeads, updateLeadStatus } from '@/lib/audit-store';
+import { isAdminRequest } from '@/lib/admin-auth';
 
-export async function GET() {
+const UNAUTHORIZED = () =>
+  NextResponse.json({ error: 'Akses admin ditolak' }, { status: 401 });
+
+export async function GET(req: NextRequest) {
+  if (!isAdminRequest(req)) return UNAUTHORIZED();
   try {
     const leads = await getAllLeads();
     return NextResponse.json({ success: true, leads });
@@ -16,6 +21,7 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
+  if (!isAdminRequest(req)) return UNAUTHORIZED();
   try {
     const body = await req.json();
     const { id, status } = body;

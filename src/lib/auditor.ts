@@ -3,6 +3,18 @@
  */
 
 import { AuditFinding, CalculatedAudit, calculateOverallAudit } from './scoring';
+import { isBlockedHost } from './security';
+import { lookup } from 'dns/promises';
+
+const MAX_REDIRECTS = 5;
+
+/** Tolak host yang me-resolve ke IP privat (menutup DNS rebinding & redirect ke internal). */
+async function assertPublicHost(url: string): Promise<void> {
+  const { hostname } = new URL(url);
+  if (isBlockedHost(hostname)) throw new Error('blocked-host');
+  const addrs = await lookup(hostname, { all: true });
+  if (addrs.some(a => isBlockedHost(a.address))) throw new Error('blocked-host');
+}
 
 interface FetchResponse {
   status: number;
@@ -14,20 +26,36 @@ interface FetchResponse {
 async function safeFetch(url: string, timeout = 10000): Promise<FetchResponse> {
   const t0 = Date.now();
   try {
-    const res = await fetch(url, {
-      signal: AbortSignal.timeout(timeout),
-      headers: {
-        'User-Agent': 'SEOsuite-Bot/2.0 (+https://seosuite.info/bot; Mozilla/5.0 Compatible)',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
-      },
-      redirect: 'follow',
-    });
-    const html = await res.text().catch(() => '');
-    const ttfbMs = Date.now() - t0;
-    const headers: Record<string, string> = {};
-    res.headers.forEach((v, k) => { headers[k.toLowerCase()] = v; });
-    return { status: res.status, html, headers, ttfbMs };
+    let current = url;
+    // Redirect ditangani manual: tiap hop divalidasi ulang, supaya situs publik
+    // tidak bisa memantulkan kita ke 127.0.0.1 atau metadata cloud (SSRF).
+    for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+      await assertPublicHost(current);
+      const res = await fetch(current, {
+        signal: AbortSignal.timeout(timeout),
+        headers: {
+          'User-Agent': 'SEOsuite-Bot/2.0 (+https://seosuite.info/bot; Mozilla/5.0 Compatible)',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
+        },
+        redirect: 'manual',
+      });
+
+      const location = res.headers.get('location');
+      if (res.status >= 300 && res.status < 400 && location) {
+        current = new URL(location, current).toString();
+        const proto = new URL(current).protocol;
+        if (proto !== 'http:' && proto !== 'https:') break;
+        continue;
+      }
+
+      const html = await res.text().catch(() => '');
+      const ttfbMs = Date.now() - t0;
+      const headers: Record<string, string> = {};
+      res.headers.forEach((v, k) => { headers[k.toLowerCase()] = v; });
+      return { status: res.status, html, headers, ttfbMs };
+    }
+    return { status: 0, html: '', headers: {}, ttfbMs: Date.now() - t0 };
   } catch {
     return { status: 0, html: '', headers: {}, ttfbMs: Date.now() - t0 };
   }

@@ -6,8 +6,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateAndSanitizeUrl } from '@/lib/security';
 import { runUnifiedAudit } from '@/lib/auditor';
 import { saveAuditReport } from '@/lib/audit-store';
+import { rateLimit, clientIp } from '@/lib/rate-limit';
+
+const WINDOW_MS = 10 * 60 * 1000;
+
+function throttled(req: NextRequest, limit: number) {
+  const { allowed, retryAfterSec } = rateLimit(clientIp(req), limit, WINDOW_MS);
+  if (allowed) return null;
+  return NextResponse.json(
+    { error: `Terlalu banyak permintaan audit. Coba lagi dalam ${retryAfterSec} detik.` },
+    { status: 429, headers: { 'Retry-After': String(retryAfterSec) } }
+  );
+}
 
 export async function POST(req: NextRequest) {
+  const limited = throttled(req, 5);
+  if (limited) return limited;
+
   try {
     const body = await req.json();
     const { url, businessName, whatsapp, city, vertical } = body;
@@ -52,6 +67,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  const limited = throttled(req, 10);
+  if (limited) return limited;
+
   const urlParam = req.nextUrl.searchParams.get('url');
   if (!urlParam) {
     return NextResponse.json({ error: 'Parameter url wajib disertakan' }, { status: 400 });
