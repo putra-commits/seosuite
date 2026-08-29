@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAndSanitizeUrl, safeFetchUrl } from '@/lib/security';
 
 interface LocalCheck { item: string; pass: boolean; detail: string; category: string; }
 
@@ -6,8 +7,15 @@ export async function GET(req: NextRequest) {
   const targetUrl = req.nextUrl.searchParams.get('url');
   if (!targetUrl) return NextResponse.json({ error: 'Missing url param' }, { status: 400 });
 
+  const validation = validateAndSanitizeUrl(targetUrl);
+  if (!validation.valid || !validation.sanitizedUrl) {
+    return NextResponse.json({ error: validation.error || 'URL tidak valid' }, { status: 400 });
+  }
+  const safeUrl = validation.sanitizedUrl;
+
   try {
-    const res = await fetch(targetUrl, { headers: { 'User-Agent': 'SEOsuite/3.0 Bot' } });
+    const res = await safeFetchUrl(safeUrl, { headers: { 'User-Agent': 'SEOsuite/3.0 Bot' } });
+    if (!res) return NextResponse.json({ error: 'URL tidak dapat diakses atau diblokir demi keamanan' }, { status: 400 });
     const html = await res.text();
     const checks: LocalCheck[] = [];
 

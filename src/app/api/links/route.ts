@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAndSanitizeUrl, safeFetchUrl } from '@/lib/security';
 
 interface LinkResult {
   url: string;
@@ -28,8 +29,9 @@ async function checkLink(url: string, timeout = 8000): Promise<{ status: number;
   try {
     const controller = new AbortController();
     const tid = setTimeout(() => controller.abort(), timeout);
-    const res = await fetch(url, { method: 'HEAD', redirect: 'follow', signal: controller.signal });
+    const res = await safeFetchUrl(url, { method: 'HEAD', signal: controller.signal }, timeout);
     clearTimeout(tid);
+    if (!res) return { status: 0, ok: false };
     return { status: res.status, ok: res.ok };
   } catch {
     return { status: 0, ok: false };
@@ -40,9 +42,16 @@ export async function GET(req: NextRequest) {
   const targetUrl = req.nextUrl.searchParams.get('url');
   if (!targetUrl) return NextResponse.json({ error: 'Missing url parameter' }, { status: 400 });
 
+  const validation = validateAndSanitizeUrl(targetUrl);
+  if (!validation.valid || !validation.sanitizedUrl) {
+    return NextResponse.json({ error: validation.error || 'URL tidak valid' }, { status: 400 });
+  }
+  const safeUrl = validation.sanitizedUrl;
+
   try {
     // Fetch the page HTML
-    const pageRes = await fetch(targetUrl, { headers: { 'User-Agent': 'SEOsuite/3.0 Bot' } });
+    const pageRes = await safeFetchUrl(safeUrl, { headers: { 'User-Agent': 'SEOsuite/3.0 Bot' } });
+    if (!pageRes) return NextResponse.json({ error: 'URL tidak dapat diakses atau diblokir demi keamanan' }, { status: 400 });
     const html = await pageRes.text();
 
     // Extract all <a> tags

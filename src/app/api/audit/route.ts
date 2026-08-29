@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
 import Groq from 'groq-sdk';
 import { PrismaClient } from '@prisma/client';
+import { validateAndSanitizeUrl, safeFetchUrl } from '@/lib/security';
+import { rateLimit, clientIp } from '@/lib/rate-limit';
+
+const WINDOW_MS = 10 * 60 * 1000;
 
 const prisma = new PrismaClient();
 
@@ -14,6 +18,14 @@ try {
 }
 
 export async function POST(req: Request) {
+  const { allowed, retryAfterSec } = rateLimit(clientIp(req), 10, WINDOW_MS);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: `Terlalu banyak permintaan audit. Coba lagi dalam ${retryAfterSec} detik.` },
+      { status: 429, headers: { 'Retry-After': String(retryAfterSec) } }
+    );
+  }
+
   try {
     const body = await req.json();
     const { url } = body;
@@ -22,17 +34,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'URL wajib diisi' }, { status: 400 });
     }
     
-    // Pastikan URL memiliki http:// atau https://
-    let finalUrl = url.trim();
-    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
-      finalUrl = 'https://' + finalUrl;
+    // Validasi & sanitasi URL (SSRF guard)
+    const validation = validateAndSanitizeUrl(url);
+    if (!validation.valid || !validation.sanitizedUrl) {
+      return NextResponse.json({ error: validation.error || 'URL tidak valid' }, { status: 400 });
     }
+    const finalUrl = validation.sanitizedUrl;
 
     // 1. Scraping Ringan
-    const fetchRes = await fetch(finalUrl, { 
-      headers: { 'User-Agent': 'SEOsuite-Auditor/1.0' },
-      next: { revalidate: 0 } // Bypass cache
-    }).catch(() => null);
+    const fetchRes = await safeFetchUrl(finalUrl, { headers: { 'User-Agent': 'SEOsuite-Auditor/1.0' }, next: { revalidate: 0 } });
     
     if (!fetchRes || !fetchRes.ok) {
       return NextResponse.json({ error: 'Gagal mengakses URL tersebut. Pastikan URL valid dan dapat diakses publik.' }, { status: 400 });
