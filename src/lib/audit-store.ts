@@ -1,75 +1,392 @@
 /**
- * audit-store.ts — File-based storage untuk audit results
- * Simpan di data/audits/{uuid}.json & data/history/{domain}.json
+ * audit-store.ts — File-based Data Store for Audit Reports & Lead Engine
+ * Menyimpan laporan audit dan database prospek di data/audits/ & data/leads.json
  */
+
 import { promises as fs } from 'fs';
 import path from 'path';
 import { randomUUID } from 'crypto';
+import { CalculatedAudit, TopIssue, ModuleSection } from './scoring';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const AUDITS_DIR = path.join(DATA_DIR, 'audits');
-const HISTORY_DIR = path.join(DATA_DIR, 'history');
+const LEADS_FILE = path.join(DATA_DIR, 'leads.json');
+
+export interface StoredAuditRecord {
+  id: string;
+  slug: string;
+  url: string;
+  domain: string;
+  businessName: string;
+  whatsapp: string;
+  city: string;
+  vertical: string;
+  score: number;
+  grade: 'A' | 'B' | 'C' | 'D' | 'F';
+  statusColor: 'emerald' | 'amber' | 'rose';
+  summaryText: string;
+  lossEstimateText: string;
+  top3Issues: TopIssue[];
+  modules: ModuleSection[];
+  status: 'new' | 'contacted' | 'won' | 'lost';
+  isPublic: boolean;
+  createdAt: string;
+}
 
 async function ensureDirs() {
+  await fs.mkdir(DATA_DIR, { recursive: true });
   await fs.mkdir(AUDITS_DIR, { recursive: true });
-  await fs.mkdir(HISTORY_DIR, { recursive: true });
+  try {
+    await fs.access(LEADS_FILE);
+  } catch {
+    await fs.writeFile(LEADS_FILE, JSON.stringify([], null, 2), 'utf-8');
+  }
 }
 
-export interface StoredAudit {
-  uuid: string;
+export function generateSlug(domain: string): string {
+  return domain
+    .toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/^www\./, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'website';
+}
+
+export async function saveAuditReport(params: {
   url: string;
-  score: number;
-  sections: unknown[];
-  timestamp: string;
-  verdict?: string;
-}
-
-export async function saveAudit(data: Omit<StoredAudit, 'uuid'>): Promise<string> {
+  businessName?: string;
+  whatsapp?: string;
+  city?: string;
+  vertical?: string;
+  audit: CalculatedAudit;
+}): Promise<StoredAuditRecord> {
   await ensureDirs();
-  const uuid = randomUUID();
-  const stored: StoredAudit = { uuid, ...data };
-  await fs.writeFile(path.join(AUDITS_DIR, `${uuid}.json`), JSON.stringify(stored, null, 2));
 
-  // Simpan ke history domain
-  const domain = new URL(data.url).hostname.replace('www.', '');
-  const histFile = path.join(HISTORY_DIR, `${domain}.json`);
-  let history: StoredAudit[] = [];
+  let domain = '';
   try {
-    const raw = await fs.readFile(histFile, 'utf-8');
-    history = JSON.parse(raw);
-  } catch { /* file belum ada */ }
-  history.unshift(stored);
-  history = history.slice(0, 20); // max 20 history per domain
-  await fs.writeFile(histFile, JSON.stringify(history, null, 2));
+    domain = new URL(params.url).hostname.replace(/^www\./, '');
+  } catch {
+    domain = params.url.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+  }
 
-  return uuid;
+  const slug = generateSlug(domain);
+  const id = randomUUID();
+  const createdAt = new Date().toISOString();
+
+  const record: StoredAuditRecord = {
+    id,
+    slug,
+    url: params.url,
+    domain,
+    businessName: params.businessName || domain,
+    whatsapp: params.whatsapp || '',
+    city: params.city || 'Indonesia',
+    vertical: params.vertical || 'Umum / Bisnis',
+    score: params.audit.overallScore,
+    grade: params.audit.grade,
+    statusColor: params.audit.statusColor,
+    summaryText: params.audit.summaryText,
+    lossEstimateText: params.audit.lossEstimateText,
+    top3Issues: params.audit.top3Issues,
+    modules: params.audit.modules,
+    status: 'new',
+    isPublic: true,
+    createdAt,
+  };
+
+  // Simpan detail laporan per slug & per id
+  await fs.writeFile(path.join(AUDITS_DIR, `${slug}.json`), JSON.stringify(record, null, 2), 'utf-8');
+  await fs.writeFile(path.join(AUDITS_DIR, `${id}.json`), JSON.stringify(record, null, 2), 'utf-8');
+
+  // Perbarui master index leads
+  try {
+    const raw = await fs.readFile(LEADS_FILE, 'utf-8');
+    let leads: StoredAuditRecord[] = JSON.parse(raw);
+    // Hapus duplikat domain lama jika ada, masukkan yang terbaru di atas
+    leads = leads.filter(l => l.slug !== slug);
+    leads.unshift(record);
+    await fs.writeFile(LEADS_FILE, JSON.stringify(leads.slice(0, 200), null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Failed to update leads master file:', err);
+  }
+
+  return record;
 }
 
-export async function getAudit(uuid: string): Promise<StoredAudit | null> {
+export async function getAuditBySlug(slug: string): Promise<StoredAuditRecord | null> {
+  await ensureDirs();
+  const filePath = path.join(AUDITS_DIR, `${slug.toLowerCase()}.json`);
   try {
-    const raw = await fs.readFile(path.join(AUDITS_DIR, `${uuid}.json`), 'utf-8');
+    const raw = await fs.readFile(filePath, 'utf-8');
     return JSON.parse(raw);
   } catch {
-    return null;
+    // Coba fallback cari di leads.json
+    try {
+      const rawLeads = await fs.readFile(LEADS_FILE, 'utf-8');
+      const leads: StoredAuditRecord[] = JSON.parse(rawLeads);
+      const found = leads.find(l => l.slug === slug || l.id === slug);
+      return found || null;
+    } catch {
+      return null;
+    }
   }
 }
 
-export async function getDomainHistory(domain: string): Promise<StoredAudit[]> {
+export async function getAllLeads(): Promise<StoredAuditRecord[]> {
+  await ensureDirs();
   try {
-    const cleanDomain = domain.replace('www.', '');
-    const raw = await fs.readFile(path.join(HISTORY_DIR, `${cleanDomain}.json`), 'utf-8');
-    return JSON.parse(raw);
+    const raw = await fs.readFile(LEADS_FILE, 'utf-8');
+    const leads: StoredAuditRecord[] = JSON.parse(raw);
+    if (leads.length === 0) {
+      // Seed dummy initial report jika masih kosong
+      const dummy = await seedDummyAudit();
+      return [dummy];
+    }
+    return leads;
   } catch {
-    return [];
+    const dummy = await seedDummyAudit();
+    return [dummy];
   }
 }
 
-export async function getLatestAuditForDomain(domain: string): Promise<StoredAudit | null> {
-  const history = await getDomainHistory(domain);
-  if (!history.length) return null;
-  const latest = history[0];
-  // Return if < 6 jam
-  const age = Date.now() - new Date(latest.timestamp).getTime();
-  if (age < 6 * 60 * 60 * 1000) return latest;
-  return null;
+export async function updateLeadStatus(idOrSlug: string, status: StoredAuditRecord['status']): Promise<boolean> {
+  await ensureDirs();
+  try {
+    const raw = await fs.readFile(LEADS_FILE, 'utf-8');
+    const leads: StoredAuditRecord[] = JSON.parse(raw);
+    const item = leads.find(l => l.id === idOrSlug || l.slug === idOrSlug);
+    if (!item) return false;
+
+    item.status = status;
+    await fs.writeFile(LEADS_FILE, JSON.stringify(leads, null, 2), 'utf-8');
+
+    // Update individual file juga
+    const indFile = path.join(AUDITS_DIR, `${item.slug}.json`);
+    try {
+      await fs.writeFile(indFile, JSON.stringify(item, null, 2), 'utf-8');
+    } catch { /* ignore */ }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function seedDummyAudit(): Promise<StoredAuditRecord> {
+  await ensureDirs();
+  const dummy: StoredAuditRecord = {
+    id: 'demo-audit-klinik-sehat',
+    slug: 'klinik-gigi-sehat-id',
+    url: 'https://klinikgigisehat.id',
+    domain: 'klinikgigisehat.id',
+    businessName: 'Klinik Gigi Sehat Setiabudi',
+    whatsapp: '081234567890',
+    city: 'Jakarta Selatan',
+    vertical: 'Kesehatan / Klinik Gigi',
+    score: 54,
+    grade: 'C',
+    statusColor: 'amber',
+    summaryText: 'Website Anda sudah aktif dan terindeks, namun mengalami kebocoran calon pasien akibat ketiadaan tombol WhatsApp instan, kecepatan respons lambat, dan belum adanya schema LocalBusiness.',
+    lossEstimateText: 'Perkiraan: Website Anda berpotensi kehilangan 15–25 calon pasien baru per bulan yang beralih ke klinik kompetitor yang memiliki tombol reservasi WhatsApp dan peta Maps cepat.',
+    top3Issues: [
+      {
+        id: 'LOC-01',
+        title_id: 'Tidak Ditemukan Tombol Chat WhatsApp Langsung',
+        why_it_matters_id: '90% pasien klinik di Indonesia memilih booking jadwal via WhatsApp daripada formulir web.',
+        how_to_fix_id: 'Pasang floating WhatsApp CTA button di pojok kanan bawah dengan link wa.me.',
+        impact: 'H',
+        effort: 'S',
+        category: 'local',
+        severity: 'critical',
+      },
+      {
+        id: 'LOC-03',
+        title_id: 'Schema LocalBusiness & Peta Google Maps Belum Terpasang',
+        why_it_matters_id: 'Google Maps sulit mengenali lokasi fisik klinik saat orang mencari "klinik gigi terdekat".',
+        how_to_fix_id: 'Tambahkan JSON-LD structured data LocalBusiness lengkap dengan alamat dan jam buka.',
+        impact: 'H',
+        effort: 'M',
+        category: 'local',
+        severity: 'warn',
+      },
+      {
+        id: 'PERF-04',
+        title_id: 'Waktu Respons Server (TTFB) Lambat (1.4 Detik)',
+        why_it_matters_id: 'Pengunjung mobile sering menutup halaman jika website tidak muncul dalam 2-3 detik.',
+        how_to_fix_id: 'Aktifkan edge caching CDN (Cloudflare) dan optimalkan kompresi gambar.',
+        impact: 'H',
+        effort: 'M',
+        category: 'performance',
+        severity: 'critical',
+      },
+    ],
+    modules: [
+      {
+        id: 'technical',
+        title: '🔧 Technical & Indexability',
+        weight: 30,
+        score: 75,
+        findings: [
+          {
+            id: 'TECH-01',
+            category: 'technical',
+            severity: 'critical',
+            pass: true,
+            title_id: 'Aksesibilitas Server & Status HTTP',
+            why_it_matters_id: 'Server merespons normal (HTTP 200).',
+            evidence: 'HTTP Status Code: 200',
+            how_to_fix_id: 'Pastikan web server aktif.',
+            effort: 'S',
+            impact: 'H',
+            owner: 'dev',
+          },
+          {
+            id: 'TECH-02',
+            category: 'technical',
+            severity: 'critical',
+            pass: true,
+            title_id: 'Protokol Keamanan HTTPS / SSL',
+            why_it_matters_id: 'Situs diamankan dengan enkripsi SSL HTTPS.',
+            evidence: 'Protokol: https',
+            how_to_fix_id: 'Pasang sertifikat SSL.',
+            effort: 'S',
+            impact: 'H',
+            owner: 'dev',
+          },
+          {
+            id: 'TECH-05',
+            category: 'technical',
+            severity: 'critical',
+            pass: true,
+            title_id: 'File robots.txt & Izin Googlebot',
+            why_it_matters_id: 'File robots.txt tersedia dan mengizinkan Googlebot merayapi situs.',
+            evidence: 'robots.txt OK',
+            how_to_fix_id: 'Konfigurasi robots.txt.',
+            effort: 'S',
+            impact: 'H',
+            owner: 'dev',
+          },
+        ],
+      },
+      {
+        id: 'onpage',
+        title: '📄 On-Page SEO & Content',
+        weight: 20,
+        score: 65,
+        findings: [
+          {
+            id: 'PAGE-01',
+            category: 'onpage',
+            severity: 'critical',
+            pass: true,
+            title_id: 'Judul Halaman (Title Tag)',
+            why_it_matters_id: 'Title tag terisi (42 karakter).',
+            evidence: '"Klinik Gigi Sehat Jakarta Selatan — Dokter Gigi"',
+            how_to_fix_id: 'Optimalkan kata kunci.',
+            effort: 'S',
+            impact: 'H',
+            owner: 'konten',
+          },
+          {
+            id: 'PAGE-03',
+            category: 'onpage',
+            severity: 'critical',
+            pass: false,
+            title_id: 'Heading Utama (Tag <h1> Tunggal)',
+            why_it_matters_id: 'Tidak ditemukan tag <h1>, menyulitkan mesin pencari memahami topik utama.',
+            evidence: 'Jumlah tag <h1>: 0',
+            how_to_fix_id: 'Tambahkan 1 tag <h1> dengan kata kunci layanan.',
+            effort: 'S',
+            impact: 'H',
+            owner: 'dev',
+          },
+        ],
+      },
+      {
+        id: 'performance',
+        title: '⚡ Kecepatan & Core Web Vitals',
+        weight: 20,
+        score: 45,
+        findings: [
+          {
+            id: 'PERF-04',
+            category: 'performance',
+            severity: 'critical',
+            pass: false,
+            title_id: 'Waktu Respons Server (TTFB)',
+            why_it_matters_id: 'Waktu respons server lambat (1420ms).',
+            evidence: 'TTFB Homepage: 1420ms',
+            how_to_fix_id: 'Gunakan edge caching CDN.',
+            effort: 'M',
+            impact: 'H',
+            owner: 'dev',
+          },
+        ],
+      },
+      {
+        id: 'local',
+        title: '📍 Sinyal Lokal & Konversi WA (ID)',
+        weight: 15,
+        score: 30,
+        findings: [
+          {
+            id: 'LOC-01',
+            category: 'local',
+            severity: 'critical',
+            pass: false,
+            title_id: 'Tombol & Tautan Langsung WhatsApp',
+            why_it_matters_id: 'Tidak ditemukan tautan WhatsApp langsung (wa.me).',
+            evidence: 'Tidak ada link WhatsApp di halaman utama',
+            how_to_fix_id: 'Pasang tombol WhatsApp.',
+            effort: 'S',
+            impact: 'H',
+            owner: 'bisnis',
+          },
+          {
+            id: 'LOC-03',
+            category: 'local',
+            severity: 'warn',
+            pass: false,
+            title_id: 'Schema JSON-LD LocalBusiness',
+            why_it_matters_id: 'Schema LocalBusiness tidak terpasang.',
+            evidence: 'Schema tidak ditemukan',
+            how_to_fix_id: 'Tambahkan JSON-LD schema LocalBusiness.',
+            effort: 'M',
+            impact: 'M',
+            owner: 'dev',
+          },
+        ],
+      },
+      {
+        id: 'ai',
+        title: '🤖 Kesiapan Pencarian AI (AEO/GEO)',
+        weight: 15,
+        score: 40,
+        findings: [
+          {
+            id: 'AEO-01',
+            category: 'ai',
+            severity: 'warn',
+            pass: false,
+            title_id: 'Struktur Data FAQ (Schema FAQPage)',
+            why_it_matters_id: 'Schema FAQPage belum ada; kehilangan peluang kutipan AI Overview.',
+            evidence: 'Schema FAQPage tidak ditemukan',
+            how_to_fix_id: 'Tambahkan blok FAQ beserta schema JSON-LD.',
+            effort: 'M',
+            impact: 'H',
+            owner: 'dev',
+          },
+        ],
+      },
+    ],
+    status: 'new',
+    isPublic: true,
+    createdAt: new Date().toISOString(),
+  };
+
+  await fs.writeFile(path.join(AUDITS_DIR, `${dummy.slug}.json`), JSON.stringify(dummy, null, 2), 'utf-8');
+  await fs.writeFile(path.join(AUDITS_DIR, `${dummy.id}.json`), JSON.stringify(dummy, null, 2), 'utf-8');
+  await fs.writeFile(LEADS_FILE, JSON.stringify([dummy], null, 2), 'utf-8');
+
+  return dummy;
 }
