@@ -7,10 +7,15 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { randomUUID } from 'crypto';
 import { CalculatedAudit, TopIssue, ModuleSection } from './scoring';
+import { withFileLock, writeJsonAtomic } from './file-lock';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
+// Lokasi data lewat env supaya bisa diarahkan ke volume di luar folder
+// deploy. Kalau tetap di dalam folder rilis, seluruh database lead lenyap
+// begitu folder deploy diganti.
+const DATA_DIR = process.env.ADOLOSEO_DATA_DIR || path.join(process.cwd(), 'data');
 const AUDITS_DIR = path.join(DATA_DIR, 'audits');
 const LEADS_FILE = path.join(DATA_DIR, 'leads.json');
+const MAX_LEADS = 200;
 
 export interface StoredAuditRecord {
   id: string;
@@ -98,17 +103,27 @@ export async function saveAuditReport(params: {
   };
 
   // Simpan detail laporan per slug & per id
-  await fs.writeFile(path.join(AUDITS_DIR, `${slug}.json`), JSON.stringify(record, null, 2), 'utf-8');
-  await fs.writeFile(path.join(AUDITS_DIR, `${id}.json`), JSON.stringify(record, null, 2), 'utf-8');
+  await writeJsonAtomic(path.join(AUDITS_DIR, `${slug}.json`), record);
+  await writeJsonAtomic(path.join(AUDITS_DIR, `${id}.json`), record);
 
-  // Perbarui master index leads
+  // Perbarui master index leads. Baca-ubah-tulis WAJIB di dalam kunci:
+  // tanpa itu dua worker PM2 bisa saling menimpa dan lead hilang senyap.
   try {
-    const raw = await fs.readFile(LEADS_FILE, 'utf-8');
-    let leads: StoredAuditRecord[] = JSON.parse(raw);
-    // Hapus duplikat domain lama jika ada, masukkan yang terbaru di atas
-    leads = leads.filter(l => l.slug !== slug);
-    leads.unshift(record);
-    await fs.writeFile(LEADS_FILE, JSON.stringify(leads.slice(0, 200), null, 2), 'utf-8');
+    await withFileLock(LEADS_FILE, async () => {
+      let leads: StoredAuditRecord[] = [];
+      try {
+        leads = JSON.parse(await fs.readFile(LEADS_FILE, 'utf-8'));
+      } catch { /* berkas belum ada atau rusak — mulai dari kosong */ }
+
+      // Hapus duplikat domain lama jika ada, masukkan yang terbaru di atas
+      leads = leads.filter(l => l.slug !== slug);
+      leads.unshift(record);
+
+      if (leads.length > MAX_LEADS) {
+        console.warn(`leads.json melewati ${MAX_LEADS}; ${leads.length - MAX_LEADS} lead terlama dipangkas`);
+      }
+      await writeJsonAtomic(LEADS_FILE, leads.slice(0, MAX_LEADS));
+    });
   } catch (err) {
     console.error('Failed to update leads master file:', err);
   }
@@ -155,21 +170,22 @@ export async function getAllLeads(): Promise<StoredAuditRecord[]> {
 export async function updateLeadStatus(idOrSlug: string, status: StoredAuditRecord['status']): Promise<boolean> {
   await ensureDirs();
   try {
-    const raw = await fs.readFile(LEADS_FILE, 'utf-8');
-    const leads: StoredAuditRecord[] = JSON.parse(raw);
-    const item = leads.find(l => l.id === idOrSlug || l.slug === idOrSlug);
-    if (!item) return false;
+    return await withFileLock(LEADS_FILE, async () => {
+      const raw = await fs.readFile(LEADS_FILE, 'utf-8');
+      const leads: StoredAuditRecord[] = JSON.parse(raw);
+      const item = leads.find(l => l.id === idOrSlug || l.slug === idOrSlug);
+      if (!item) return false;
 
-    item.status = status;
-    await fs.writeFile(LEADS_FILE, JSON.stringify(leads, null, 2), 'utf-8');
+      item.status = status;
+      await writeJsonAtomic(LEADS_FILE, leads);
 
-    // Update individual file juga
-    const indFile = path.join(AUDITS_DIR, `${item.slug}.json`);
-    try {
-      await fs.writeFile(indFile, JSON.stringify(item, null, 2), 'utf-8');
-    } catch { /* ignore */ }
+      // Update individual file juga
+      try {
+        await writeJsonAtomic(path.join(AUDITS_DIR, `${item.slug}.json`), item);
+      } catch { /* laporan per-slug boleh gagal, master index yang menentukan */ }
 
-    return true;
+      return true;
+    });
   } catch {
     return false;
   }
@@ -387,9 +403,9 @@ export async function seedDummyAudit(): Promise<StoredAuditRecord> {
     createdAt: new Date().toISOString(),
   };
 
-  await fs.writeFile(path.join(AUDITS_DIR, `${dummy.slug}.json`), JSON.stringify(dummy, null, 2), 'utf-8');
-  await fs.writeFile(path.join(AUDITS_DIR, `${dummy.id}.json`), JSON.stringify(dummy, null, 2), 'utf-8');
-  await fs.writeFile(LEADS_FILE, JSON.stringify([dummy], null, 2), 'utf-8');
+  await writeJsonAtomic(path.join(AUDITS_DIR, `${dummy.slug}.json`), dummy);
+  await writeJsonAtomic(path.join(AUDITS_DIR, `${dummy.id}.json`), dummy);
+  await writeJsonAtomic(LEADS_FILE, [dummy]);
 
   return dummy;
 }
@@ -414,17 +430,19 @@ export async function saveAudit(data: Omit<StoredAudit, 'uuid'>): Promise<string
   await fs.mkdir(HISTORY_DIR, { recursive: true });
   const uuid = randomUUID();
   const stored: StoredAudit = { uuid, ...data };
-  await fs.writeFile(path.join(AUDITS_DIR, `${uuid}.json`), JSON.stringify(stored, null, 2));
+  await writeJsonAtomic(path.join(AUDITS_DIR, `${uuid}.json`), stored);
 
   let domain = data.url;
   try { domain = new URL(data.url).hostname.replace(/^www\./, ''); } catch { /* biarkan apa adanya */ }
   const histFile = path.join(HISTORY_DIR, `${domain}.json`);
-  let history: StoredAudit[] = [];
-  try {
-    history = JSON.parse(await fs.readFile(histFile, 'utf-8'));
-  } catch { /* file belum ada */ }
-  history.unshift(stored);
-  await fs.writeFile(histFile, JSON.stringify(history.slice(0, 20), null, 2));
+  await withFileLock(histFile, async () => {
+    let history: StoredAudit[] = [];
+    try {
+      history = JSON.parse(await fs.readFile(histFile, 'utf-8'));
+    } catch { /* file belum ada */ }
+    history.unshift(stored);
+    await writeJsonAtomic(histFile, history.slice(0, 20));
+  });
 
   return uuid;
 }
