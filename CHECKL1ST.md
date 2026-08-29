@@ -96,6 +96,9 @@ Daftar 13 repositori lokal yang wajib mematuhi standardisasi ini dan disinkronka
   * Bebas dari silent dummy metrics dan terhubung dengan dynamic scanner untuk memeriksa kesiapan deploy produk SaaS.
 * [x] **SEO Content Engine (100+ Interlinked Blogs)**:
   * Wajib memiliki setidaknya 100 artikel blog publikasi organik yang terstruktur saling mengait (interlink) satu sama lain secara semantik guna membentuk *Topic Cluster* dan mendongkrak otoritas mesin pencari (SEO).
+* [x] **Analytics & SEO Intelligence (GA4 & GSC)**:
+  * Wajib menautkan domain utama ke Google Analytics 4 (GA4) dan Google Search Console (GSC).
+  * Status Tautan Berhasil (Live): `agenc1st.com`, `unmaha.ac.id`, dan `autoprofit.id`.
 
 ---
 
@@ -107,7 +110,7 @@ Daftar 13 repositori lokal yang wajib mematuhi standardisasi ini dan disinkronka
   * Menyediakan navigasi ringkas atau tombol panel pencarian (*search overlay*) menuju modul ekosistem pendukung lainnya untuk mempermudah retensi pengguna.
   * Pastikan modul AI Chat & RAG (AI Advisor) merujuk secara halus ke sister-apps jika mendeteksi kebutuhan khusus (misal: RAG Kumaha merekomendasikan major/prodi di UNMAHA, RAG BizGrow merekomendasikan pencarian leads di OmniClaw).
 * [x] **Tim INTI UX Testing & AI Ingestor Loop**:
-  * Menyediakan dasbor pengujian UX terintegrasi (`/ux-test`) bagi penguji inti (Mbak Sugik, Pak Hendra, Bu Sri, Pak Salam) lengkap dengan WA dispatch.
+  * Menyediakan dasbor pengujian UX terintegrasi (`/ux-test`) bagi penguji inti (Mbak Sugik, Pak Hendra, Bu Sri, Pak Salam) lengkap dengan WA dispatch (terintegrasi **Fonnte API** otonom).
   * Menyediakan sistem Automated Ingestor AI (`/api/ux-report`) untuk mem-parse dan menyimpan masukan tim INTI ke database perbaikan pengembang secara otonom tanpa download/upload manual.
 
 ---

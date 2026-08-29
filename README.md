@@ -4,11 +4,16 @@
 
 Built on the BERNAS Intelligence Engine. Enterprise-grade SEO auditing, Core Web Vitals monitoring, keyword tracking, and the **Pilar1st** topic cluster builder.
 
+## 📌 Dokumentasi & Standar Audit
+
+- 📊 **[Laporan Audit Kesiapan Repositori](file:///D:/Fullstack/seosuite/docs/AUDIT_REPORT.md)**: Evaluasi kesiapan teknis repositori terhadap mesin lead & audit.
+- 📋 **[Checklist Parameter Audit SEOsuite](file:///D:/Fullstack/seosuite/docs/AUDIT_CHECKS.md)**: 5-Layer Checklist (Technical, On-page, Performance, Local ID, AI Visibility).
+
 ## Modules
 
 | Module | Description | Status |
-|--------|-------------|--------|
-| **SEO Audit** | 53-point technical audit (robots, sitemap, on-page, schema, headers, CWV, links) | ✅ Live |
+|---|---|---|
+| **SEO Audit & Lead Engine** | 5-layer audit (Technical, On-page, Speed, Local ID/WA, AI Readiness) + Generator Lead WhatsApp | 🚀 In Progress |
 | **Pilar1st** | GEO × Keyword matrix — 100 keywords × 10 kota = 1000 artikel | ✅ Live |
 | **CWV Monitor** | PageSpeed Insights API integration — LCP, INP, CLS, FCP, TTFB | 🔑 Requires PSI_API_KEY |
 | **Mobile CWV Engine** | Hydration-aware LCP optimization, Server-Component Extractor for INP, and strict Min-Height layout guards for CLS. | ✅ Live |

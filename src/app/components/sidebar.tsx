@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Search, TrendingUp, ShieldCheck,
   Unlink, MapPin, Bot, Layers, Trash2,
-  Binary, Filter
+  Binary, Filter, Zap, Activity, Users
 } from 'lucide-react';
 import { AdoloSeoMark } from './logo';
 
@@ -25,6 +25,7 @@ const MENU = [
       { name: 'Integritas Konten', href: '/content-audit', icon: ShieldCheck },
       { name: 'Audit Link', href: '/links', icon: Unlink },
       { name: 'Audit Funnel', href: '/funnel', icon: Filter },
+      { name: 'Cek SEO Gratis ↗', href: '/cek-seo', icon: Zap },
     ]
   },
   {
@@ -34,6 +35,14 @@ const MENU = [
       { name: 'AEO & GEO', href: '/aeo-geo', icon: Bot },
       { name: 'Pilar Builder', href: '/pilar', icon: Layers },
       { name: 'Detektor Kanibal', href: '/cannibal', icon: Trash2 },
+    ]
+  },
+  {
+    title: 'Pertumbuhan',
+    items: [
+      { name: 'Before vs After', href: '/before-after', icon: TrendingUp },
+      { name: 'Benchmark', href: '/benchmark', icon: Activity },
+      { name: 'Database Prospek', href: '/admin/leads', icon: Users },
     ]
   }
 ];
