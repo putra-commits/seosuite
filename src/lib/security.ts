@@ -80,3 +80,43 @@ export function validateAndSanitizeUrl(inputUrl: string): ValidationResult {
     return { valid: false, error: 'Format URL tidak valid' };
   }
 }
+
+const MAX_REDIRECTS = 5;
+
+/**
+ * Fetch aman: tiap hop redirect divalidasi ulang termasuk resolusi DNS-nya,
+ * supaya domain publik tidak bisa memantulkan kita ke jaringan internal VPS
+ * atau endpoint metadata cloud (SSRF). Mengembalikan null kalau diblokir.
+ */
+export async function safeFetchUrl(
+  startUrl: string,
+  init: RequestInit = {},
+  timeoutMs = 15000
+): Promise<Response | null> {
+  const { lookup } = await import('dns/promises');
+  let current = startUrl;
+
+  for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+    const { hostname } = new URL(current);
+    if (isBlockedHost(hostname)) return null;
+    const addrs = await lookup(hostname, { all: true }).catch(() => null);
+    if (!addrs || addrs.some(a => isBlockedHost(a.address))) return null;
+
+    const res = await fetch(current, {
+      ...init,
+      redirect: 'manual',
+      signal: AbortSignal.timeout(timeoutMs),
+    }).catch(() => null);
+    if (!res) return null;
+
+    const location = res.headers.get('location');
+    if (res.status >= 300 && res.status < 400 && location) {
+      const next = new URL(location, current);
+      if (next.protocol !== 'http:' && next.protocol !== 'https:') return null;
+      current = next.toString();
+      continue;
+    }
+    return res;
+  }
+  return null;
+}

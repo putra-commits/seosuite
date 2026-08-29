@@ -16,13 +16,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!record) {
     return {
-      title: 'Laporan Audit Tidak Ditemukan | SEOsuite',
+      title: 'Laporan Audit Tidak Ditemukan | AdoloSEO',
       robots: { index: false, follow: false },
     };
   }
 
   return {
-    title: `Audit SEO ${record.domain} — Skor ${record.score}/100 | SEOsuite`,
+    title: `Audit SEO ${record.domain} — Skor ${record.score}/100 | AdoloSEO`,
     description: `Hasil analisis kesehatan SEO & konversi untuk ${record.domain}. Skor: ${record.score}/100. ${record.summaryText.slice(0, 140)}...`,
     robots: {
       index: true,
@@ -30,9 +30,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     openGraph: {
       title: `Audit SEO ${record.domain} — Skor ${record.score}/100`,
-      description: `Cek 5-Layer SEO & Conversion Audit untuk ${record.domain} di SEOsuite.`,
-      url: `https://seosuite.info/laporan/${record.slug}`,
-      siteName: 'SEOsuite',
+      description: `Cek 5-Layer SEO & Conversion Audit untuk ${record.domain} di AdoloSEO.`,
+      url: `https://seo.adolo.id/laporan/${record.slug}`,
+      siteName: 'AdoloSEO',
     },
   };
 }

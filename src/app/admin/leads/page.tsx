@@ -127,7 +127,7 @@ export default function AdminLeadsPage() {
           }}
           className="w-full max-w-sm rounded-2xl border border-white/10 bg-zinc-950/80 p-8"
         >
-          <h1 className="text-xl font-semibold mb-2">Admin SEOsuite</h1>
+          <h1 className="text-xl font-semibold mb-2">Admin AdoloSEO</h1>
           <p className="text-sm text-zinc-400 mb-6">
             Masukkan token admin untuk membuka database prospek.
           </p>
@@ -164,7 +164,7 @@ export default function AdminLeadsPage() {
               <h1 className="text-sm font-black uppercase tracking-wider text-white">
                 Lead Intelligence Inbox
               </h1>
-              <p className="text-[10px] text-zinc-400">SEOsuite Operator Console v3.0</p>
+              <p className="text-[10px] text-zinc-400">AdoloSEO Operator Console v3.0</p>
             </div>
           </div>
 

@@ -16,6 +16,7 @@ Built on the BERNAS Intelligence Engine. Enterprise-grade SEO auditing, Core Web
 | **SEO Audit & Lead Engine** | 5-layer audit (Technical, On-page, Speed, Local ID/WA, AI Readiness) + Generator Lead WhatsApp | 🚀 In Progress |
 | **Pilar1st** | GEO × Keyword matrix — 100 keywords × 10 kota = 1000 artikel | ✅ Live |
 | **CWV Monitor** | PageSpeed Insights API integration — LCP, INP, CLS, FCP, TTFB | 🔑 Requires PSI_API_KEY |
+| **Mobile CWV Engine** | Hydration-aware LCP optimization, Server-Component Extractor for INP, and strict Min-Height layout guards for CLS. | ✅ Live |
 | **GSC Tracker** | Keyword rank tracking via Google Search Console API | 🔜 Roadmap |
 | **PDF Reports** | Weekly automated SEO health PDF export | 🔜 Roadmap |
 

@@ -38,7 +38,7 @@ export default function ReportView({ report }: Props) {
   const operatorWhatsApp = process.env.NEXT_PUBLIC_WHATSAPP_OPERATOR || '6281234567890';
   const waContactUrl = (packageText: string) => {
     const text = encodeURIComponent(
-      `Halo Tim SEOsuite, saya baru saja melihat laporan audit website saya di https://seosuite.info/laporan/${report.slug}.\n\nSaya tertarik untuk konsultasi mengenai: *${packageText}*. Mohon info langkah selanjutnya!`
+      `Halo Tim AdoloSEO, saya baru saja melihat laporan audit website saya di https://seo.adolo.id/laporan/${report.slug}.\n\nSaya tertarik untuk konsultasi mengenai: *${packageText}*. Mohon info langkah selanjutnya!`
     );
     return `https://wa.me/${operatorWhatsApp}?text=${text}`;
   };
@@ -431,9 +431,9 @@ export default function ReportView({ report }: Props) {
         {/* Footer Disclaimer */}
         <footer className="pt-8 border-t border-white/10 text-center space-y-2 text-xs text-zinc-500">
           <p>
-            Audit ini dijalankan secara otomatis menggunakan engine heuristik 5-Layer SEOsuite. Hasil evaluasi merupakan indikator kesehatan teknis dan estimasi konversi, bukan jaminan mutlak posisi ranking Google.
+            Audit ini dijalankan secara otomatis menggunakan engine heuristik 5-Layer AdoloSEO. Hasil evaluasi merupakan indikator kesehatan teknis dan estimasi konversi, bukan jaminan mutlak posisi ranking Google.
           </p>
-          <p>© 2026 SEOsuite — Sovereign Growth Engine.</p>
+          <p>© 2026 AdoloSEO — Sovereign Growth Engine.</p>
         </footer>
       </main>
     </div>

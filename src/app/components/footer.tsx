@@ -1,152 +1,194 @@
-'use client';
-
+/**
+ * Footer AdoloSEO — mengikuti struktur footer adolo.id
+ * (`/var/www/adolo.id/src/components/site-footer.tsx`) supaya satu keluarga:
+ * 4 kolom = identitas / produk / perusahaan / legal, dengan lencana status
+ * berwarna sama (emerald=production, sky=beta, amber=segera hadir).
+ *
+ * Yang DIBUANG dari footer lama beserta alasannya:
+ * - "Ecosystem Bernas Mahakarya Asia" -> footer adolo.id mendaftar produk
+ *   keluarga Adolo, bukan payung lintas-entitas.
+ * - agenc1st.id dan adoloweb.com -> domainnya tidak ada (DNS gagal resolve).
+ * - autoprofit.id -> balas 502.
+ * - "TEFA ACADEMY x UNMAHA" & "Developed by TEFA Student Developers" ->
+ *   UNMAHA punya merek institusional sendiri yang sengaja dipisahkan dari
+ *   sisi komersial Adolo. Menyebut "dibangun mahasiswa" juga melemahkan
+ *   posisi harga paket Rp4.999.000.
+ * - "Secured by SSL" -> setiap situs punya SSL; itu bukan pembeda.
+ */
 import React from 'react';
 import Link from 'next/link';
-import { Mail, Phone, MessageCircle, MapPin, ShieldCheck, Heart, Award, Globe, Zap } from 'lucide-react';
+import { AdoloSeoMark } from './logo';
+import {
+  TAUTAN_LEGAL,
+  TAUTAN_PERUSAHAAN,
+  produkBerstatus,
+  type Produk,
+  type StatusProduk,
+} from '@/config/ekosistem';
 
-export default function Footer() {
-  const currentYear = new Date().getFullYear();
+const GAYA_LENCANA: Record<StatusProduk, string> = {
+  production: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300',
+  beta: 'border-sky-400/30 bg-sky-400/10 text-sky-300',
+  soon: 'border-amber-400/30 bg-amber-400/10 text-amber-300',
+};
+
+const LABEL_KELOMPOK: Record<StatusProduk, { judul: string; warna: string }> = {
+  production: { judul: 'Production', warna: 'text-emerald-500/80' },
+  beta: { judul: 'Beta', warna: 'text-sky-500/80' },
+  soon: { judul: 'Segera hadir', warna: 'text-amber-500/80' },
+};
+
+function TautanProduk({ produk }: { produk: Produk }) {
+  // Situs ini sendiri: ditaut ke beranda, bukan keluar.
+  if (produk.nama === 'AdoloSEO') {
+    return (
+      <Link href="/" className="inline-flex flex-wrap items-center text-white transition hover:text-accent">
+        {produk.nama}
+        <span className="ml-1.5 text-[10px] font-normal uppercase tracking-wide text-slate-500">
+          Anda di sini
+        </span>
+      </Link>
+    );
+  }
+
+  // Aturan yang diwarisi dari canLinkExternally() di adolo.id: produk 'soon'
+  // TIDAK ditaut keluar. Inilah yang dulu tidak ada, sehingga tiga tautan
+  // mati sempat tayang di footer.
+  if (produk.status === 'soon') {
+    return <span className="inline-flex flex-wrap items-center text-slate-500">{produk.nama}</span>;
+  }
 
   return (
-    <footer className="relative z-10 bg-[#040609] border-t border-white/5 pt-20 pb-10 px-6 lg:px-12 text-zinc-400 font-sans selection:bg-amber-500/20 mt-auto">
-      
-      {/* Footer Ambient Background glows */}
-      <div className="absolute top-0 right-[15%] w-[350px] h-[350px] bg-amber-500/5 blur-[130px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-[15%] w-[350px] h-[350px] bg-indigo-500/5 blur-[130px] rounded-full pointer-events-none" />
+    <a
+      href={produk.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex flex-wrap items-center transition hover:text-white"
+    >
+      {produk.nama}
+      {produk.status !== 'production' && (
+        <span
+          className={`ml-1.5 rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${GAYA_LENCANA[produk.status]}`}
+        >
+          {LABEL_KELOMPOK[produk.status].judul}
+        </span>
+      )}
+    </a>
+  );
+}
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-        
-        {/* Column 1: Brand & TEFA Charter */}
-        <div className="flex flex-col gap-6">
-          <Link href="/" className="flex items-center gap-2 group">
-            <Zap className="w-8 h-8 text-amber-500 fill-amber-500 group-hover:scale-110 transition-transform" />
-            <span className="text-2xl font-black tracking-tighter uppercase italic text-white">
-              SEO<span className="text-zinc-600">suite</span>
-            </span>
-          </Link>
-          <p className="text-xs text-zinc-500 leading-relaxed">
-            <strong className="text-zinc-300">AEO/GEO Answer Engine Platform.</strong> Transformasi website Anda menjadi aset kedaulatan digital. Audit konversi enterprise untuk dominasi pasar.
-          </p>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-[10px] text-zinc-500 font-black uppercase tracking-widest bg-zinc-900/80 border border-zinc-800 px-3 py-1.5 rounded-xl w-fit">
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-500/80" /> Sovereign Engine
+function KelompokProduk({ status }: { status: StatusProduk }) {
+  const daftar = produkBerstatus(status);
+  if (daftar.length === 0) return null;
+  const { judul, warna } = LABEL_KELOMPOK[status];
+
+  return (
+    <div>
+      <p className={`mb-2 text-[10px] font-semibold uppercase tracking-wider ${warna}`}>{judul}</p>
+      <ul className="space-y-2">
+        {daftar.map((produk) => (
+          <li key={produk.nama}>
+            <TautanProduk produk={produk} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default function Footer() {
+  const tahun = new Date().getFullYear();
+
+  return (
+    <footer className="mt-auto bg-ink-900 text-slate-400 selection:bg-accent/20">
+      <div className="hairline-gradient" />
+
+      <div className="relative">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-[15%] top-0 h-[300px] w-[300px] rounded-full bg-brand-600/10 blur-[120px]"
+        />
+
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
+          {/* Kolom 1: identitas — badan hukum yang sama dengan adolo.id */}
+          <div>
+            <Link href="/" className="inline-flex items-center gap-3" aria-label="AdoloSEO">
+              <AdoloSeoMark className="h-10 w-10" />
+              <span className="font-display text-lg font-bold tracking-tight text-white">
+                Adolo<span className="text-gradient">SEO</span>
+              </span>
+            </Link>
+            <p className="mt-3 text-sm leading-relaxed">
+              PT Adolo Coaching Mentoring
+              <br />
+              IDX Tower, Jl. Jend. Sudirman, Jakarta Selatan
+            </p>
+            <p className="mt-4 text-xs text-slate-500">
+              Bagian dari ekosistem{' '}
+              <a
+                href="https://adolo.id"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 underline underline-offset-2 transition hover:text-white"
+              >
+                adolo.id
+              </a>
+            </p>
+          </div>
+
+          {/* Kolom 2: produk keluarga Adolo */}
+          <div>
+            <p className="section-label text-slate-400">Produk</p>
+            <div className="mt-4 space-y-5 text-sm">
+              <KelompokProduk status="production" />
+              <KelompokProduk status="beta" />
+              <KelompokProduk status="soon" />
             </div>
           </div>
-        </div>
 
-        {/* Column 2: Ecosystem Bernas Mahakarya Asia (SEO Cross-Linking) */}
-        <div className="flex flex-col gap-5">
-          <h4 className="text-xs font-black uppercase tracking-widest text-white border-b border-white/5 pb-2">
-            Ecosystem Bernas Mahakarya Asia
-          </h4>
-          <ul className="space-y-2.5 text-[11px] font-semibold text-zinc-400">
-            <li>
-              <a href="https://bernas.id" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 text-zinc-300 transition-colors block">
-                • BERNAS (Media & Portal Intelektual)
-              </a>
-            </li>
-            <li>
-              <a href="https://unmaha.ac.id" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 text-zinc-300 transition-colors block">
-                • UNMAHA (Universitas Mahakarya Asia)
-              </a>
-            </li>
-            <li>
-              <a href="https://agenc1st.id" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors block">
-                • Agenc1st (Tech-Enabled Agency & PMB)
-              </a>
-            </li>
-            <li>
-              <a href="https://seosuite.info" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors block">
-                • SEOsuite (AEO/GEO Answer Engine Platform)
-              </a>
-            </li>
-            <li>
-              <a href="https://adoloweb.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors block">
-                • AdoloWeb (AI-Native B2B Growth Engine)
-              </a>
-            </li>
-            <li>
-              <a href="https://omniads.ai" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors block">
-                • OmniAds (AI-Powered Ads Optimization)
-              </a>
-            </li>
-            <li className="pt-2.5 border-t border-white/5">
-              <a href="https://autoprofit.id" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 text-zinc-300 transition-colors flex items-center gap-1.5 font-bold">
-                <Globe size={12} className="text-zinc-500" /> Katalog 73 App autoprofit.id
-              </a>
-            </li>
-          </ul>
-        </div>
+          {/* Kolom 3: perusahaan — halaman adolo.id, tidak diduplikasi di sini */}
+          <div>
+            <p className="section-label text-slate-400">Perusahaan</p>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              {TAUTAN_PERUSAHAAN.map((tautan) => (
+                <li key={tautan.href}>
+                  <a
+                    href={tautan.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition hover:text-white"
+                  >
+                    {tautan.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        {/* Column 3: Flagship Ecosystem Features (Col 3 - Sovereign Arsenal) */}
-        <div className="flex flex-col gap-5">
-          <h4 className="text-xs font-black uppercase tracking-widest text-white border-b border-white/5 pb-2">
-            Sovereign Arsenal
-          </h4>
-          <div className="space-y-4">
-            <ul className="space-y-2 text-[11px] font-semibold text-zinc-500">
-              <li><Link href="/aeo-geo" className="hover:text-white transition-colors block">• AEO & GEO Optimizers</Link></li>
-              <li><Link href="/funnel" className="hover:text-white transition-colors block">• Pirate Funnel Auditor</Link></li>
-              <li><Link href="/blog" className="hover:text-white transition-colors block">• Intelijen SEO (Blog)</Link></li>
-              <li><Link href="/dashboard" className="hover:text-white transition-colors block">• Dasbor Sovereign</Link></li>
+          {/* Kolom 4: legal — satu badan hukum, satu set dokumen */}
+          <div>
+            <p className="section-label text-slate-400">Legal</p>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              {TAUTAN_LEGAL.map((tautan) => (
+                <li key={tautan.href}>
+                  <a
+                    href={tautan.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition hover:text-white"
+                  >
+                    {tautan.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
-
-        {/* Column 4: Sertifikasi & Kontak */}
-        <div className="flex flex-col gap-5">
-          <h4 className="text-xs font-black uppercase tracking-widest text-white border-b border-white/5 pb-2">
-            Sertifikasi & Kemitraan
-          </h4>
-          <ul className="space-y-3.5 text-xs font-semibold text-zinc-500">
-            <li className="flex items-center gap-2">
-              <Award className="w-4 h-4 text-zinc-500 shrink-0" />
-              <a href="https://lsafglobal.com" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors">
-                LSAF Global ACCA / FIA Qualification
-              </a>
-            </li>
-            <li className="flex items-center gap-2">
-              <Award className="w-4 h-4 text-zinc-500 shrink-0" />
-              <a href="https://csainstitute.or.id" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors">
-                CSA® Certified Securities Analyst
-              </a>
-            </li>
-            <li className="flex items-center gap-2">
-              <Heart className="w-4 h-4 text-zinc-500 shrink-0" />
-              <span className="text-zinc-500 font-normal">Kemendikbudristek Ditjen Vokasi</span>
-            </li>
-            <li className="pt-3 border-t border-white/5 flex items-center gap-2 text-zinc-400 font-bold">
-              <MessageCircle className="w-4 h-4 text-zinc-500 shrink-0" />
-              <a href="https://wa.me/62811283522" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-                Official WA: +62 811-283-522
-              </a>
-            </li>
-            <li className="flex items-start gap-2 text-zinc-500">
-              <MapPin className="w-4 h-4 text-zinc-500 shrink-0 mt-0.5" />
-              <span className="font-normal text-[11px] leading-relaxed">
-                Jakarta & Yogyakarta, Indonesia
-              </span>
-            </li>
-          </ul>
-        </div>
-
       </div>
 
-      <div className="h-px bg-white/5 max-w-7xl mx-auto mb-8" />
-
-      {/* Bottom Copyright */}
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] text-zinc-600 font-bold uppercase tracking-widest">
-        <p className="text-center md:text-left">
-          © {currentYear} SEOsuite AI. Hak Cipta Dilindungi. <br className="md:hidden" />
-          <span className="text-zinc-500">Developed by Teaching Factory (TEFA) Student Developers × PT ADOLO COACHING MENTORING.</span>
-        </p>
-        <div className="flex items-center gap-6">
-          <span>TEFA Accredited</span>
-          <span>|</span>
-          <span>Sovereign Platform</span>
-        </div>
+      <div className="border-t border-white/5 py-5 text-center text-xs text-slate-500">
+        &copy; {tahun} PT Adolo Coaching Mentoring
       </div>
-
     </footer>
   );
 }

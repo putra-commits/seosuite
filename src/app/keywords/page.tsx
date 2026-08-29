@@ -15,11 +15,15 @@ interface KW {
   words: number; 
   intent: 'Informational' | 'Navigational' | 'Transactional';
   isBranded: boolean;
+  searchVolume: number;
+  cpc: number;
+  competitionLevel: string;
 }
 
 interface KWData { 
   seed: string; 
   total: number; 
+  source: string;
   keywords: KW[]; 
 }
 
@@ -30,6 +34,8 @@ export default function KeywordsPage() {
   const [copied, setCopied] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<'All' | 'Informational' | 'Navigational' | 'Transactional'>('All');
   const [showBranded, setShowBranded] = useState<boolean | null>(null); // null = all, true = branded, false = non-branded
+  const [selectedKWs, setSelectedKWs] = useState<string[]>([]);
+  const [exporting, setExporting] = useState(false);
   
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -70,13 +76,13 @@ export default function KeywordsPage() {
     catch { 
       // Fallback for demo/dev
       const mockKeywords: KW[] = [
-        { keyword: `${seed} terbaru`, score: 85, words: 3, intent: 'Informational', isBranded: false },
-        { keyword: `cara optimasi ${seed}`, score: 92, words: 4, intent: 'Informational', isBranded: false },
-        { keyword: `harga ${seed} premium`, score: 78, words: 3, intent: 'Transactional', isBranded: false },
-        { keyword: `seosuite ${seed} audit`, score: 95, words: 3, intent: 'Navigational', isBranded: true },
-        { keyword: `daftar ${seed} 2026`, score: 88, words: 3, intent: 'Transactional', isBranded: false },
+        { keyword: `${seed} terbaru`, score: 85, words: 3, intent: 'Informational', isBranded: false, searchVolume: 1200, cpc: 2500, competitionLevel: 'MEDIUM' },
+        { keyword: `cara optimasi ${seed}`, score: 92, words: 4, intent: 'Informational', isBranded: false, searchVolume: 450, cpc: 1200, competitionLevel: 'LOW' },
+        { keyword: `harga ${seed} premium`, score: 78, words: 3, intent: 'Transactional', isBranded: false, searchVolume: 880, cpc: 8500, competitionLevel: 'HIGH' },
+        { keyword: `seosuite ${seed} audit`, score: 95, words: 3, intent: 'Navigational', isBranded: true, searchVolume: 150, cpc: 500, competitionLevel: 'LOW' },
+        { keyword: `daftar ${seed} 2026`, score: 88, words: 3, intent: 'Transactional', isBranded: false, searchVolume: 300, cpc: 4300, competitionLevel: 'MEDIUM' },
       ];
-      setData({ seed, total: mockKeywords.length, keywords: mockKeywords });
+      setData({ seed, total: mockKeywords.length, source: 'Mock Data', keywords: mockKeywords });
     }
     finally { setLoading(false); }
   }
@@ -96,6 +102,37 @@ export default function KeywordsPage() {
     setTimeout(() => setCopied(null), 1500);
   }
 
+  function toggleSelection(kw: string) {
+    setSelectedKWs(prev => 
+      prev.includes(kw) ? prev.filter(k => k !== kw) : [...prev, kw]
+    );
+  }
+
+  async function exportToAlchemist() {
+    if (selectedKWs.length === 0) return;
+    setExporting(true);
+    try {
+      const payload = data?.keywords.filter(k => selectedKWs.includes(k.keyword)) || [];
+      const res = await fetch('/api/export-pilar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ keywords: payload })
+      });
+      if (res.ok) {
+        alert(`${selectedKWs.length} kata kunci berhasil dikirim ke Alchemist Engine!`);
+        setSelectedKWs([]);
+      } else {
+        alert('Gagal mengekspor kata kunci.');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Terjadi kesalahan sistem.');
+    } finally {
+      setExporting(false);
+    }
+  }
+
+
   return (
     <div className="p-8 lg:p-12 max-w-6xl mx-auto font-sans">
       <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -104,7 +141,7 @@ export default function KeywordsPage() {
             <Sparkles className="w-4 h-4 text-emerald-500 fill-emerald-500/20" />
             <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Keyword Intelligence v2.0</span>
           </div>
-          <h1 className="text-4xl font-black tracking-tight text-white mb-2 italic">
+          <h1 className="text-4xl font-black tracking-tight text-white mb-2">
             Penjelajah <span className="text-zinc-500">Semantik</span>
           </h1>
           <p className="text-zinc-500 text-sm max-w-lg leading-relaxed">
@@ -113,16 +150,18 @@ export default function KeywordsPage() {
         </div>
 
         <div className="flex gap-2">
-           <div className="px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">GSC Pipeline Active</span>
-           </div>
+           {data?.source && (
+             <div className="px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center gap-3">
+                <div className={`w-2 h-2 rounded-full ${data.source === 'Google Ads API' ? 'bg-amber-500' : 'bg-emerald-500'} animate-pulse`} />
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Source: {data.source}</span>
+             </div>
+           )}
         </div>
       </header>
 
       {/* Search Interface */}
       <div className="relative group mb-10">
-        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-emerald-600/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-amber-600/20 to-emerald-600/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
         <div className="relative flex gap-3 p-3 bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 rounded-[1.5rem] shadow-2xl">
           <div className="flex items-center pl-4">
              <Search className="w-5 h-5 text-zinc-600" />
@@ -139,7 +178,7 @@ export default function KeywordsPage() {
           <button 
             onClick={research}
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-blue-600/20"
+            className="bg-amber-600 hover:bg-amber-500 text-white px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-amber-600/20"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <TrendingUp className="w-4 h-4" />}
             {loading ? 'Menganalisis Niat...' : 'Riset'}
@@ -149,7 +188,7 @@ export default function KeywordsPage() {
 
       {loading && (
         <div className="py-24 text-center">
-          <div className="w-16 h-16 rounded-full border-2 border-zinc-900 border-t-blue-500 animate-spin mx-auto mb-6" />
+          <div className="w-16 h-16 rounded-full border-2 border-zinc-900 border-t-amber-500 animate-spin mx-auto mb-6" />
           <p className="text-sm text-zinc-500 font-bold uppercase tracking-widest animate-pulse">Mengklasifikasikan klaster niat pencarian...</p>
         </div>
       )}
@@ -167,7 +206,7 @@ export default function KeywordsPage() {
                       onClick={() => setActiveFilter(f)}
                       className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tight transition-all border ${
                         activeFilter === f 
-                          ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20' 
+                          ? 'bg-amber-600 border-amber-500 text-white shadow-lg shadow-amber-600/20' 
                           : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700'
                       }`}
                     >
@@ -184,7 +223,7 @@ export default function KeywordsPage() {
                   >
                     Branded
                   </button>
-                  <button 
+                   <button 
                     onClick={() => setShowBranded(false === showBranded ? null : false)}
                     className={`px-2 py-1 rounded text-[10px] font-bold border transition-all ${showBranded === false ? 'bg-amber-500/10 border-amber-500/50 text-amber-500' : 'bg-zinc-900 border-zinc-800 text-zinc-500'}`}
                   >
@@ -193,45 +232,81 @@ export default function KeywordsPage() {
                </div>
             </div>
 
+            {selectedKWs.length > 0 && (
+               <div className="flex justify-between items-center bg-amber-600/10 border border-amber-500/20 rounded-2xl p-4 animate-in fade-in zoom-in duration-300">
+                  <span className="text-sm font-bold text-amber-400">
+                     {selectedKWs.length} Kata Kunci Terpilih
+                  </span>
+                  <button
+                     onClick={exportToAlchemist}
+                     disabled={exporting}
+                     className="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 disabled:opacity-50"
+                  >
+                     {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
+                     {exporting ? 'Mengirim...' : 'Kirim ke BERNAS'}
+                  </button>
+               </div>
+            )}
+
+
             <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl overflow-hidden backdrop-blur-sm">
               <div className="grid grid-cols-12 px-6 py-4 border-b border-zinc-800 bg-zinc-900/80">
-                <div className="col-span-7 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Penemuan Kata Kunci</div>
-                <div className="col-span-3 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-center">Lapisan Niat</div>
-                <div className="col-span-2 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-right">Hasil</div>
+                <div className="col-span-1 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-center">Pilih</div>
+                <div className="col-span-4 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Penemuan Kata Kunci</div>
+                <div className="col-span-2 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-center">Lapisan Niat</div>
+                <div className="col-span-3 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-right">Metrics (SV/CPC)</div>
+                <div className="col-span-2 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-right">Score</div>
               </div>
               <div className="divide-y divide-zinc-800 max-h-[600px] overflow-y-auto custom-scrollbar">
                 {filteredKeywords.map((k, i) => (
-                  <div key={i} className="grid grid-cols-12 items-center px-6 py-4 hover:bg-zinc-800/40 group transition-all">
-                    <div className="col-span-7 flex items-center gap-4">
+                  <div key={i} className={`grid grid-cols-12 items-center px-6 py-4 hover:bg-zinc-800/40 group transition-all ${selectedKWs.includes(k.keyword) ? 'bg-amber-900/10' : ''}`}>
+                    <div className="col-span-1 flex justify-center">
+                       <input 
+                         type="checkbox"
+                         checked={selectedKWs.includes(k.keyword)}
+                         onChange={() => toggleSelection(k.keyword)}
+                         className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-amber-500 focus:ring-offset-zinc-900 cursor-pointer"
+                       />
+                    </div>
+                    <div className="col-span-4 flex items-center gap-4">
                       <button 
                         onClick={() => copyKW(k.keyword)}
                         className="p-2 rounded-xl border border-zinc-800 bg-zinc-900/50 text-zinc-600 hover:text-white hover:border-zinc-700 transition-all"
                       >
                         {copied === k.keyword ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                       </button>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-bold text-zinc-100 group-hover:text-blue-400 transition-colors truncate">{k.keyword}</span>
+                      <div className="flex flex-col truncate pr-2">
+                        <span className="text-sm font-bold text-zinc-100 group-hover:text-amber-400 transition-colors truncate">{k.keyword}</span>
                         <div className="flex items-center gap-2 mt-1">
                           {k.words >= 4 && <span className="text-[8px] font-black text-emerald-500 uppercase tracking-tighter">Long-Tail</span>}
-                          {k.isBranded && <span className="text-[8px] font-black text-blue-500 uppercase tracking-tighter italic">Branded</span>}
+                          {k.isBranded && <span className="text-[8px] font-black text-amber-500 uppercase tracking-tighter">Branded</span>}
+                          {k.competitionLevel && k.competitionLevel !== 'UNSPECIFIED' && (
+                             <span className="text-[8px] font-black text-amber-500 uppercase tracking-tighter border border-amber-500/20 px-1 rounded">{k.competitionLevel}</span>
+                          )}
                         </div>
                       </div>
                     </div>
-                    <div className="col-span-3 text-center">
+                    <div className="col-span-2 text-center">
                       <span className={`text-[9px] font-black px-2 py-1 rounded uppercase tracking-wider ${
                         k.intent === 'Transactional' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 
-                        k.intent === 'Navigational' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 
+                        k.intent === 'Navigational' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 
                         'bg-zinc-800 text-zinc-500 border border-zinc-700'
                       }`}>
-                        {k.intent === 'Transactional' ? 'TRANSAKSIONAL' : 
-                         k.intent === 'Navigational' ? 'NAVIGASIONAL' : 
-                         'INFORMASIONAL'}
+                        {k.intent === 'Transactional' ? 'TRANS' : 
+                         k.intent === 'Navigational' ? 'NAV' : 
+                         'INFO'}
                       </span>
+                    </div>
+                    <div className="col-span-3 text-right">
+                       <div className="flex flex-col items-end justify-center">
+                         <span className="text-xs font-bold text-zinc-300">{k.searchVolume > 0 ? k.searchVolume.toLocaleString('id-ID') : '-'} <span className="text-[8px] text-zinc-500 uppercase">Vol</span></span>
+                         <span className="text-[10px] font-mono text-zinc-500">{k.cpc > 0 ? `Rp ${k.cpc.toLocaleString('id-ID')}` : '-'} <span className="text-[8px] text-zinc-600 uppercase">CPC</span></span>
+                       </div>
                     </div>
                     <div className="col-span-2 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <div className="w-12 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                          <div className="h-full bg-blue-500" style={{ width: `${k.score}%` }} />
+                        <div className="hidden md:block w-12 h-1 bg-zinc-800 rounded-full overflow-hidden">
+                          <div className="h-full bg-amber-500" style={{ width: `${k.score}%` }} />
                         </div>
                         <span className="text-[10px] font-black font-mono text-zinc-500">{k.score}</span>
                       </div>
@@ -256,33 +331,33 @@ export default function KeywordsPage() {
                  <ShieldAlert size={80} className="text-amber-500" />
               </div>
               
-              <h3 className="text-lg font-black text-white mb-6 flex items-center gap-2 italic uppercase tracking-tighter">
+              <h3 className="text-lg font-black text-white mb-6 flex items-center gap-2 uppercase tracking-tighter">
                 Celah <span className="text-amber-500">Kompetitor</span>
               </h3>
               
               <div className="space-y-4">
                 <GapItem label="Celah Bernilai Tinggi" value="12" sub="Tindakan Segera" color="text-amber-500" />
                 <GapItem label="Long-Tail Terlewat" value="48" sub="Trafik Belum Terjamah" color="text-emerald-500" />
-                <GapItem label="Niat Cari Tidak Cocok" value="3" sub="Butuh Perubahan Konten" color="text-blue-500" />
+                <GapItem label="Niat Cari Tidak Cocok" value="3" sub="Butuh Perubahan Konten" color="text-amber-500" />
               </div>
 
               <div className="mt-8 pt-6 border-t border-zinc-800 space-y-3">
                  <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">Tindakan Direkomendasikan:</p>
                  <div className="flex items-center gap-2 text-xs text-zinc-400 group/link cursor-pointer hover:text-white transition-colors">
-                    <ChevronRight className="w-3 h-3 text-blue-500 group-hover/link:translate-x-1 transition-transform" />
+                    <ChevronRight className="w-3 h-3 text-amber-500 group-hover/link:translate-x-1 transition-transform" />
                     Suntik long-tail ke Pilar Builder
                  </div>
                  <div className="flex items-center gap-2 text-xs text-zinc-400 group/link cursor-pointer hover:text-white transition-colors">
-                    <ChevronRight className="w-3 h-3 text-blue-500 group-hover/link:translate-x-1 transition-transform" />
+                    <ChevronRight className="w-3 h-3 text-amber-500 group-hover/link:translate-x-1 transition-transform" />
                     Pertajam node semantik AEO/GEO
                  </div>
               </div>
             </div>
 
             {/* Strategic Summary */}
-            <div className="p-8 rounded-[2.5rem] bg-blue-600/5 border border-blue-600/10">
+            <div className="p-8 rounded-[2.5rem] bg-amber-600/5 border border-amber-600/10">
                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-600 flex items-center justify-center shadow-lg shadow-amber-600/20">
                      <Tag className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -292,7 +367,7 @@ export default function KeywordsPage() {
                </div>
 
                <div className="space-y-6">
-                  <DistributionBar label="Informasional" percent={65} color="bg-blue-500" />
+                  <DistributionBar label="Informasional" percent={65} color="bg-amber-500" />
                   <DistributionBar label="Transaksional" percent={20} color="bg-emerald-500" />
                   <DistributionBar label="Navigasional" percent={15} color="bg-amber-500" />
                </div>
@@ -312,7 +387,7 @@ function GapItem({ label, value, sub, color }: any) {
         <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{label}</p>
         <p className="text-[9px] font-bold text-zinc-600">{sub}</p>
       </div>
-      <span className={`text-2xl font-black italic ${color}`}>{value}</span>
+      <span className={`text-2xl font-black  ${color}`}>{value}</span>
     </div>
   );
 }

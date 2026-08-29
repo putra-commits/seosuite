@@ -193,7 +193,7 @@ export default function ShareCard({ audit }: Props) {
           <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-3">🏅 Pasang Badge</h3>
           <div className="bg-zinc-950 rounded-lg p-3 overflow-x-auto mb-3">
             <code className="text-[11px] text-emerald-400 font-mono whitespace-nowrap">
-              {`<a href="https://seosuite.info/hasil/${audit.uuid}"><img src="https://seosuite.info/api/badge/${domain}" alt="SEO Score" /></a>`}
+              {`<a href="https://seo.adolo.id/hasil/${audit.uuid}"><img src="https://seo.adolo.id/api/badge/${domain}" alt="SEO Score" /></a>`}
             </code>
           </div>
           <img src={`/api/badge/${domain}`} alt="SEO Badge" className="h-7" />

@@ -2,53 +2,137 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import Link from 'next/link';
+import Image from 'next/image';
+import { ArrowRight, Clock } from 'lucide-react';
+import Footer from '../components/footer';
+import SiteNav from '../components/site-nav';
+import { AdoloSeoMark } from '../components/logo';
 
-export const metadata = {
-  title: 'Sovereign Intel Engine | SEOsuite',
-  description: 'Artikel dan laporan analitik dari tim arsitek pencarian SEOsuite.',
+type PostMeta = {
+  slug: string;
+  title?: string;
+  description?: string;
+  date?: string;
+  category?: string;
+  image?: string;
 };
 
-export default function BlogIndex() {
-  const blogDir = path.join(process.cwd(), 'src/content/blog');
-  let posts: any[] = [];
-  
-  if (fs.existsSync(blogDir)) {
-    const files = fs.readdirSync(blogDir);
-    posts = files.filter(f => f.endsWith('.md')).map(filename => {
-      const filePath = path.join(blogDir, filename);
-      const fileContent = fs.readFileSync(filePath, 'utf8');
-      const { data } = matter(fileContent);
-      return {
-        slug: filename.replace('.md', ''),
-        title: data.title,
-        date: data.date,
-        excerpt: data.excerpt,
-      };
-    }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }
+async function getPosts(): Promise<PostMeta[]> {
+  const dir = path.join(process.cwd(), 'src/content/blog');
+  // Hanya .md — sama seperti generateStaticParams di /blog/[slug]. Berkas .mdx
+  // dan .json di folder ini tidak punya halaman detail (getPost cuma membaca
+  // `${slug}.md`), jadi menampilkannya di indeks hanya menghasilkan tautan mati.
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith('.md'));
+
+  const posts = files.flatMap((filename) => {
+    const slug = filename.replace('.md', '');
+    try {
+      const markdownWithMeta = fs.readFileSync(path.join(dir, filename), 'utf-8');
+      const { data: frontmatter } = matter(markdownWithMeta);
+      return [{ slug, ...frontmatter } as PostMeta];
+    } catch (err) {
+      // Frontmatter rusak tidak boleh menjatuhkan seluruh halaman indeks.
+      console.warn(`[blog] lewati ${filename}:`, err instanceof Error ? err.message : err);
+      return [];
+    }
+  });
+
+  // Sort by date descending
+  return posts.sort((a, b) => new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime());
+}
+
+export default async function BlogIndex() {
+  const posts = await getPosts();
 
   return (
-    <div className="min-h-screen bg-[#040609] text-white pt-32 pb-24">
-      <div className="max-w-4xl mx-auto px-8 relative z-10">
-        <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter mb-4 text-amber-500">
-          Sovereign Intel Engine
-        </h1>
-        <p className="text-zinc-400 font-bold mb-16">
-          Kajian analitik dan arsitektur kedaulatan digital (AEO/GEO).
-        </p>
+    <div className="min-h-screen bg-ink text-white">
+      <SiteNav />
 
-        <div className="space-y-6">
-          {posts.map(post => (
-            <Link key={post.slug} href={`/blog/${post.slug}`} className="block group">
-              <div className="p-8 rounded-3xl bg-white/[0.02] backdrop-blur-xl border border-zinc-800 hover:border-amber-500/50 transition-all shadow-[0_0_30px_rgba(245,158,11,0.0)] hover:shadow-[0_0_30px_rgba(245,158,11,0.05)]">
-                <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">{post.date}</span>
-                <h2 className="text-2xl font-black mt-2 mb-4 group-hover:text-amber-400 transition-colors">{post.title}</h2>
-                <p className="text-sm text-zinc-400 font-medium leading-relaxed">{post.excerpt}</p>
-              </div>
-            </Link>
-          ))}
+      {/* Hero */}
+      <header className="hero-mesh border-b border-white/10 py-20 sm:py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <span aria-hidden="true" className="ey-accent-bar mb-4 h-1 w-14 bg-accent" />
+          <p className="section-label text-accent">Sovereign Intel</p>
+          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight sm:text-5xl">
+            Membongkar Rahasia <span className="text-gradient">Dominasi Pasar.</span>
+          </h1>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-300">
+            Wawasan eksklusif, strategi Enterprise SEO, dan rahasia arsitektur konversi yang
+            digunakan oleh dominator industri untuk meraup miliaran rupiah.
+          </p>
         </div>
-      </div>
+      </header>
+
+      {/* Blog Grid */}
+      <main className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => {
+            const imagePath = post.image || '/images/blog/pilar1.png';
+
+            return (
+              <Link
+                href={`/blog/${post.slug}`}
+                key={post.slug}
+                className="card-lift group flex h-full flex-col overflow-hidden rounded-2xl bg-ink ring-1 ring-white/10 transition hover:ring-accent/40"
+              >
+                {/* Ke-36 hero artikel masih artwork AI HITAM + NEON KUNING-EMAS
+                    (palet lama yang dibuang). Sampai gambarnya diregenerasi
+                    dengan palet biru-cyan, treatment duotone yang sama persis
+                    dengan photo-split-section.tsx (grayscale + multiply + screen)
+                    mengunci massa visual halaman blog ke palet terkunci. */}
+                <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-white/10">
+                  <Image
+                    src={imagePath}
+                    alt={post.title ?? 'Artikel AdoloSEO'}
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    className="object-cover grayscale transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-gradient-to-tr from-brand-900/80 via-brand-700/40 to-accent/25 mix-blend-multiply"
+                  />
+                  <div aria-hidden="true" className="absolute inset-0 bg-brand-500/15 mix-blend-screen" />
+                  <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent opacity-80" />
+
+                  {/* Watermark AdoloSEO */}
+                  <div className="absolute left-4 top-4 z-10 flex items-center gap-1.5 rounded-lg border border-white/10 bg-black/60 px-2.5 py-1.5 backdrop-blur-md">
+                    <AdoloSeoMark className="h-4 w-4" />
+                    <span className="font-display text-[10px] font-bold tracking-tight text-white">
+                      Adolo<span className="text-gradient">SEO</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-1 flex-col p-6">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="section-label rounded-full border border-white/10 bg-white/5 px-3 py-1 text-accent">
+                      {post.category || 'Intelijen'}
+                    </span>
+                    <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+                      <Clock className="h-3 w-3" /> {new Date(post.date ?? 0).toLocaleDateString('id-ID')}
+                    </span>
+                  </div>
+
+                  <h2 className="mt-5 font-display text-xl font-bold leading-snug tracking-tight text-white transition group-hover:text-accent">
+                    {post.title}
+                  </h2>
+
+                  <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-400">
+                    {post.description}
+                  </p>
+
+                  <div className="mt-6 flex items-center gap-2 border-t border-white/10 pt-5 text-xs font-bold text-slate-400 transition group-hover:text-white">
+                    Baca Selengkapnya <ArrowRight className="h-4 w-4" />
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

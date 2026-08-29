@@ -121,7 +121,7 @@ export default function CekPage() {
   }
 
   function copyShare() {
-    const text = `Website saya dapat SEO score ${report?.score}/100 dari SEOsuite.\nCek website kamu juga: ${shareUrl}`;
+    const text = `Website saya dapat SEO score ${report?.score}/100 dari AdoloSEO.\nCek website kamu juga: ${shareUrl}`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -375,7 +375,7 @@ export default function CekPage() {
                 <p className="text-xs text-zinc-500 mb-3">Tempel kode ini di footer website-mu untuk tampilkan skor SEO real-time:</p>
                 <div className="bg-zinc-950 rounded-lg p-3 overflow-x-auto mb-3">
                   <code className="text-[11px] text-emerald-400 font-mono whitespace-nowrap">
-                    {`<a href="https://seosuite.info/cek"><img src="https://seosuite.info/api/badge/${new URL(report.url).hostname}" alt="SEO Score" /></a>`}
+                    {`<a href="https://seo.adolo.id/cek"><img src="https://seo.adolo.id/api/badge/${new URL(report.url).hostname}" alt="SEO Score" /></a>`}
                   </code>
                 </div>
                 <img

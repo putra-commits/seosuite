@@ -111,7 +111,7 @@ export default function CekSeoPage() {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-inner">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             <span className="text-xs font-bold uppercase tracking-widest text-zinc-300">
-              SEOsuite 5-Layer Health & Lead Audit
+              AdoloSEO 5-Layer Health & Lead Audit
             </span>
           </div>
 

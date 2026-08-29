@@ -39,6 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+client_secret_*.json
+audit-res*.json
 
-# local audit data
+/src/generated/prisma
+
+# local audit data (lead funnel & laporan)
 /data/

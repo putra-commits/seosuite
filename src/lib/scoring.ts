@@ -183,7 +183,7 @@ Berikut 3 luka prioritas yang terdeteksi dan berpotensi menghambat masuknya lead
 ${issueBullets || '1. Optimasi struktur data dan kecepatan mobile'}
 
 Laporan audit interaktif lengkap dapat Anda buka di:
-👉 https://seosuite.info/laporan/${params.reportSlug}
+👉 https://seo.adolo.id/laporan/${params.reportSlug}
 
 Ketiga perbaikan teknis di atas bisa kami bantu selesaikan langsung ke kode situs Anda dalam 7–14 hari kerja. 
 Apakah ada waktu sebentar jika kami bantu jelaskan langkah perbaikannya? Terima kasih! 🙏`;

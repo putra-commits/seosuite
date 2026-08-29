@@ -34,7 +34,7 @@ async function safeFetch(url: string, timeout = 10000): Promise<FetchResponse> {
       const res = await fetch(current, {
         signal: AbortSignal.timeout(timeout),
         headers: {
-          'User-Agent': 'SEOsuite-Bot/2.0 (+https://seosuite.info/bot; Mozilla/5.0 Compatible)',
+          'User-Agent': 'AdoloSEO-Bot/2.0 (+https://seo.adolo.id/bot; Mozilla/5.0 Compatible)',
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
           'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
         },
