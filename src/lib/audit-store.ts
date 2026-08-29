@@ -58,6 +58,29 @@ export function generateSlug(domain: string): string {
     .replace(/^-+|-+$/g, '') || 'website';
 }
 
+/**
+ * Cari slug yang belum terpakai. Audit pertama sebuah domain mendapat URL
+ * cantik (klinikgigisehat-id); audit berikutnya diberi imbuhan -2, -3, dst.
+ *
+ * Tanpa ini, audit ulang domain yang sama menimpa laporan lama DAN menghapus
+ * lead sebelumnya dari index — riwayat penjualan hilang, dan orang luar bisa
+ * sengaja menimpa laporan milik domain orang lain.
+ *
+ * Harus dipanggil di dalam kunci: cek-lalu-tulis ini balapan kalau tidak.
+ */
+async function reserveSlug(base: string): Promise<string> {
+  for (let n = 1; n <= 500; n++) {
+    const candidate = n === 1 ? base : `${base}-${n}`;
+    try {
+      await fs.access(path.join(AUDITS_DIR, `${candidate}.json`));
+    } catch {
+      return candidate; // berkas belum ada = slug bebas
+    }
+  }
+  // Ekor yang sangat panjang: jatuh ke akhiran acak daripada menyerah.
+  return `${base}-${randomUUID().slice(0, 8)}`;
+}
+
 export async function saveAuditReport(params: {
   url: string;
   businessName?: string;
@@ -76,59 +99,61 @@ export async function saveAuditReport(params: {
     domain = params.url.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
   }
 
-  const slug = generateSlug(domain);
+  const baseSlug = generateSlug(domain);
   const id = randomUUID();
   const createdAt = new Date().toISOString();
 
-  const record: StoredAuditRecord = {
-    id,
-    slug,
-    url: params.url,
-    domain,
-    businessName: params.businessName || domain,
-    whatsapp: params.whatsapp || '',
-    city: params.city || 'Indonesia',
-    vertical: params.vertical || 'Umum / Bisnis',
-    score: params.audit.overallScore,
-    grade: params.audit.grade,
-    statusColor: params.audit.statusColor,
-    summaryText: params.audit.summaryText,
-    lossEstimateText: params.audit.lossEstimateText,
-    top3Issues: params.audit.top3Issues,
-    modules: params.audit.modules,
-    aiVerdict: params.aiVerdict ?? null,
-    status: 'new',
-    isPublic: true,
-    createdAt,
-  };
+  // Satu kunci menaungi pemesanan slug DAN pembaruan index — kalau dipisah,
+  // dua audit domain sama di worker berbeda bisa memesan slug yang sama.
+  return await withFileLock(LEADS_FILE, async () => {
+    const slug = await reserveSlug(baseSlug);
 
-  // Simpan detail laporan per slug & per id
-  await writeJsonAtomic(path.join(AUDITS_DIR, `${slug}.json`), record);
-  await writeJsonAtomic(path.join(AUDITS_DIR, `${id}.json`), record);
+    const record: StoredAuditRecord = {
+      id,
+      slug,
+      url: params.url,
+      domain,
+      businessName: params.businessName || domain,
+      whatsapp: params.whatsapp || '',
+      city: params.city || 'Indonesia',
+      vertical: params.vertical || 'Umum / Bisnis',
+      score: params.audit.overallScore,
+      grade: params.audit.grade,
+      statusColor: params.audit.statusColor,
+      summaryText: params.audit.summaryText,
+      lossEstimateText: params.audit.lossEstimateText,
+      top3Issues: params.audit.top3Issues,
+      modules: params.audit.modules,
+      aiVerdict: params.aiVerdict ?? null,
+      status: 'new',
+      isPublic: true,
+      createdAt,
+    };
 
-  // Perbarui master index leads. Baca-ubah-tulis WAJIB di dalam kunci:
-  // tanpa itu dua worker PM2 bisa saling menimpa dan lead hilang senyap.
-  try {
-    await withFileLock(LEADS_FILE, async () => {
+    // Simpan detail laporan per slug & per id
+    await writeJsonAtomic(path.join(AUDITS_DIR, `${slug}.json`), record);
+    await writeJsonAtomic(path.join(AUDITS_DIR, `${id}.json`), record);
+
+    // Perbarui master index leads. Lead lama TIDAK dihapus: tiap audit adalah
+    // satu prospek, dan riwayatnya bagian dari data penjualan.
+    try {
       let leads: StoredAuditRecord[] = [];
       try {
         leads = JSON.parse(await fs.readFile(LEADS_FILE, 'utf-8'));
       } catch { /* berkas belum ada atau rusak — mulai dari kosong */ }
 
-      // Hapus duplikat domain lama jika ada, masukkan yang terbaru di atas
-      leads = leads.filter(l => l.slug !== slug);
       leads.unshift(record);
 
       if (leads.length > MAX_LEADS) {
         console.warn(`leads.json melewati ${MAX_LEADS}; ${leads.length - MAX_LEADS} lead terlama dipangkas`);
       }
       await writeJsonAtomic(LEADS_FILE, leads.slice(0, MAX_LEADS));
-    });
-  } catch (err) {
-    console.error('Failed to update leads master file:', err);
-  }
+    } catch (err) {
+      console.error('Failed to update leads master file:', err);
+    }
 
-  return record;
+    return record;
+  });
 }
 
 export async function getAuditBySlug(slug: string): Promise<StoredAuditRecord | null> {
