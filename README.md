@@ -24,7 +24,7 @@ Built on the BERNAS Intelligence Engine. Enterprise-grade SEO auditing, Core Web
 
 ```bash
 # Clone
-git clone https://github.com/putra-commits/seosuite.git
+git clone https://github.com/putra-commits/adoloseo.git
 cd seosuite
 
 # Install
