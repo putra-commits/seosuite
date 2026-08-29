@@ -166,6 +166,16 @@ export default function ReportView({ report }: Props) {
                 </p>
                 {report.summaryText}
               </div>
+
+              {/* Verdict konsultan (dihasilkan sekali saat audit, disimpan di laporan) */}
+              {report.aiVerdict && (
+                <div className="p-4 rounded-2xl bg-amber-400/[0.06] border border-amber-400/20 text-zinc-200 text-sm leading-relaxed print:text-black print:border-zinc-300">
+                  <p className="font-semibold text-amber-300 mb-1 flex items-center gap-2 print:text-black">
+                    <Bot className="w-4 h-4" /> Catatan Konsultan:
+                  </p>
+                  {report.aiVerdict}
+                </div>
+              )}
             </div>
           </div>
         </section>

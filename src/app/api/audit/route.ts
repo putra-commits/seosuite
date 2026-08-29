@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateAndSanitizeUrl } from '@/lib/security';
 import { runUnifiedAudit } from '@/lib/auditor';
 import { saveAuditReport } from '@/lib/audit-store';
+import { generateVerdict } from '@/lib/verdict';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
 
 const WINDOW_MS = 10 * 60 * 1000;
@@ -40,7 +41,10 @@ export async function POST(req: NextRequest) {
     // 2. Jalankan Unified 5-Layer Audit
     const auditResult = await runUnifiedAudit(validation.sanitizedUrl);
 
-    // 3. Simpan ke database laporan & lead store
+    // 3. Verdict naratif (opsional — audit tetap sah kalau ini gagal)
+    const aiVerdict = await generateVerdict(validation.sanitizedUrl, auditResult.audit);
+
+    // 4. Simpan ke database laporan & lead store
     const savedRecord = await saveAuditReport({
       url: validation.sanitizedUrl,
       businessName,
@@ -48,6 +52,7 @@ export async function POST(req: NextRequest) {
       city,
       vertical,
       audit: auditResult.audit,
+      aiVerdict,
     });
 
     return NextResponse.json({

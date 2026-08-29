@@ -28,6 +28,7 @@ export interface StoredAuditRecord {
   lossEstimateText: string;
   top3Issues: TopIssue[];
   modules: ModuleSection[];
+  aiVerdict?: string | null;
   status: 'new' | 'contacted' | 'won' | 'lost';
   isPublic: boolean;
   createdAt: string;
@@ -59,6 +60,7 @@ export async function saveAuditReport(params: {
   city?: string;
   vertical?: string;
   audit: CalculatedAudit;
+  aiVerdict?: string | null;
 }): Promise<StoredAuditRecord> {
   await ensureDirs();
 
@@ -89,6 +91,7 @@ export async function saveAuditReport(params: {
     lossEstimateText: params.audit.lossEstimateText,
     top3Issues: params.audit.top3Issues,
     modules: params.audit.modules,
+    aiVerdict: params.aiVerdict ?? null,
     status: 'new',
     isPublic: true,
     createdAt,
