@@ -10,38 +10,68 @@
 
 set -euo pipefail
 
-APP_NAME="${APP_NAME:-seosuite}"     # nama PM2 (belum di-rename)
+APP_NAME="${APP_NAME:-seosuite}"     # nama PM2 (path & nama PM2 belum di-rename)
 PORT="${PORT:-3025}"
-DOPPLER_PROJECT="${DOPPLER_PROJECT:-seosuite}"
+ENV_FILE="${ENV_FILE:-.env}"
+
+# AdoloSEO memakai berkas .env, BUKAN Doppler: PM2 menjalankan `next start`
+# langsung tanpa `doppler run`, dan workspace Doppler sudah mentok batas 10
+# project sehingga app ini tidak bisa mendapat project sendiri.
+# Kalau suatu saat pindah ke Doppler, set DOPPLER_PROJECT dan skrip akan
+# membaca dari sana.
+DOPPLER_PROJECT="${DOPPLER_PROJECT:-}"
 DOPPLER_CONFIG="${DOPPLER_CONFIG:-prd}"
 
 info() { printf '\n\033[1;36m==> %s\033[0m\n' "$1"; }
 gagal() { printf '\n\033[1;31mGAGAL: %s\033[0m\n' "$1" >&2; exit 1; }
 
-# ── 1. Rahasia wajib ────────────────────────────────────────────────────────
-info "Memeriksa rahasia di Doppler ($DOPPLER_PROJECT/$DOPPLER_CONFIG)"
-
+# Ambil nilai satu kunci dari sumber yang berlaku. Sengaja TIDAK memakai
+# `source .env`: berkas itu bisa memuat karakter yang ditafsirkan shell.
 ambil_rahasia() {
-  doppler secrets get "$1" --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain 2>/dev/null || true
+  if [ -n "$DOPPLER_PROJECT" ]; then
+    doppler secrets get "$1" --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain 2>/dev/null || true
+  else
+    [ -f "$ENV_FILE" ] || return 0
+    sed -n "s/^$1=//p" "$ENV_FILE" | tail -1 | sed 's/^["'"'"']//; s/["'"'"']$//'
+  fi
 }
 
+if [ -n "$DOPPLER_PROJECT" ]; then
+  info "Sumber rahasia: Doppler ($DOPPLER_PROJECT/$DOPPLER_CONFIG)"
+else
+  info "Sumber rahasia: $ENV_FILE"
+  [ -f "$ENV_FILE" ] || gagal "$ENV_FILE tidak ada di $(pwd)."
+  # Berkas rahasia tidak boleh terbaca pengguna lain di server bersama.
+  IZIN="$(stat -c '%a' "$ENV_FILE")"
+  case "$IZIN" in
+    600|400) ;;
+    *) printf '\033[1;33mPERINGATAN: izin %s pada %s terlalu terbuka. Rapatkan: chmod 600 %s\033[0m\n' "$IZIN" "$ENV_FILE" "$ENV_FILE" ;;
+  esac
+fi
+
+# ── 1. Rahasia wajib ────────────────────────────────────────────────────────
 ADMIN_TOKEN_VAL="$(ambil_rahasia ADMIN_TOKEN)"
 if [ -z "$ADMIN_TOKEN_VAL" ]; then
   gagal "ADMIN_TOKEN belum diset. Tanpa ini /admin/leads menolak SEMUA akses.
-       Setel dulu:
-         doppler secrets set ADMIN_TOKEN=\"\$(openssl rand -hex 32)\" --project $DOPPLER_PROJECT --config $DOPPLER_CONFIG"
+       Setel dulu (nilai acak, jangan diketik manual):
+         printf 'ADMIN_TOKEN=%s\n' \"\$(openssl rand -hex 32)\" >> $(pwd)/$ENV_FILE"
 fi
 
-# Gotcha #1: migrasi Doppler sering mengisi nilai template, bukan nilai asli.
+# Gotcha #1: migrasi rahasia sering menyisakan nilai template, bukan nilai asli.
 case "$ADMIN_TOKEN_VAL" in
   *change-me*|*your-*|*xxx*|sk-ant-*)
     gagal "ADMIN_TOKEN tampak berisi nilai placeholder, bukan token asli." ;;
 esac
+if [ "${#ADMIN_TOKEN_VAL}" -lt 24 ]; then
+  gagal "ADMIN_TOKEN hanya ${#ADMIN_TOKEN_VAL} karakter — terlalu pendek untuk menjaga database prospek."
+fi
+info "ADMIN_TOKEN terpasang (${#ADMIN_TOKEN_VAL} karakter)"
 
 DATA_DIR_VAL="$(ambil_rahasia ADOLOSEO_DATA_DIR)"
 if [ -z "$DATA_DIR_VAL" ]; then
-  printf '\033[1;33mPERINGATAN: ADOLOSEO_DATA_DIR kosong — data lead disimpan di dalam folder rilis
-dan akan LENYAP saat folder deploy diganti. Sangat disarankan set ke /var/lib/adoloseo/data\033[0m\n'
+  printf '[1;33mPERINGATAN: ADOLOSEO_DATA_DIR kosong — data lead disimpan di dalam folder rilis
+dan akan LENYAP saat folder deploy diganti. Sangat disarankan set ke /var/lib/adoloseo/data[0m
+'
 else
   info "Data lead: $DATA_DIR_VAL"
   mkdir -p "$DATA_DIR_VAL"
