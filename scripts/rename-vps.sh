@@ -17,6 +17,9 @@ PORT="${PORT:-3025}"
 DOMAIN="${DOMAIN:-seo.adolo.id}"
 NGINX_CONF="${NGINX_CONF:-/etc/nginx/sites-available/$DOMAIN}"
 
+# AdoloSEO memakai .env, bukan Doppler (workspace Doppler mentok batas 10
+# project). PM2 menjalankan `next start` langsung.
+
 info() { printf '\n\033[1;36m==> %s\033[0m\n' "$1"; }
 gagal() { printf '\n\033[1;31mGAGAL: %s\033[0m\n' "$1" >&2; exit 1; }
 
@@ -31,13 +34,13 @@ sudo ss -tlnp | grep ":$PORT " || true
 # ── 1. Pastikan data lead TIDAK di dalam folder yang akan dipindah ─────────
 # Kalau ADOLOSEO_DATA_DIR belum diarahkan keluar, rename ini ikut memindahkan
 # database prospek dan alamatnya berubah di tengah jalan.
-DATA_DIR_VAL="$(doppler secrets get ADOLOSEO_DATA_DIR --project seosuite --config prd --plain 2>/dev/null || true)"
+DATA_DIR_VAL="$(sed -n 's/^ADOLOSEO_DATA_DIR=//p' "$LAMA_PATH/.env" 2>/dev/null | tail -1 | tr -d '"'"'"'"')"
 if [ -z "$DATA_DIR_VAL" ] || [[ "$DATA_DIR_VAL" == "$LAMA_PATH"* ]]; then
   gagal "ADOLOSEO_DATA_DIR belum menunjuk ke luar $LAMA_PATH (sekarang: '${DATA_DIR_VAL:-kosong}').
        Pindahkan data lead dulu:
          sudo mkdir -p /var/lib/adoloseo/data
          sudo cp -r $LAMA_PATH/data/* /var/lib/adoloseo/data/
-         doppler secrets set ADOLOSEO_DATA_DIR=/var/lib/adoloseo/data --project seosuite --config prd"
+         printf 'ADOLOSEO_DATA_DIR=/var/lib/adoloseo/data\n' >> $LAMA_PATH/.env"
 fi
 info "Data lead aman di luar folder app: $DATA_DIR_VAL"
 
@@ -49,6 +52,9 @@ pm2 delete "$LAMA_PM2"
 # ── 3. Pindahkan folder ─────────────────────────────────────────────────────
 info "Memindahkan $LAMA_PATH -> $BARU_PATH"
 sudo mv "$LAMA_PATH" "$BARU_PATH"
+
+info "Memastikan .env ikut berpindah"
+[ -f "$BARU_PATH/.env" ] || gagal ".env tidak ada di $BARU_PATH. App tidak akan punya ADMIN_TOKEN."
 
 # ── 4. Arahkan remote git ke nama repo baru ────────────────────────────────
 info "Memperbarui git remote"
@@ -70,7 +76,9 @@ SISA="$(sudo ss -tlnp | grep ":$PORT " || true)"
 
 info "Menjalankan PM2 $BARU_PM2"
 cd "$BARU_PATH"
-pm2 start doppler --name "$BARU_PM2" -- run -- npm run start
+# Sama persis dengan cara app lama dijalankan: next start langsung, port
+# dipaksa lewat -p. Next.js membaca .env dari cwd saat runtime.
+pm2 start ./node_modules/next/dist/bin/next --name "$BARU_PM2" -- start -p "$PORT"
 pm2 save
 
 # ── 7. Verifikasi cwd (gotcha #2) ──────────────────────────────────────────
@@ -97,7 +105,7 @@ for i in $(seq 1 15); do
   sleep 2
 done
 [ "$KODE" = "200" ] || gagal "Lokal membalas $KODE.
-       ROLLBACK: pm2 delete $BARU_PM2; sudo mv $BARU_PATH $LAMA_PATH; cd $LAMA_PATH; pm2 start doppler --name $LAMA_PM2 -- run -- npm run start; pm2 save"
+       ROLLBACK: pm2 delete $BARU_PM2; sudo mv $BARU_PATH $LAMA_PATH; cd $LAMA_PATH; pm2 start ./node_modules/next/dist/bin/next --name $LAMA_PM2 -- start -p $PORT; pm2 save"
 echo "  127.0.0.1:$PORT -> 200"
 
 KODE_PUBLIK="$(curl -s -o /dev/null -w '%{http_code}' "https://$DOMAIN/" || true)"
